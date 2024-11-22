@@ -4,23 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d6eb701e-94d1-44dd-8355-e52f1cc2862a" name="Changes" comment="FEAT : 게임화면생성,  화살표 회전">
-      <change afterPath="$PROJECT_DIR$/src/assets/game/gamebottom.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/game/shooter/cc1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/game/shooter/dd1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/game/shooter/dd10.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/game/shooter/dd11.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/game/shooter/dd12.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/game/shooter/dd2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/game/shooter/dd3.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/game/shooter/dd4.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/game/shooter/dd5.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/game/shooter/dd6.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/game/shooter/dd7.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/game/shooter/dd8.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/game/shooter/dd9.png" afterDir="false" />
+    <list default="true" id="d6eb701e-94d1-44dd-8355-e52f1cc2862a" name="Changes" comment="FEAT : 발사대회전, 화면 하단">
+      <change afterPath="$PROJECT_DIR$/src/assets/bubble/bubble1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/bubble/bubble2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/bubble/bubble3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/bubble/bubble4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/bubble/bubble5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/bubble/bubble6.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/bubble/bubble7.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GameScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameScreen.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/bubble/Bobbles.png" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +55,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "cm/feat1",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/eduHansung/bubblePop/bubblePop/src/assets/game",
+    "last_opened_file_path": "C:/eduHansung/bubblePop/bubblePop/src/assets/bubble",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -74,6 +68,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\eduHansung\bubblePop\bubblePop\src\assets\bubble" />
       <recent name="C:\eduHansung\bubblePop\bubblePop\src\assets\game" />
       <recent name="C:\eduHansung\bubblePop\bubblePop\src\assets\game\shooter" />
       <recent name="C:\eduHansung\bubblePop\bubblePop\src\assets\chracter" />
@@ -100,7 +95,7 @@
       <updated>1732093151380</updated>
       <workItem from="1732093152338" duration="374000" />
       <workItem from="1732256598195" duration="2683000" />
-      <workItem from="1732260254346" duration="9098000" />
+      <workItem from="1732260254346" duration="10477000" />
     </task>
     <task id="LOCAL-00001" summary="FEAT : 게임화면생성,  화살표 회전">
       <option name="closed" value="true" />
@@ -110,7 +105,15 @@
       <option name="project" value="LOCAL" />
       <updated>1732266275387</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="FEAT : 발사대회전, 화면 하단">
+      <option name="closed" value="true" />
+      <created>1732270889295</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1732270889295</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -118,7 +121,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="FEAT : 게임화면생성,  화살표 회전" />
-    <option name="LAST_COMMIT_MESSAGE" value="FEAT : 게임화면생성,  화살표 회전" />
+    <MESSAGE value="FEAT : 발사대회전, 화면 하단" />
+    <option name="LAST_COMMIT_MESSAGE" value="FEAT : 발사대회전, 화면 하단" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

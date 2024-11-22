@@ -60,6 +60,9 @@ class GamePanel extends JPanel implements KeyListener {
 
     private BufferedImage gameBottom; // 게임 하단 이미지
 
+    private BufferedImage b1; // 버블1 이미지
+
+
 
     private double angle = 0; // 화살표의 현재 각도 (라디안 값)
     private final double maxAngle = Math.toRadians(50); // 최대 각도 (70도)
@@ -84,6 +87,7 @@ class GamePanel extends JPanel implements KeyListener {
             dd10 = ImageIO.read(getClass().getClassLoader().getResource("assets/game/shooter/dd10.png"));
             dd11 = ImageIO.read(getClass().getClassLoader().getResource("assets/game/shooter/dd11.png"));
             dd12 = ImageIO.read(getClass().getClassLoader().getResource("assets/game/shooter/dd12.png"));
+            b1 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubble1.png"));
 
             //게임 하단 이미지 로드
             gameBottom = ImageIO.read(getClass().getClassLoader().getResource("assets/game/gamebottom.png"));
@@ -103,6 +107,27 @@ class GamePanel extends JPanel implements KeyListener {
 
         // 화살표 각도에 따라 dd 이미지 선택
         BufferedImage currentImage = getImageForAngle();
+
+        // 상단 1번째 줄
+        if (b1 != null) {
+            int startX = 43; // 시작 X 위치
+            int startY = 65; // 시작 Y 위치
+            int spacing = 48; // 간격
+
+            for (int i = 0; i < 8; i++) {
+                g.drawImage(b1, startX + i * spacing, startY, null);
+            }
+        }
+        // 상단 1번째 줄
+        if (b1 != null) {
+            int startX = 67; // 시작 X 위치
+            int startY = 113; // 시작 Y 위치
+            int spacing = 48; // 간격
+
+            for (int i = 0; i < 7; i++) {
+                g.drawImage(b1, startX + i * spacing, startY, null);
+            }
+        }
 
         // 선택된 dd 이미지를 화면에 출력
         if (currentImage != null) {
