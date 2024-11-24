@@ -5,7 +5,8 @@ public class WaitingRoom {
     public static void main(String[] args) {
         JFrame frame = new JFrame("대기방");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(960, 672);        frame.setLayout(null); // 절대 레이아웃 사용
+        frame.setSize(960, 672);
+        frame.setLayout(null); // 절대 레이아웃 사용
         frame.getContentPane().setBackground(Color.decode("#181329"));
         // 프레임 크기 고정
         frame.setResizable(false);
@@ -38,22 +39,6 @@ public class WaitingRoom {
         playerPanel2.setBounds(350, 170, 200, 250);
         frame.add(playerPanel2);
 
-        // 준비 1
-        JLabel readyLabel1 = new JLabel("준비 완료"); //중앙에
-        readyLabel1.setBounds(115, 435, 200, 40);
-        readyLabel1.setFont(new Font("맑은 고딕", Font.BOLD, 16));
-        readyLabel1.setOpaque(false); // 투명한 배경
-        readyLabel1.setForeground(Color.WHITE); // 글자색만!
-        frame.add(readyLabel1);
-
-        // 준비 2
-        JLabel readyLabel2 = new JLabel("준비 완료"); //중앙에
-        readyLabel2.setBounds(415, 435, 200, 40);
-        readyLabel2.setFont(new Font("맑은 고딕", Font.BOLD, 16));
-        readyLabel2.setOpaque(false); // 투명한 배경
-        readyLabel2.setForeground(Color.WHITE); // 글자색만!
-        frame.add(readyLabel2);
-
         // READY 버튼
         JButton readyButton = new JButton("READY");
         readyButton.setBounds(25, 500, 550, 50);
@@ -69,6 +54,12 @@ public class WaitingRoom {
         startButton.setForeground(Color.WHITE);
         startButton.setFont(new Font("맑은 고딕", Font.BOLD, 18));
         frame.add(startButton);
+
+        // START 버튼 클릭 이벤트 추가
+        startButton.addActionListener(e -> {
+            frame.dispose(); // 현재 대기방 프레임 닫기
+            GameScreen.main(new String[]{}); // GameScreen 실행
+        });
 
         // 채팅 패널
         JPanel chatPanel = new JPanel();
@@ -96,17 +87,15 @@ public class WaitingRoom {
         frame.setVisible(true);
     }
 
-
     private static JPanel createPlayerPanel(String playerName, String imagePath, Font font) {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         panel.setBackground(Color.DARK_GRAY);
 
-        // 이미지 추가 (ClassLoader를 사용한 경로)
         JLabel avatarLabel = new JLabel();
         try {
             ImageIcon icon = new ImageIcon(ClassLoader.getSystemResource(imagePath));
-            Image scaledImage = icon.getImage().getScaledInstance(140, 140, Image.SCALE_SMOOTH); // 크기 조정
+            Image scaledImage = icon.getImage().getScaledInstance(140, 140, Image.SCALE_SMOOTH);
             avatarLabel.setIcon(new ImageIcon(scaledImage));
         } catch (Exception e) {
             System.err.println("이미지를 불러오지 못했습니다: " + imagePath);
@@ -121,5 +110,4 @@ public class WaitingRoom {
 
         return panel;
     }
-
 }
