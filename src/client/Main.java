@@ -1,5 +1,6 @@
+package client;
+
 import javax.swing.*;
-import java.awt.*;
 
 public class Main extends JFrame {
     public Main() {

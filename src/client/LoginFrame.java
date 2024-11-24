@@ -1,7 +1,25 @@
+package client;
+
+import shared.ChatMsg;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 
 public class LoginFrame extends JFrame{
+    // 서버 연결 필요 요소
+    String serverAddress = "localhost";
+    int serverPort = 12345;
+    Socket socket;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
+    private ManageNetwork network;
+
     private JPanel startPane;
     private JPanel loginPane;
     private JTextField txtUserName;
@@ -10,9 +28,9 @@ public class LoginFrame extends JFrame{
     private JTextField txtPortNumber;
     private JButton btnLogin;
 
-    private Image background = new ImageIcon(getClass().getResource("/assets/background/login_bg.jpg")).getImage();
-    private ImageIcon logo = new ImageIcon(getClass().getResource("/assets/logo/logo.png"));
-    private ImageIcon logo_character = new ImageIcon(getClass().getResource("/assets/logo/logo_character.png"));
+    private Image background = new ImageIcon(getClass().getResource("/client/assets/background/login_bg.jpg")).getImage();
+    private ImageIcon logo = new ImageIcon(getClass().getResource("/client/assets/logo/logo.png"));
+    private ImageIcon logo_character = new ImageIcon(getClass().getResource("/client/assets/logo/logo_character.png"));
 
     public LoginFrame() {
         setTitle("2024-2 Network Programming-BubblePOP");
@@ -75,6 +93,13 @@ public class LoginFrame extends JFrame{
         btnLogin.setBackground(Color.BLACK);
         btnLogin.setForeground(Color.white);
 
+        btnLogin.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                connectToServer();
+            }
+        });
+
         loginPane.add(lblUserName);
         loginPane.add(txtUserName);
         loginPane.add(lblUserPassword);
@@ -82,6 +107,40 @@ public class LoginFrame extends JFrame{
         loginPane.add(btnLogin);
 
         startPane.add(loginPane);
+    }
+
+    /* 클라이언트와 서버간의 통신 코드 시작 */
+    public void connectToServer() {
+        try {
+            socket = new Socket(serverAddress, serverPort);
+            out = new ObjectOutputStream(socket.getOutputStream());
+            in = new ObjectInputStream(socket.getInputStream());
+
+            // 총관리 네트워크 설정
+            network = new ManageNetwork(in, out, socket);
+            network.start();
+
+            // GameUser 객체 생성 및 전송
+            String userName = txtUserName.getText();
+            String password = new String(txtUserPassword.getPassword());
+            GameUser gameUser = new GameUser(userName, password);
+            out.writeObject(gameUser);
+            out.flush();
+
+            // ChatMsg 객체 전송
+            ChatMsg cmsg = new ChatMsg(gameUser.getId(), ChatMsg.MODE_LOGIN, "Login");
+            out.writeObject(cmsg);
+            out.flush();
+
+
+            setVisible(false);
+            //new LobbyFrame();
+
+        } catch(IOException e) {
+            // 서버 연결시 다양한 오류가 발생할 수 있기 때문에 꼭 작성해줘야함(서버 연결 실패, 네트워크 오류 등)
+            System.out.println("서버 오류 > " + e.getMessage());
+            System.exit(-1); // 비정상 오류 상태는 음수 값
+        }
     }
     public static void main(String[] args) {
         new LoginFrame();
