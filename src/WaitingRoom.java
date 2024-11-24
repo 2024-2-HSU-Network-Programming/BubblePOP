@@ -29,12 +29,12 @@ public class WaitingRoom {
         frame.add(roomTitle);
 
         // 플레이어 패널 1
-        JPanel playerPanel1 = createPlayerPanel("아이디 1", koreanFont);
+        JPanel playerPanel1 = createPlayerPanel("아이디 1","assets/chracter/mainPlayer1_1.png", koreanFont);
         playerPanel1.setBounds(50, 170, 200, 250);
         frame.add(playerPanel1);
 
         // 플레이어 패널 2
-        JPanel playerPanel2 = createPlayerPanel("아이디 2", koreanFont);
+        JPanel playerPanel2 = createPlayerPanel("아이디 2", "assets/chracter/mainPlayer2_1.png",koreanFont);
         playerPanel2.setBounds(350, 170, 200, 250);
         frame.add(playerPanel2);
 
@@ -96,12 +96,21 @@ public class WaitingRoom {
         frame.setVisible(true);
     }
 
-    private static JPanel createPlayerPanel(String playerName, Font font) {
+
+    private static JPanel createPlayerPanel(String playerName, String imagePath, Font font) {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         panel.setBackground(Color.DARK_GRAY);
 
-        JLabel avatarLabel = new JLabel(); // 이미지가 없으므로 빈 라벨
+        // 이미지 추가 (ClassLoader를 사용한 경로)
+        JLabel avatarLabel = new JLabel();
+        try {
+            ImageIcon icon = new ImageIcon(ClassLoader.getSystemResource(imagePath));
+            Image scaledImage = icon.getImage().getScaledInstance(140, 140, Image.SCALE_SMOOTH); // 크기 조정
+            avatarLabel.setIcon(new ImageIcon(scaledImage));
+        } catch (Exception e) {
+            System.err.println("이미지를 불러오지 못했습니다: " + imagePath);
+        }
         avatarLabel.setHorizontalAlignment(SwingConstants.CENTER);
         panel.add(avatarLabel, BorderLayout.CENTER);
 
@@ -112,4 +121,5 @@ public class WaitingRoom {
 
         return panel;
     }
+
 }

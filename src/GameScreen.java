@@ -61,6 +61,12 @@ class GamePanel extends JPanel implements KeyListener {
     private BufferedImage gameBottom; // 게임 하단 이미지
 
     private BufferedImage b1; // 버블1 이미지
+    private BufferedImage b2;
+    private BufferedImage b3;
+    private BufferedImage b4;
+    private BufferedImage b5;
+    private BufferedImage b6;
+    private BufferedImage b7;
 
 
 
@@ -88,6 +94,12 @@ class GamePanel extends JPanel implements KeyListener {
             dd11 = ImageIO.read(getClass().getClassLoader().getResource("assets/game/shooter/dd11.png"));
             dd12 = ImageIO.read(getClass().getClassLoader().getResource("assets/game/shooter/dd12.png"));
             b1 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubble1.png"));
+            b2 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubble2.png"));
+            b3 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubble3.png"));
+            b4 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubble4.png"));
+            b5 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubble5.png"));
+            b6 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubble6.png"));
+            b7 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubble7.png"));
 
             //게임 하단 이미지 로드
             gameBottom = ImageIO.read(getClass().getClassLoader().getResource("assets/game/gamebottom.png"));
@@ -109,25 +121,43 @@ class GamePanel extends JPanel implements KeyListener {
         BufferedImage currentImage = getImageForAngle();
 
         // 상단 1번째 줄
-        if (b1 != null) {
-            int startX = 43; // 시작 X 위치
-            int startY = 65; // 시작 Y 위치
-            int spacing = 48; // 간격
+        int startX = 43; // 시작 X 위치
+        int startY = 65; // 시작 Y 위치
+        int spacing = 48; // 간격
 
-            for (int i = 0; i < 8; i++) {
-                g.drawImage(b1, startX + i * spacing, startY, null);
+        for (int i = 0; i < 8; i++) {
+            int randomBubble = (int) (Math.random() * 7) + 1; // 1~7 중 랜덤 값
+            BufferedImage bubbleImage = getBubbleImage(randomBubble);
+            if (bubbleImage != null) {
+                g.drawImage(bubbleImage, startX + i * spacing, startY, null);
             }
         }
-        // 상단 1번째 줄
-        if (b1 != null) {
-            int startX = 67; // 시작 X 위치
-            int startY = 113; // 시작 Y 위치
-            int spacing = 48; // 간격
 
-            for (int i = 0; i < 7; i++) {
-                g.drawImage(b1, startX + i * spacing, startY, null);
+// 상단 2번째 줄
+        startX = 67; // 시작 X 위치
+        startY = 113; // 시작 Y 위치
+
+        for (int i = 0; i < 7; i++) {
+            int randomBubble = (int) (Math.random() * 7) + 1; // 1~7 중 랜덤 값
+            BufferedImage bubbleImage = getBubbleImage(randomBubble);
+            if (bubbleImage != null) {
+                g.drawImage(bubbleImage, startX + i * spacing, startY, null);
             }
         }
+
+// 상단 3번째 줄
+        startX = 43; // 시작 X 위치
+        startY = 161; // 시작 Y 위치
+
+        for (int i = 0; i < 8; i++) {
+            int randomBubble = (int) (Math.random() * 7) + 1; // 1~7 중 랜덤 값
+            BufferedImage bubbleImage = getBubbleImage(randomBubble);
+            if (bubbleImage != null) {
+                g.drawImage(bubbleImage, startX + i * spacing, startY, null);
+            }
+        }
+
+
 
         // 선택된 dd 이미지를 화면에 출력
         if (currentImage != null) {
@@ -167,6 +197,20 @@ class GamePanel extends JPanel implements KeyListener {
         }
 
 
+    }
+
+    // 버블 이미지를 반환하는 메서드 추가
+    private BufferedImage getBubbleImage(int bubbleNumber) {
+        return switch (bubbleNumber) {
+            case 1 -> b1;
+            case 2 -> b2;
+            case 3 -> b3;
+            case 4 -> b4;
+            case 5 -> b5;
+            case 6 -> b6;
+            case 7 -> b7;
+            default -> null;
+        };
     }
 
     private BufferedImage getImageForAngle() {
