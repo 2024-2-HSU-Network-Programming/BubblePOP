@@ -102,7 +102,7 @@ public class LobbyFrame extends JFrame {
         btnCreateRoom.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new MakeRoomDialog();
+                new MakeRoomDialog(LobbyFrame.this);
             }
         });
 

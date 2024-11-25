@@ -1,3 +1,5 @@
+package client;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -58,7 +60,7 @@ public class WaitingRoom {
         // START 버튼 클릭 이벤트 추가
         startButton.addActionListener(e -> {
             frame.dispose(); // 현재 대기방 프레임 닫기
-            GameScreen.main(new String[]{}); // GameScreen 실행
+            GameScreen.main(new String[]{}); // client.GameScreen 실행
         });
 
         // 채팅 패널
