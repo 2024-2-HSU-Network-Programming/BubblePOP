@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d6eb701e-94d1-44dd-8355-e52f1cc2862a" name="Changes" comment="FEAT :  스타트버튼 -&gt; 게임화면 전환">
+    <list default="true" id="d6eb701e-94d1-44dd-8355-e52f1cc2862a" name="Changes" comment="CHANGE">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -93,7 +93,7 @@
       <workItem from="1732260254346" duration="15079000" />
       <workItem from="1732294103692" duration="601000" />
       <workItem from="1732453676062" duration="9760000" />
-      <workItem from="1732515062777" duration="3520000" />
+      <workItem from="1732515062777" duration="4475000" />
     </task>
     <task id="LOCAL-00001" summary="FEAT : 게임화면생성,  화살표 회전">
       <option name="closed" value="true" />
@@ -151,7 +151,15 @@
       <option name="project" value="LOCAL" />
       <updated>1732464845919</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="CHANGE">
+      <option name="closed" value="true" />
+      <created>1732523190143</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1732523190143</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -165,7 +173,8 @@
     <MESSAGE value="FEAT :  대기방 화면 플레이어 이미지" />
     <MESSAGE value="FEAT :  교환 방 생성" />
     <MESSAGE value="FEAT :  스타트버튼 -&gt; 게임화면 전환" />
-    <option name="LAST_COMMIT_MESSAGE" value="FEAT :  스타트버튼 -&gt; 게임화면 전환" />
+    <MESSAGE value="CHANGE" />
+    <option name="LAST_COMMIT_MESSAGE" value="CHANGE" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
