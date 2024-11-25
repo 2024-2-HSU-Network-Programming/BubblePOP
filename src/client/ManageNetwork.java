@@ -42,8 +42,7 @@ public class ManageNetwork extends Thread{
                     System.out.println(cm.getMode());
                     switch (cm.getMode()) {
                         case ChatMsg.MODE_LOGIN:
-                            lobbyFrame = new LobbyFrame();
-                            lobbyFrame.setVisible(true);
+                            lobbyFrame = new LobbyFrame(cm.getUserId());
                             break;
                         default:
                             System.out.println("알 수 없는 모드: " + cm.getMode());

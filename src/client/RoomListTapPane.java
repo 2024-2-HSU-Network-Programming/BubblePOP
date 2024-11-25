@@ -24,9 +24,12 @@ public class RoomListTapPane extends JTabbedPane {
         tab1.setBackground(new Color(40,49,69));
         tab1.setPreferredSize(new Dimension(215, 572)); // 전체 크기 고정
 
+        // 수정 필요
         tab1.add(RoomPane(1, "초보자 방"));
         tab1.add(Box.createVerticalStrut(10));
-        tab1.add(RoomPane(2, "고수들만"));
+        tab1.add(RoomPane(2, "고수"));
+        tab1.add(Box.createVerticalStrut(10)); // 간격 추가
+        tab1.add(RoomPane(3, "같이 게임해요"));
         tab1.add(Box.createVerticalStrut(10)); // 간격 추가
 
 

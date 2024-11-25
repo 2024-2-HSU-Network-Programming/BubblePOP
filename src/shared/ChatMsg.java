@@ -13,7 +13,6 @@ public class ChatMsg implements Serializable {
     private int mode;
     private String message;
 
-
     public ChatMsg(String userId, int mode, String message) {
         this.userId = userId;
         this.mode = mode;

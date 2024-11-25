@@ -104,7 +104,7 @@ public class ServerMain extends JFrame {
                 } else {
                     connectedUsers.add(userName); // 사용자 추가
                     t_display.append("새 사용자 접속: " + userName);
-                    ChatMsg welcomeMsg = new ChatMsg("Server", ChatMsg.MODE_LOGIN, userName + "님 환영합니다!");
+                    ChatMsg welcomeMsg = new ChatMsg(userName, ChatMsg.MODE_LOGIN, userName + "님 환영합니다!");
                     out.writeObject(welcomeMsg);
                     out.flush();
                 }
