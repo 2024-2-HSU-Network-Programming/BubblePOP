@@ -32,10 +32,16 @@
   &quot;associatedIndex&quot;: 3
 }</component>
   <component name="ProjectId" id="2p6iufZiOwhufQ6Ndw1ra7fO2Fm" />
+
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
+
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -137,6 +143,7 @@
         <item itemvalue="애플리케이션.ItemStoreFrame" />
       </list>
     </recent_temporary>
+
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -147,7 +154,9 @@
       <option name="presentableId" value="Default" />
       <updated>1732093151380</updated>
       <workItem from="1732093152338" duration="374000" />
+
     </task>
+
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
