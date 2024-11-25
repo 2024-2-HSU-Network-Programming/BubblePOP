@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="bubblePop:jar2" />
+    </artifacts-to-build>
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d6eb701e-94d1-44dd-8355-e52f1cc2862a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/bubblePop_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/bubblePop_jar2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ExchangeRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/ExchangeRoom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GameScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/GameScreen.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WaitingRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/WaitingRoom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/LobbyFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/LobbyFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/MakeRoomDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/MakeRoomDialog.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,6 +32,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="dev" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GithubPullRequestsUISettings">{
@@ -32,16 +49,10 @@
   &quot;associatedIndex&quot;: 3
 }</component>
   <component name="ProjectId" id="2p6iufZiOwhufQ6Ndw1ra7fO2Fm" />
-
-  <component name="ProjectLevelVcsManager">
-    <ConfirmationsSetting value="2" id="Add" />
-  </component>
-
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -54,13 +65,17 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "아티팩트",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
     "vue.rearranger.settings.migration": "true",
     "애플리케이션.Client.executor": "Run",
     "애플리케이션.ItemStoreFrame.executor": "Run",
     "애플리케이션.LobbyFrame.executor": "Run",
     "애플리케이션.LoginFrame.executor": "Run",
     "애플리케이션.Main.executor": "Run",
-    "애플리케이션.ServerMain.executor": "Run"
+    "애플리케이션.ServerMain.executor": "Run",
+    "애플리케이션.WaitingRoom.executor": "Run"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -68,14 +83,14 @@
       <recent name="$PROJECT_DIR$/src/assets/logo" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/src/client/assets/game" />
       <recent name="$PROJECT_DIR$/src/client/assets/item" />
       <recent name="$PROJECT_DIR$/src/client/assets/bubble" />
       <recent name="$PROJECT_DIR$/src/client/assets" />
-      <recent name="$PROJECT_DIR$/src/assets/logo" />
     </key>
   </component>
-  <component name="RunManager" selected="애플리케이션.LoginFrame">
+  <component name="RunManager" selected="애플리케이션.LobbyFrame">
     <configuration name="Client" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="catchmind.Client" />
       <module name="bubblePop" />
@@ -135,15 +150,28 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="WaitingRoom" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="client.WaitingRoom" />
+      <module name="bubblePop" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="client.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="애플리케이션.LobbyFrame" />
+        <item itemvalue="애플리케이션.WaitingRoom" />
         <item itemvalue="애플리케이션.LoginFrame" />
         <item itemvalue="애플리케이션.ServerMain" />
-        <item itemvalue="애플리케이션.LobbyFrame" />
         <item itemvalue="애플리케이션.ItemStoreFrame" />
       </list>
     </recent_temporary>
-
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -154,9 +182,7 @@
       <option name="presentableId" value="Default" />
       <updated>1732093151380</updated>
       <workItem from="1732093152338" duration="374000" />
-
     </task>
-
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
