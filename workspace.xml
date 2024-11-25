@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d6eb701e-94d1-44dd-8355-e52f1cc2862a" name="Changes" comment="CHANGE">
+    <list default="true" id="d6eb701e-94d1-44dd-8355-e52f1cc2862a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -32,53 +32,118 @@
   &quot;associatedIndex&quot;: 3
 }</component>
   <component name="ProjectId" id="2p6iufZiOwhufQ6Ndw1ra7fO2Fm" />
+
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
+
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.ExchangeRoom.executor&quot;: &quot;Run&quot;,
-    &quot;Application.GameScreen.executor&quot;: &quot;Run&quot;,
-    &quot;Application.WaitingRoom.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;cm/feat1&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/eduHansung/bubblePop/bubblePop/src/assets/bubble&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;,
-    &quot;애플리케이션.Main.executor&quot;: &quot;Run&quot;
+
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "feat/#1",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/yebin/GitHub/BubblePOP/src/assets/logo",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true",
+    "애플리케이션.Client.executor": "Run",
+    "애플리케이션.ItemStoreFrame.executor": "Run",
+    "애플리케이션.LobbyFrame.executor": "Run",
+    "애플리케이션.LoginFrame.executor": "Run",
+    "애플리케이션.Main.executor": "Run",
+    "애플리케이션.ServerMain.executor": "Run"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\eduHansung\bubblePop\bubblePop\src\assets\bubble" />
-      <recent name="C:\eduHansung\bubblePop\bubblePop\src\assets\game" />
-      <recent name="C:\eduHansung\bubblePop\bubblePop\src\assets\game\shooter" />
-      <recent name="C:\eduHansung\bubblePop\bubblePop\src\assets\chracter" />
+      <recent name="$PROJECT_DIR$/src/assets/logo" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\eduHansung\bubblePop\bubblePop\src\assets\game" />
-    </key>
-    <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="" />
+      <recent name="$PROJECT_DIR$/src/client/assets/game" />
+      <recent name="$PROJECT_DIR$/src/client/assets/item" />
+      <recent name="$PROJECT_DIR$/src/client/assets/bubble" />
+      <recent name="$PROJECT_DIR$/src/client/assets" />
+      <recent name="$PROJECT_DIR$/src/assets/logo" />
     </key>
   </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9823dce3aa75-b114ca120d71-intellij.indexing.shared.core-IU-242.20224.300" />
-        <option value="bundled-js-predefined-d6986cc7102b-410509235cf1-JavaScript-IU-242.20224.300" />
-      </set>
-    </attachedChunks>
+  <component name="RunManager" selected="애플리케이션.LoginFrame">
+    <configuration name="Client" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="catchmind.Client" />
+      <module name="bubblePop" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="catchmind.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ItemStoreFrame" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="client.ItemStoreFrame" />
+      <module name="bubblePop" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LobbyFrame" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="client.LobbyFrame" />
+      <module name="bubblePop" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="shared.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LoginFrame" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="client.LoginFrame" />
+      <module name="bubblePop" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="shared.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ServerMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="server.ServerMain" />
+      <module name="bubblePop" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="server.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="애플리케이션.LoginFrame" />
+        <item itemvalue="애플리케이션.ServerMain" />
+        <item itemvalue="애플리케이션.LobbyFrame" />
+        <item itemvalue="애플리케이션.ItemStoreFrame" />
+      </list>
+    </recent_temporary>
+
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -89,95 +154,12 @@
       <option name="presentableId" value="Default" />
       <updated>1732093151380</updated>
       <workItem from="1732093152338" duration="374000" />
-      <workItem from="1732256598195" duration="2683000" />
-      <workItem from="1732260254346" duration="15079000" />
-      <workItem from="1732294103692" duration="601000" />
-      <workItem from="1732453676062" duration="9760000" />
-      <workItem from="1732515062777" duration="4475000" />
+
     </task>
-    <task id="LOCAL-00001" summary="FEAT : 게임화면생성,  화살표 회전">
-      <option name="closed" value="true" />
-      <created>1732266275387</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1732266275387</updated>
-    </task>
-    <task id="LOCAL-00002" summary="FEAT : 발사대회전, 화면 하단">
-      <option name="closed" value="true" />
-      <created>1732270889295</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1732270889295</updated>
-    </task>
-    <task id="LOCAL-00003" summary="FEAT :  구슬 배치예시">
-      <option name="closed" value="true" />
-      <created>1732273622033</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1732273622033</updated>
-    </task>
-    <task id="LOCAL-00004" summary="FEAT :  대기방 화면구성">
-      <option name="closed" value="true" />
-      <created>1732460540446</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1732460540446</updated>
-    </task>
-    <task id="LOCAL-00005" summary="FEAT :  대기방 화면 플레이어 이미지">
-      <option name="closed" value="true" />
-      <created>1732462341477</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1732462341477</updated>
-    </task>
-    <task id="LOCAL-00006" summary="FEAT :  교환 방 생성">
-      <option name="closed" value="true" />
-      <created>1732464814163</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1732464814163</updated>
-    </task>
-    <task id="LOCAL-00007" summary="FEAT :  스타트버튼 -&gt; 게임화면 전환">
-      <option name="closed" value="true" />
-      <created>1732464845919</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1732464845919</updated>
-    </task>
-    <task id="LOCAL-00008" summary="CHANGE">
-      <option name="closed" value="true" />
-      <created>1732523190143</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1732523190143</updated>
-    </task>
-    <option name="localTasksCounter" value="9" />
+
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="FEAT : 게임화면생성,  화살표 회전" />
-    <MESSAGE value="FEAT : 발사대회전, 화면 하단" />
-    <MESSAGE value="FEAT :  구슬 배치예시" />
-    <MESSAGE value="FEAT :  대기방 화면구성" />
-    <MESSAGE value="FEAT :  대기방 화면 플레이어 이미지" />
-    <MESSAGE value="FEAT :  교환 방 생성" />
-    <MESSAGE value="FEAT :  스타트버튼 -&gt; 게임화면 전환" />
-    <MESSAGE value="CHANGE" />
-    <option name="LAST_COMMIT_MESSAGE" value="CHANGE" />
-  </component>
-  <component name="XSLT-Support.FileAssociations.UIState">
-    <expand />
-    <select />
   </component>
 </project>
