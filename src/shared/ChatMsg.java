@@ -8,6 +8,11 @@ public class ChatMsg implements Serializable {
     public final static int MODE_TX_STRING = 0x10;
     public final static int MODE_TX_FILE = 300;
     public final static int MODE_TX_IMAGE = 301;
+    public final static int MODE_TX_ITEMCHANGE =302;
+    public final static int MODE_TX_ALLCHAT=303;
+    public final static int MODE_TX_ROOMCHAT=304;
+    public final static int MODE_TX_GAME=305;
+
 
     private String userId;
     private int mode;

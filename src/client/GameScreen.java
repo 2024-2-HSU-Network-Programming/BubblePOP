@@ -47,42 +47,27 @@ class GamePanel extends JPanel implements KeyListener {
 
     private BufferedImage cc1; // 발사대 상단 이미지
 
-    private BufferedImage dd1; // 발사대 하단 이미지
-    private BufferedImage dd2; // 발사대 하단 이미지
-    private BufferedImage dd3; // 발사대 하단 이미지
-    private BufferedImage dd4; // 발사대 하단 이미지
-    private BufferedImage dd5; // 발사대 하단 이미지
-    private BufferedImage dd6; // 발사대 하단 이미지
-    private BufferedImage dd7; // 발사대 하단 이미지
-    private BufferedImage dd8; // 발사대 하단 이미지
-    private BufferedImage dd9; // 발사대 하단 이미지
-    private BufferedImage dd10; // 발사대 하단 이미지
-    private BufferedImage dd11; // 발사대 하단 이미지
-    private BufferedImage dd12; // 발사대 하단 이미지
-
+    private BufferedImage dd1, dd2, dd3, dd4, dd5, dd6, dd7, dd8, dd9, dd10, dd11, dd12; // 발사대 하단 이미지
     private BufferedImage gameBottom; // 게임 하단 이미지
 
-    private BufferedImage b1; // 버블1 이미지
-    private BufferedImage b2;
-    private BufferedImage b3;
-    private BufferedImage b4;
-    private BufferedImage b5;
-    private BufferedImage b6;
-    private BufferedImage b7;
-
-
-
+    private BufferedImage b1, b2, b3, b4, b5, b6, b7; // 버블 이미지
     private double angle = 0; // 화살표의 현재 각도 (라디안 값)
     private final double maxAngle = Math.toRadians(50); // 최대 각도 (70도)
     private final double minAngle = Math.toRadians(-50); // 최소 각도 (-70도)
     private final double rotationSpeed = Math.toRadians(4); // 회전 속도
+
+    private int[][] board = { // 구슬 상태를 저장하는 배열
+            {1, 2, 3, 4, 5, 6, 7, 1},   // 첫 번째 줄 (8개)
+            {1, 2, 3, 4, 5, 6, 7, 0},   // 두 번째 줄 (7개 + 오른쪽 빈칸)
+            {1, 2, 3, 4, 5, 6, 7, 1},   // 세 번째 줄 (8개)
+            {1, 2, 3, 4, 5, 6, 7, 0}    // 네 번째 줄 (7개 + 오른쪽 빈칸)
+    };
 
     public GamePanel() {
         try {
             // 화살표 이미지 로드
             arrowImage = ImageIO.read(getClass().getClassLoader().getResource("assets/game/shooter/arrow.png"));
             cc1 = ImageIO.read(getClass().getClassLoader().getResource("assets/game/shooter/cc1.png"));
-            // 발사대 하단 이미지 로드
             dd1 = ImageIO.read(getClass().getClassLoader().getResource("assets/game/shooter/dd1.png"));
             dd2 = ImageIO.read(getClass().getClassLoader().getResource("assets/game/shooter/dd2.png"));
             dd3 = ImageIO.read(getClass().getClassLoader().getResource("assets/game/shooter/dd3.png"));
@@ -102,8 +87,6 @@ class GamePanel extends JPanel implements KeyListener {
             b5 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubble5.png"));
             b6 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubble6.png"));
             b7 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubble7.png"));
-
-            //게임 하단 이미지 로드
             gameBottom = ImageIO.read(getClass().getClassLoader().getResource("assets/game/gamebottom.png"));
 
         } catch (IOException e) {
@@ -119,63 +102,40 @@ class GamePanel extends JPanel implements KeyListener {
         ImageIcon backgroundImage = new ImageIcon(getClass().getClassLoader().getResource("assets/game/two_player_background.png"));
         g.drawImage(backgroundImage.getImage(), 0, 0, getWidth(), getHeight(), null);
 
-        // 화살표 각도에 따라 dd 이미지 선택
+        // 구슬 배열을 기반으로 그리기
+        int startX, startY = 65; // 시작 Y 위치
+        int spacing = 48; // 구슬 간 간격
+
+        for (int row = 0; row < board.length; row++) {
+            startX = (row % 2 == 0) ? 43 : 67; // 홀수 줄과 짝수 줄의 X 위치 조정
+            for (int col = 0; col < board[row].length; col++) {
+                int bubbleType = board[row][col];
+                if (bubbleType != 0) { // 0은 빈 공간
+                    BufferedImage bubbleImage = getBubbleImage(bubbleType);
+                    if (bubbleImage != null) {
+                        g.drawImage(bubbleImage, startX + col * spacing, startY, null);
+                    }
+                }
+            }
+            startY += 48; // 다음 줄로 이동
+        }
+
+        // 발사대 하단 이미지 출력
         BufferedImage currentImage = getImageForAngle();
-
-        // 상단 1번째 줄
-        int startX = 43; // 시작 X 위치
-        int startY = 65; // 시작 Y 위치
-        int spacing = 48; // 간격
-
-        for (int i = 0; i < 8; i++) {
-            int randomBubble = (int) (Math.random() * 7) + 1; // 1~7 중 랜덤 값
-            BufferedImage bubbleImage = getBubbleImage(randomBubble);
-            if (bubbleImage != null) {
-                g.drawImage(bubbleImage, startX + i * spacing, startY, null);
-            }
-        }
-
-// 상단 2번째 줄
-        startX = 67; // 시작 X 위치
-        startY = 113; // 시작 Y 위치
-
-        for (int i = 0; i < 7; i++) {
-            int randomBubble = (int) (Math.random() * 7) + 1; // 1~7 중 랜덤 값
-            BufferedImage bubbleImage = getBubbleImage(randomBubble);
-            if (bubbleImage != null) {
-                g.drawImage(bubbleImage, startX + i * spacing, startY, null);
-            }
-        }
-
-// 상단 3번째 줄
-        startX = 43; // 시작 X 위치
-        startY = 161; // 시작 Y 위치
-
-        for (int i = 0; i < 8; i++) {
-            int randomBubble = (int) (Math.random() * 7) + 1; // 1~7 중 랜덤 값
-            BufferedImage bubbleImage = getBubbleImage(randomBubble);
-            if (bubbleImage != null) {
-                g.drawImage(bubbleImage, startX + i * spacing, startY, null);
-            }
-        }
-
-
-
-        // 선택된 dd 이미지를 화면에 출력
         if (currentImage != null) {
-            int ddX = 152; // dd 이미지의 X 위치
-            int ddY = 557; // dd 이미지의 Y 위치
+            int ddX = 152; // 발사대 하단의 X 위치
+            int ddY = 557; // 발사대 하단의 Y 위치
             g.drawImage(currentImage, ddX, ddY, null);
         }
 
-        // cc1 이미지를 화면에 출력
+        // 발사대 상단 이미지 출력
         if (cc1 != null) {
-            int cc1X = 191; // cc1의 X 위치
-            int cc1Y = 516; // cc1의 Y 위치
+            int cc1X = 191; // 발사대 상단의 X 위치
+            int cc1Y = 516; // 발사대 상단의 Y 위치
             g.drawImage(cc1, cc1X, cc1Y, null);
         }
 
-        // 화살표 이미지를 회전시켜 그리기
+        // 화살표 이미지 출력
         if (arrowImage != null) {
             Graphics2D g2d = (Graphics2D) g;
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // 부드럽게 렌더링
@@ -191,14 +151,12 @@ class GamePanel extends JPanel implements KeyListener {
             g2d.rotate(-angle, arrowX + arrowWidth / 2.0, arrowY + arrowHeight / 2.0); // 회전 복구
         }
 
-        // cc1 이미지를 화면에 출력
+        // 게임 하단 이미지 출력
         if (gameBottom != null) {
-            int gameBottomX = 5; // cc1의 X 위치
-            int gameBottomY = 516; // cc1의 Y 위치
+            int gameBottomX = 5; // 하단의 X 위치
+            int gameBottomY = 516; // 하단의 Y 위치
             g.drawImage(gameBottom, gameBottomX, gameBottomY, null);
         }
-
-
     }
 
     // 버블 이미지를 반환하는 메서드 추가
@@ -225,38 +183,32 @@ class GamePanel extends JPanel implements KeyListener {
         if (index > 11) index = 11;
 
         // 인덱스에 따른 이미지 반환
-        switch (index) {
-            case 0: return dd1;
-            case 1: return dd2;
-            case 2: return dd3;
-            case 3: return dd4;
-            case 4: return dd5;
-            case 5: return dd6;
-            case 6: return dd7;
-            case 7: return dd8;
-            case 8: return dd9;
-            case 9: return dd10;
-            case 10: return dd11;
-            case 11: return dd12;
-            default: return dd1; // 기본값
-        }
+        return switch (index) {
+            case 0 -> dd1;
+            case 1 -> dd2;
+            case 2 -> dd3;
+            case 3 -> dd4;
+            case 4 -> dd5;
+            case 5 -> dd6;
+            case 6 -> dd7;
+            case 7 -> dd8;
+            case 8 -> dd9;
+            case 9 -> dd10;
+            case 10 -> dd11;
+            case 11 -> dd12;
+            default -> dd1; // 기본값
+        };
     }
-
-
-
 
     @Override
     public void keyPressed(KeyEvent e) {
-        // 왼쪽 방향키 입력 처리
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             angle -= rotationSpeed;
             if (angle < minAngle) {
                 angle = minAngle; // 최소 각도 제한
             }
             repaint();
-        }
-        // 오른쪽 방향키 입력 처리
-        else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             angle += rotationSpeed;
             if (angle > maxAngle) {
                 angle = maxAngle; // 최대 각도 제한
