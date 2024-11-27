@@ -51,11 +51,16 @@ class GamePanel extends JPanel implements KeyListener {
     private BufferedImage gameBottom; // 게임 하단 이미지
 
     private BufferedImage b1, b2, b3, b4, b5, b6, b7; // 버블 이미지
-    private double angle = 0; // 화살표의 현재 각도 (라디안 값)
-    private final double maxAngle = Math.toRadians(50); // 최대 각도 (70도)
-    private final double minAngle = Math.toRadians(-50); // 최소 각도 (-70도)
+    private double angle = 0 ; // 화살표의 현재 각도 (라디안 값)
+    private final double maxAngle = Math.toRadians(50); // 최대 각도 (50도)
+    private final double minAngle = Math.toRadians(-50); // 최소 각도 (-50도)
     private final double rotationSpeed = Math.toRadians(4); // 회전 속도
 
+    private boolean isBubbleMoving = false; // 구슬이 발사 중인지 여부
+    private int bubbleX, bubbleY; // 발사되는 구슬의 현재 위치
+    private final int bubbleSpeed = 8; // 구슬의 이동 속도
+
+    private int currentBubbleType = 1; // 발사대 구슬의 타입 (1~7)
     private int[][] board = { // 구슬 상태를 저장하는 배열
             {1, 2, 3, 4, 5, 6, 7, 1},   // 첫 번째 줄 (8개)
             {1, 2, 3, 4, 5, 6, 7, 0},   // 두 번째 줄 (7개 + 오른쪽 빈칸)
@@ -88,6 +93,10 @@ class GamePanel extends JPanel implements KeyListener {
             b6 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubble6.png"));
             b7 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubble7.png"));
             gameBottom = ImageIO.read(getClass().getClassLoader().getResource("assets/game/gamebottom.png"));
+
+            // 발사대 구슬 초기 위치 설정
+            bubbleX = 212; // 발사대 중심 X 좌표
+            bubbleY = 525; // 발사대 중심 Y 좌표
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -151,6 +160,22 @@ class GamePanel extends JPanel implements KeyListener {
             g2d.rotate(-angle, arrowX + arrowWidth / 2.0, arrowY + arrowHeight / 2.0); // 회전 복구
         }
 
+        // 발사대 구슬 출력
+        if (!isBubbleMoving) { // 구슬이 발사 중이 아닐 때만 출력
+            BufferedImage bubbleImage = getBubbleImage(currentBubbleType);
+            if (bubbleImage != null) {
+                g.drawImage(bubbleImage, bubbleX, bubbleY, null);
+            }
+        }
+
+        // 발사 중인 구슬 출력
+        if (isBubbleMoving) {
+            BufferedImage bubbleImage = getBubbleImage(currentBubbleType);
+            if (bubbleImage != null) {
+                g.drawImage(bubbleImage, bubbleX, bubbleY, null);
+            }
+        }
+
         // 게임 하단 이미지 출력
         if (gameBottom != null) {
             int gameBottomX = 5; // 하단의 X 위치
@@ -199,23 +224,57 @@ class GamePanel extends JPanel implements KeyListener {
             default -> dd1; // 기본값
         };
     }
-
+    // 키 입력 처리 메서드 수정
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) { // 화살표 왼쪽 회전
             angle -= rotationSpeed;
             if (angle < minAngle) {
                 angle = minAngle; // 최소 각도 제한
             }
             repaint();
-        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) { // 화살표 오른쪽 회전
             angle += rotationSpeed;
             if (angle > maxAngle) {
                 angle = maxAngle; // 최대 각도 제한
             }
             repaint();
+        } else if (e.getKeyCode() == KeyEvent.VK_SPACE) { // 스페이스바로 구슬 발사
+            if (!isBubbleMoving) {
+                isBubbleMoving = true;
+                double startX = bubbleX; // 발사 시작 위치의 X 좌표
+                double startY = bubbleY; // 발사 시작 위치의 Y 좌표
+
+                // 수정된 부분: 초기 각도를 -Math.PI/2로 설정 (12시 방향)
+                double dx = Math.cos(angle - Math.PI/2) * bubbleSpeed;
+                double dy = Math.sin(angle - Math.PI/2) * bubbleSpeed;
+
+                new Thread(() -> {
+                    while (isBubbleMoving) {
+                        bubbleX += dx; // X 방향 이동
+                        bubbleY += dy; // Y 방향 이동
+
+                        // 구슬이 화면 경계를 벗어나거나 Y축 상단에 도달하면 발사 종료
+                        if (bubbleX < 0 || bubbleX > getWidth() || bubbleY < 0) {
+                            isBubbleMoving = false;
+
+                            // 발사대 초기 위치로 재설정
+                            bubbleX = 212;
+                            bubbleY = 525;
+                        }
+                        repaint();
+                        try {
+                            Thread.sleep(16); // 프레임 딜레이
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }).start();
+            }
         }
     }
+
+
 
     @Override
     public void keyReleased(KeyEvent e) {
