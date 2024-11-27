@@ -106,6 +106,14 @@ public class LobbyFrame extends JFrame {
             }
         });
 
+        btnExchangeRoom.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ExchangeRoom.main(new String[]{});
+            }
+        });
+
         lobbyRightPane.add(btnItemStore);
         lobbyRightPane.add(btnCreateRoom);
         lobbyRightPane.add(btnExchangeRoom);
