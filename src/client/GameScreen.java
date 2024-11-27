@@ -60,6 +60,9 @@ class GamePanel extends JPanel implements KeyListener {
     private int bubbleX, bubbleY; // 발사되는 구슬의 현재 위치
     private final int bubbleSpeed = 8; // 구슬의 이동 속도
 
+    private double dx, dy; // 구슬의 이동 방향 멤버 변수로 ...
+
+
     private int currentBubbleType = 1; // 발사대 구슬의 타입 (1~7)
     private int[][] board = { // 구슬 상태를 저장하는 배열
             {1, 2, 3, 4, 5, 6, 7, 1},   // 첫 번째 줄 (8개)
@@ -245,23 +248,42 @@ class GamePanel extends JPanel implements KeyListener {
                 double startX = bubbleX; // 발사 시작 위치의 X 좌표
                 double startY = bubbleY; // 발사 시작 위치의 Y 좌표
 
-                // 수정된 부분: 초기 각도를 -Math.PI/2로 설정 (12시 방향)
-                double dx = Math.cos(angle - Math.PI/2) * bubbleSpeed;
-                double dy = Math.sin(angle - Math.PI/2) * bubbleSpeed;
+                // 초기 각도를 -Math.PI/2로 설정 (12시 방향) ,,!!!!!!
+                 dx = Math.cos(angle - Math.PI/2) * bubbleSpeed;
+                 dy = Math.sin(angle - Math.PI/2) * bubbleSpeed;
 
                 new Thread(() -> {
+                    // 게임 보드의 좌우 경계 설정
+                    int boardStartX = 43; // 가장 왼쪽 경계
+                    int boardEndX = boardStartX + (board[0].length - 1) * 48; // 가장 오른쪽 경계 //48-> 구슬 크기
+
                     while (isBubbleMoving) {
+
+                        // 구슬 이동
                         bubbleX += dx; // X 방향 이동
                         bubbleY += dy; // Y 방향 이동
 
-                        // 구슬이 화면 경계를 벗어나거나 Y축 상단에 도달하면 발사 종료
-                        if (bubbleX < 0 || bubbleX > getWidth() || bubbleY < 0) {
+                        // 좌우 벽에 부딪히면 반사
+                        if (bubbleX <= boardStartX) {
+                            bubbleX = boardStartX; // 경계값에 부딪혔을 때 위치 조정
+                            dx = -dx; // X 방향 반전
+                        } else if (bubbleX >= boardEndX) {
+                            bubbleX = boardEndX; // 경계값에 부딪혔을 때 위치 조정
+                            dx = -dx; // X 방향 반전
+                        }
+
+                        // 구슬이 Y축 상단에 도달하거나 특정 조건에서 발사 종료
+                        if (bubbleY < 0) {
                             isBubbleMoving = false;
 
                             // 발사대 초기 위치로 재설정
                             bubbleX = 212;
                             bubbleY = 525;
+
+                            // 다음 구슬 타입으로 변경 (1~7 순환)
+                            currentBubbleType = (currentBubbleType % 7) + 1;
                         }
+
                         repaint();
                         try {
                             Thread.sleep(16); // 프레임 딜레이
@@ -270,6 +292,7 @@ class GamePanel extends JPanel implements KeyListener {
                         }
                     }
                 }).start();
+
             }
         }
     }
