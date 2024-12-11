@@ -54,6 +54,8 @@ class GamePanel extends JPanel implements KeyListener {
 
     private BufferedImage dd1, dd2, dd3, dd4, dd5, dd6, dd7, dd8, dd9, dd10, dd11, dd12; // 발사대 하단 이미지
     private BufferedImage gameBottom; // 게임 하단 이미지
+    private BufferedImage player1,player2; // 게임 캐릭터 이미지
+
 
     private BufferedImage b1, b2, b3, b4, b5, b6, b7; // 버블 이미지
     private double angle = 0 ; // 화살표의 현재 각도 (라디안 값)
@@ -66,9 +68,10 @@ class GamePanel extends JPanel implements KeyListener {
     private final int bubbleSpeed = 15; // 구슬의 이동 속도
 
     private double dx, dy; // 구슬의 이동 방향 멤버 변수로 ...
+    private int currentBubbleType = 1; // 현재 발사할 구슬의 타입 (1~7)
+    private int nextBubbleType = 2;    // 다음 발사할 구슬의 타입 (1~7)
 
 
-    private int currentBubbleType = 1; // 발사대 구슬의 타입 (1~7)
     private int[][] board = { // 구슬 상태를 저장하는 배열
             {1, 2, 3, 4, 5, 6, 7, 1},   // 첫 번째 줄 (8개)
             {1, 2, 3, 4, 5, 6, 7, 0},   // 두 번째 줄 (7개 + 오른쪽 빈칸)
@@ -109,10 +112,17 @@ class GamePanel extends JPanel implements KeyListener {
             b6 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubble6.png"));
             b7 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubble7.png"));
             gameBottom = ImageIO.read(getClass().getClassLoader().getResource("assets/game/gamebottom.png"));
+            player1 = ImageIO.read(getClass().getClassLoader().getResource("assets/player1.png"));
+            player1 = ImageIO.read(getClass().getClassLoader().getResource("assets/player2.png"));
 
             // 발사대 구슬 초기 위치 설정
             bubbleX = 212; // 발사대 중심 X 좌표
             bubbleY = 525; // 발사대 중심 Y 좌표
+
+            // 초기 구슬 타입 설정
+            currentBubbleType = (int)(Math.random() * 7) + 1;
+            nextBubbleType = (int)(Math.random() * 7) + 1;
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -294,8 +304,8 @@ class GamePanel extends JPanel implements KeyListener {
                             bubbleX = 212;
                             bubbleY = 525;
 
-                            // 다음 구슬 타입으로 변경 (1~7 순환)
-                            currentBubbleType = (currentBubbleType % 7) + 1;
+//                            // 다음 구슬 타입으로 변경 (1~7 순환)
+//                            currentBubbleType = (currentBubbleType % 7) + 1;
                             break;
                         }
 
@@ -428,15 +438,14 @@ class GamePanel extends JPanel implements KeyListener {
         return null;
     }
 
-    // 여기에 resetBubble 메서드 추가
     private void resetBubble() {
         isBubbleMoving = false;
         bubbleX = 212;  // 발사대 중심 X 좌표
         bubbleY = 525;  // 발사대 중심 Y 좌표
-        currentBubbleType = (currentBubbleType % 7) + 1;  // 다음 구슬 타입으로 변경
+        currentBubbleType = nextBubbleType;  // 다음 구슬을 현재 구슬로
+        nextBubbleType = (int)(Math.random() * 7) + 1;  // 새로운 다음 구슬 랜덤 생성
         repaint();
     }
-
 
     private void findConnectedBubbles(int row, int col, int type, Set<Point> connected) {
         // 경계 체크 및 현재 위치가 유효한지 확인
@@ -485,6 +494,13 @@ class GamePanel extends JPanel implements KeyListener {
         // 배경 이미지 로드
         ImageIcon backgroundImage = new ImageIcon(getClass().getClassLoader().getResource("assets/game/two_player_background.png"));
         g.drawImage(backgroundImage.getImage(), 0, 0, getWidth(), getHeight(), null);
+
+        // 게임 하단 이미지 출력
+        if (gameBottom != null) {
+            int gameBottomX = 5; // 하단의 X 위치
+            int gameBottomY = 516; // 하단의 Y 위치
+            g.drawImage(gameBottom, gameBottomX, gameBottomY, null);
+        }
 
         // 구슬 배열을 기반으로 그리기
         int startX, startY = 65; // 시작 Y 위치
@@ -535,13 +551,20 @@ class GamePanel extends JPanel implements KeyListener {
             g2d.rotate(-angle, arrowX + arrowWidth / 2.0, arrowY + arrowHeight / 2.0); // 회전 복구
         }
 
+        // 다음 구슬 미리보기 출력
+        BufferedImage nextBubbleImage = getBubbleImage(nextBubbleType);
+        if (nextBubbleImage != null) {
+            g.drawImage(nextBubbleImage, 94, 579, null);  // 위치 조정
+        }
+
         // 발사대 구슬 출력
-        if (!isBubbleMoving) { // 구슬이 발사 중이 아닐 때만 출력
+        if (!isBubbleMoving) {
             BufferedImage bubbleImage = getBubbleImage(currentBubbleType);
             if (bubbleImage != null) {
                 g.drawImage(bubbleImage, bubbleX, bubbleY, null);
             }
         }
+
 
         // 발사 중인 구슬 출력
         if (isBubbleMoving) {
@@ -551,12 +574,7 @@ class GamePanel extends JPanel implements KeyListener {
             }
         }
 
-        // 게임 하단 이미지 출력
-        if (gameBottom != null) {
-            int gameBottomX = 5; // 하단의 X 위치
-            int gameBottomY = 516; // 하단의 Y 위치
-            g.drawImage(gameBottom, gameBottomX, gameBottomY, null);
-        }
+
     }
 
     // 버블 이미지를 반환하는 메서드 추가
