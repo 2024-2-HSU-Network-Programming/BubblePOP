@@ -71,6 +71,13 @@ class GamePanel extends JPanel implements KeyListener {
     private int currentBubbleType = 1; // 현재 발사할 구슬의 타입 (1~7)
     private int nextBubbleType = 2;    // 다음 발사할 구슬의 타입 (1~7)
 
+    // 구슬 흔들기
+    private int shotCount = 0;  // 발사 횟수를 추적
+    private boolean isShaking = false;  // 흔들림 상태
+    private long shakeStartTime;  // 흔들기 시작 시간
+    private static final long SHAKE_DURATION = 1000;  // 흔들림 지속 시간 (2초)
+    private int shakeOffset = 0;  // 흔들림 오프셋
+
 
     private int[][] board = { // 구슬 상태를 저장하는 배열
             {1, 2, 3, 4, 5, 6, 7, 1},   // 첫 번째 줄 (8개)
@@ -438,14 +445,49 @@ class GamePanel extends JPanel implements KeyListener {
         return null;
     }
 
+    // resetBubble 메서드 수정
     private void resetBubble() {
         isBubbleMoving = false;
-        bubbleX = 212;  // 발사대 중심 X 좌표
-        bubbleY = 525;  // 발사대 중심 Y 좌표
-        currentBubbleType = nextBubbleType;  // 다음 구슬을 현재 구슬로
-        nextBubbleType = (int)(Math.random() * 7) + 1;  // 새로운 다음 구슬 랜덤 생성
+        bubbleX = 212;
+        bubbleY = 525;
+        currentBubbleType = nextBubbleType;
+        nextBubbleType = (int)(Math.random() * 7) + 1;
+
+        // 발사 횟수 증가 및 흔들기 체크
+        shotCount++;
+        if (shotCount % 3 == 0) {
+            startShaking();
+        }
         repaint();
     }
+
+    // 흔들기 시작 메서드
+    private void startShaking() {
+        isShaking = true;
+        shakeStartTime = System.currentTimeMillis();
+
+        // 흔들기 애니메이션을 위한 타이머 시작
+        new Thread(() -> {
+            while (isShaking) {
+                long currentTime = System.currentTimeMillis();
+                if (currentTime - shakeStartTime > SHAKE_DURATION) {
+                    isShaking = false;
+                    shakeOffset = 0;
+                } else {
+                    // 흔들림효과
+                    shakeOffset = (int)(Math.sin((currentTime - shakeStartTime) / 20.0) * 3);
+                }
+                repaint();
+
+                try {
+                    Thread.sleep(16);  // 약 60fps
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
 
     private void findConnectedBubbles(int row, int col, int type, Set<Point> connected) {
         // 경계 체크 및 현재 위치가 유효한지 확인
@@ -507,17 +549,22 @@ class GamePanel extends JPanel implements KeyListener {
         int spacing = 48; // 구슬 간 간격
 
         for (int row = 0; row < board.length; row++) {
-            startX = (row % 2 == 0) ? 43 : 67; // 홀수 줄과 짝수 줄의 X 위치 조정
+            startX = (row % 2 == 0) ? 43 : 67;
             for (int col = 0; col < board[row].length; col++) {
                 int bubbleType = board[row][col];
-                if (bubbleType != 0) { // 0은 빈 공간
+                if (bubbleType != 0) {
                     BufferedImage bubbleImage = getBubbleImage(bubbleType);
                     if (bubbleImage != null) {
-                        g.drawImage(bubbleImage, startX + col * spacing, startY, null);
+                        // 흔들림이 활성화된 경우 오프셋 적용
+                        int xOffset = isShaking ? shakeOffset : 0;
+                        g.drawImage(bubbleImage,
+                                startX + col * spacing + xOffset,
+                                startY,
+                                null);
                     }
                 }
             }
-            startY += 48; // 다음 줄로 이동
+            startY += 48;
         }
 
         // 발사대 하단 이미지 출력
