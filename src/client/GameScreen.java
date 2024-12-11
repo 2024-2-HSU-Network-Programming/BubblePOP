@@ -57,8 +57,8 @@ class GamePanel extends JPanel implements KeyListener {
 
     private BufferedImage b1, b2, b3, b4, b5, b6, b7; // 버블 이미지
     private double angle = 0 ; // 화살표의 현재 각도 (라디안 값)
-    private final double maxAngle = Math.toRadians(50); // 최대 각도 (50도)
-    private final double minAngle = Math.toRadians(-50); // 최소 각도 (-50도)
+    private final double maxAngle = Math.toRadians(60); // 최대 각도 (50도)
+    private final double minAngle = Math.toRadians(-60); // 최소 각도 (-50도)
     private final double rotationSpeed = Math.toRadians(8); // 회전 속도
 
     private boolean isBubbleMoving = false; // 구슬이 발사 중인지 여부
@@ -163,6 +163,59 @@ class GamePanel extends JPanel implements KeyListener {
                 }
             }
         }
+
+    private Set<Point> findFloatingBubbles() {
+        Set<Point> anchored = new HashSet<>();  // 천장에 연결된 구슬들
+        Set<Point> allBubbles = new HashSet<>();  // 모든 구슬들
+
+        // 천장에 붙어있는 구슬부터 시작
+        for (int col = 0; col < board[0].length; col++) {
+            if (board[0][col] != 0) {
+                findAnchoredBubbles(0, col, anchored);
+            }
+        }
+
+        // 모든 구슬의 위치를 수집
+        for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board[row].length; col++) {
+                if (board[row][col] != 0) {
+                    allBubbles.add(new Point(row, col));
+                }
+            }
+        }
+
+        // 떠있는 구슬 찾기 (전체 구슬 - 고정된 구슬)
+        allBubbles.removeAll(anchored);
+        return allBubbles;  // 떠있는 구슬들 반환
+    }
+
+    private void findAnchoredBubbles(int row, int col, Set<Point> anchored) {
+        // 경계 체크 및 이미 방문했거나 빈 공간인 경우 종료
+        if (row < 0 || row >= board.length || col < 0 || col >= board[row].length ||
+                board[row][col] == 0 || anchored.contains(new Point(row, col))) {
+            return;
+        }
+
+        // 현재 구슬을 고정된 구슬로 표시
+        anchored.add(new Point(row, col));
+
+        // 주변 6방향 확인
+        int[][] directions;
+        if (row % 2 == 0) {
+            directions = new int[][] {
+                    {-1, 0}, {-1, -1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}
+            };
+        } else {
+            directions = new int[][] {
+                    {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, 0}, {1, 1}
+            };
+        }
+
+        // 재귀적으로 연결된 구슬 확인
+        for (int[] dir : directions) {
+            findAnchoredBubbles(row + dir[0], col + dir[1], anchored);
+        }
+    }
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -301,6 +354,12 @@ class GamePanel extends JPanel implements KeyListener {
         if (connected.size() >= 3) {
             // 3개 이상 연결되면 제거
             for (Point p : connected) {
+                board[p.x][p.y] = 0;
+            }
+
+            // 떠있는 구슬들 찾아서 제거
+            Set<Point> floating = findFloatingBubbles();
+            for (Point p : floating) {
                 board[p.x][p.y] = 0;
             }
         }
