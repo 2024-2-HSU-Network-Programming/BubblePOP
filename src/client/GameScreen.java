@@ -7,6 +7,8 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class GameScreen {
     public static void main(String[] args) {
@@ -43,6 +45,9 @@ public class GameScreen {
 }
 
 class GamePanel extends JPanel implements KeyListener {
+    private static final int BOARD_TOP = 65;
+    private static final  int BUBBLE_SIZE = 48 ;
+    private static final int BOARD_LEFT = 65;
     private BufferedImage arrowImage; // 화살표 이미지
 
     private BufferedImage cc1; // 발사대 상단 이미지
@@ -54,11 +59,11 @@ class GamePanel extends JPanel implements KeyListener {
     private double angle = 0 ; // 화살표의 현재 각도 (라디안 값)
     private final double maxAngle = Math.toRadians(50); // 최대 각도 (50도)
     private final double minAngle = Math.toRadians(-50); // 최소 각도 (-50도)
-    private final double rotationSpeed = Math.toRadians(4); // 회전 속도
+    private final double rotationSpeed = Math.toRadians(8); // 회전 속도
 
     private boolean isBubbleMoving = false; // 구슬이 발사 중인지 여부
     private int bubbleX, bubbleY; // 발사되는 구슬의 현재 위치
-    private final int bubbleSpeed = 8; // 구슬의 이동 속도
+    private final int bubbleSpeed = 15; // 구슬의 이동 속도
 
     private double dx, dy; // 구슬의 이동 방향 멤버 변수로 ...
 
@@ -68,7 +73,15 @@ class GamePanel extends JPanel implements KeyListener {
             {1, 2, 3, 4, 5, 6, 7, 1},   // 첫 번째 줄 (8개)
             {1, 2, 3, 4, 5, 6, 7, 0},   // 두 번째 줄 (7개 + 오른쪽 빈칸)
             {1, 2, 3, 4, 5, 6, 7, 1},   // 세 번째 줄 (8개)
-            {1, 2, 3, 4, 5, 6, 7, 0}    // 네 번째 줄 (7개 + 오른쪽 빈칸)
+            {1, 2, 3, 4, 5, 6, 7, 0},   // 네 번째 줄 (7개 + 오른쪽 빈칸)
+            {0, 0, 0, 0, 0, 0, 0, 0},   // 다섯 번째 줄 (빈 공간)
+            {0, 0, 0, 0, 0, 0, 0, 0},   // 여섯 번째 줄 (빈 공간)
+            {0, 0, 0, 0, 0, 0, 0, 0},   // 일곱 번째 줄 (빈 공간)
+            {0, 0, 0, 0, 0, 0, 0, 0},   // 여덟 번째 줄 (빈 공간)
+            {0, 0, 0, 0, 0, 0, 0, 0},   // 아홉 번째 줄 (빈 공간)
+            {0, 0, 0, 0, 0, 0, 0, 0},   // 열 번째 줄 (빈 공간)
+
+
     };
 
     public GamePanel() {
@@ -106,6 +119,306 @@ class GamePanel extends JPanel implements KeyListener {
         }
     }
 
+    /////
+    // DFS를 이용한 구슬 매칭 및 제거 메서드
+    private void removeBubbles(int row, int col, int targetType, Set<int[]> connectedBubbles) {
+        // 보드 범위를 벗어나면 종료
+        if (row < 0 || row >= board.length || col < 0 || col >= board[row].length
+                || board[row][col] != targetType) {
+            return;
+        }
+
+        // 이미 방문한 위치 체크
+        for (int[] pos : connectedBubbles) {
+            if (pos[0] == row && pos[1] == col) {
+                return;
+            }
+        }
+
+        // 현재 위치 추가
+        connectedBubbles.add(new int[]{row, col});
+
+        // 8방향 탐색 (상, 하, 좌, 우, 대각선 4방향)
+        int[][] directions = {
+                {-1, 0}, {1, 0}, {0, -1}, {0, 1},
+                {-1, -1}, {-1, 1}, {1, -1}, {1, 1}
+        };
+
+        for (int[] dir : directions) {
+            int newRow = row + dir[0];
+            int newCol = col + dir[1];
+            removeBubbles(newRow, newCol, targetType, connectedBubbles);
+        }
+    }
+
+        // 구슬 제거 로직
+        private void processConnectedBubbles(int row, int col, int bubbleType) {
+            Set<int[]> connectedBubbles = new HashSet<>();
+            removeBubbles(row, col, bubbleType, connectedBubbles);
+
+            // 3개 이상 연결된 경우 제거
+            if (connectedBubbles.size() >= 3) {
+                for (int[] pos : connectedBubbles) {
+                    board[pos[0]][pos[1]] = 0; // 구슬 제거
+                }
+            }
+        }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            // 기존 왼쪽 회전 로직 유지
+            angle -= rotationSpeed;
+            if (angle < minAngle) {
+                angle = minAngle;
+            }
+            repaint();
+        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            // 기존 오른쪽 회전 로직 유지
+            angle += rotationSpeed;
+            if (angle > maxAngle) {
+                angle = maxAngle;
+            }
+            repaint();
+        } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            if (!isBubbleMoving) {
+                isBubbleMoving = true;
+                double startX = bubbleX;
+                double startY = bubbleY;
+
+                dx = Math.cos(angle - Math.PI/2) * bubbleSpeed;
+                dy = Math.sin(angle - Math.PI/2) * bubbleSpeed;
+
+                new Thread(() -> {
+                    int boardStartX = 43;
+                    int boardEndX = boardStartX + (board[0].length - 1) * 48;
+
+                    while (isBubbleMoving) {
+                        bubbleX += dx;
+                        bubbleY += dy;
+
+
+                        // 좌우 벽에 부딪히면 반사
+                        if (bubbleX <= boardStartX) {
+                            bubbleX = boardStartX;
+                            dx = -dx;
+                        } else if (bubbleX >= boardEndX) {
+                            bubbleX = boardEndX;
+                            dx = -dx;
+                        }
+
+                        if (bubbleY <= BOARD_TOP) { // 상단 경계에 도달하면
+                            attachBubble(bubbleX, bubbleY);
+                            resetBubble();
+                            break;
+                        }
+
+                        // 구슬이 게임 보드에 닿았을 때 로직
+                        boolean bubbleStopped = false;
+                        for (int row = 0; row < board.length; row++) {
+                            int startXx = (row % 2 == 0) ? 43 : 67;
+                            for (int col = 0; col < board[row].length; col++) {
+                                if (board[row][col] != 0) {  // 빈 공간이 아닐 때만 충돌 체크
+                                    int bubbleScreenX = startXx + col * 48;
+                                    int bubbleScreenY = 65 + row * 48;
+
+                                    if (Math.abs(bubbleX - bubbleScreenX) < 30 &&
+                                            Math.abs(bubbleY - bubbleScreenY) < 30) {
+                                        attachBubble((int)bubbleX, (int)bubbleY);
+                                        resetBubble();
+                                        bubbleStopped = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (bubbleStopped) break;
+                        }
+
+                        // 구슬이 정지했을 때
+                        if (!isBubbleMoving) {
+                            // 발사대 초기 위치로 재설정
+                            bubbleX = 212;
+                            bubbleY = 525;
+
+                            // 다음 구슬 타입으로 변경 (1~7 순환)
+                            currentBubbleType = (currentBubbleType % 7) + 1;
+                            break;
+                        }
+
+                        repaint();
+                        try {
+                            Thread.sleep(16);
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }).start();
+            }
+        }
+    }
+
+    private Point findNearestGridPosition(int x, int y) {
+        int row = (y - BOARD_TOP + BUBBLE_SIZE) / BUBBLE_SIZE;
+        int col;
+
+        if (row % 2 == 0) {
+            col = (x - BOARD_LEFT + BUBBLE_SIZE) / BUBBLE_SIZE;
+        } else {
+            col = (x - (BOARD_LEFT + BUBBLE_SIZE) + BUBBLE_SIZE) / BUBBLE_SIZE;
+        }
+
+        // 경계 체크
+        if (row < 0) row = 0;
+        if (row >= board.length) row = board.length - 1;
+        if (col < 0) col = 0;
+        if (col >= board[row].length) col = board[row].length - 1;
+
+        return new Point(row, col);
+    }
+
+    private void attachBubble(int x, int y) {
+        Point gridPos = findNearestGridPosition(x, y);
+        int row = gridPos.x;
+        int col = gridPos.y;
+
+        // 이미 구슬이 있는 위치라면 아래쪽에 배치
+        if (board[row][col] != 0) {
+            Point below = findAttachPosition(row, col);
+            if (below != null) {
+                row = below.x;
+                col = below.y;
+            }
+        }
+
+        // 일단 현재 위치에 구슬 배치
+        board[row][col] = currentBubbleType;
+
+        // 같은 색상의 연결된 구슬 찾기
+        Set<Point> connected = new HashSet<>();
+        findConnectedBubbles(row, col, currentBubbleType, connected);
+
+        if (connected.size() >= 3) {
+            // 3개 이상 연결되면 제거
+            for (Point p : connected) {
+                board[p.x][p.y] = 0;
+            }
+        }
+    }
+
+    // 구슬을 붙일 수 있는 위치 찾기
+    private Point findAttachPosition(int row, int col) {
+        // 주변 6방향 체크
+        int[][] directions;
+        if (row % 2 == 0) {
+            directions = new int[][] {
+                    {1, -1}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 0}
+            };
+        } else {
+            directions = new int[][] {
+                    {1, 0}, {1, 1}, {0, -1}, {0, 1}, {-1, 0}, {-1, 1}
+            };
+        }
+
+        Point closestPoint = null;
+        double minDistance = Double.MAX_VALUE;
+
+        // 주변의 모든 빈 공간을 체크하고 가장 가까운 위치 찾기
+        for (int[] dir : directions) {
+            int newRow = row + dir[0];
+            int newCol = col + dir[1];
+
+            if (newRow >= 0 && newRow < board.length &&
+                    newCol >= 0 && newCol < board[newRow].length &&
+                    board[newRow][newCol] == 0) {
+
+                // 실제 픽셀 좌표 계산
+                int startX = (row % 2 == 0) ? 43 : 67;
+                int targetX = startX + newCol * 48;
+                int targetY = 65 + newRow * 48;
+
+                // 현재 위치와의 거리 계산
+                double distance = Math.sqrt(
+                        Math.pow(bubbleX - targetX, 2) +
+                                Math.pow(bubbleY - targetY, 2)
+                );
+
+                // 더 가까운 위치를 찾으면 업데이트
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestPoint = new Point(newRow, newCol);
+                }
+            }
+        }
+
+        return closestPoint;
+    }
+
+    private Point findLowestEmptySpace(int x) {
+        // x 좌표에 가장 가까운 열 찾기
+        int col = (x - BOARD_LEFT) / BUBBLE_SIZE;
+        if (col < 0) col = 0;
+        if (col >= board[0].length) col = board[0].length - 1;
+
+        // 아래에서부터 위로 올라가며 빈 공간 찾기
+        for (int row = board.length - 1; row >= 0; row--) {
+            if (board[row][col] == 0) {
+                return new Point(row, col);
+            }
+        }
+        return null;
+    }
+
+    // 여기에 resetBubble 메서드 추가
+    private void resetBubble() {
+        isBubbleMoving = false;
+        bubbleX = 212;  // 발사대 중심 X 좌표
+        bubbleY = 525;  // 발사대 중심 Y 좌표
+        currentBubbleType = (currentBubbleType % 7) + 1;  // 다음 구슬 타입으로 변경
+        repaint();
+    }
+
+
+    private void findConnectedBubbles(int row, int col, int type, Set<Point> connected) {
+        // 경계 체크 및 현재 위치가 유효한지 확인
+        if (row < 0 || row >= board.length || col < 0 || col >= board[row].length ||
+                board[row][col] != type || connected.contains(new Point(row, col))) {
+            return;
+        }
+
+        // 현재 위치 추가
+        connected.add(new Point(row, col));
+
+        // 인접한 6방향 체크 (홀수/짝수 행에 따라 다름)
+        int[][] directions;
+        if (row % 2 == 0) {  // 짝수 행
+            directions = new int[][] {
+                    {-1, 0},  // 위
+                    {-1, -1}, // 왼쪽 위
+                    {0, -1},  // 왼쪽
+                    {0, 1},   // 오른쪽
+                    {1, -1},  // 왼쪽 아래
+                    {1, 0}    // 아래
+            };
+        } else {  // 홀수 행
+            directions = new int[][] {
+                    {-1, 0},  // 위
+                    {-1, 1},  // 오른쪽 위
+                    {0, -1},  // 왼쪽
+                    {0, 1},   // 오른쪽
+                    {1, 0},   // 아래
+                    {1, 1}    // 오른쪽 아래
+            };
+        }
+
+        // 각 방향에 대해 재귀적으로 연결된 구슬 찾기
+        for (int[] dir : directions) {
+            int newRow = row + dir[0];
+            int newCol = col + dir[1];
+            findConnectedBubbles(newRow, newCol, type, connected);
+        }
+    }
+    /////
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -227,78 +540,6 @@ class GamePanel extends JPanel implements KeyListener {
             default -> dd1; // 기본값
         };
     }
-    // 키 입력 처리 메서드 수정
-    @Override
-    public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) { // 화살표 왼쪽 회전
-            angle -= rotationSpeed;
-            if (angle < minAngle) {
-                angle = minAngle; // 최소 각도 제한
-            }
-            repaint();
-        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) { // 화살표 오른쪽 회전
-            angle += rotationSpeed;
-            if (angle > maxAngle) {
-                angle = maxAngle; // 최대 각도 제한
-            }
-            repaint();
-        } else if (e.getKeyCode() == KeyEvent.VK_SPACE) { // 스페이스바로 구슬 발사
-            if (!isBubbleMoving) {
-                isBubbleMoving = true;
-                double startX = bubbleX; // 발사 시작 위치의 X 좌표
-                double startY = bubbleY; // 발사 시작 위치의 Y 좌표
-
-                // 초기 각도를 -Math.PI/2로 설정 (12시 방향) ,,!!!!!!
-                 dx = Math.cos(angle - Math.PI/2) * bubbleSpeed;
-                 dy = Math.sin(angle - Math.PI/2) * bubbleSpeed;
-
-                new Thread(() -> {
-                    // 게임 보드의 좌우 경계 설정
-                    int boardStartX = 43; // 가장 왼쪽 경계
-                    int boardEndX = boardStartX + (board[0].length - 1) * 48; // 가장 오른쪽 경계 //48-> 구슬 크기
-
-                    while (isBubbleMoving) {
-
-                        // 구슬 이동
-                        bubbleX += dx; // X 방향 이동
-                        bubbleY += dy; // Y 방향 이동
-
-                        // 좌우 벽에 부딪히면 반사
-                        if (bubbleX <= boardStartX) {
-                            bubbleX = boardStartX; // 경계값에 부딪혔을 때 위치 조정
-                            dx = -dx; // X 방향 반전
-                        } else if (bubbleX >= boardEndX) {
-                            bubbleX = boardEndX; // 경계값에 부딪혔을 때 위치 조정
-                            dx = -dx; // X 방향 반전
-                        }
-
-                        // 구슬이 Y축 상단에 도달하거나 특정 조건에서 발사 종료
-                        if (bubbleY < 0) {
-                            isBubbleMoving = false;
-
-                            // 발사대 초기 위치로 재설정
-                            bubbleX = 212;
-                            bubbleY = 525;
-
-                            // 다음 구슬 타입으로 변경 (1~7 순환)
-                            currentBubbleType = (currentBubbleType % 7) + 1;
-                        }
-
-                        repaint();
-                        try {
-                            Thread.sleep(16); // 프레임 딜레이
-                        } catch (InterruptedException ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                }).start();
-
-            }
-        }
-    }
-
-
-
     @Override
     public void keyReleased(KeyEvent e) {
         // 아무 작업도 하지 않음 (키를 뗐을 때 회전 멈춤)
