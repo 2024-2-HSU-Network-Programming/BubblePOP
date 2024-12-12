@@ -46,9 +46,10 @@ public class LobbyFrame extends JFrame {
         t_globalChat.setBounds(20,20,400,150);
         lobbyCenterPane.add(t_globalChat);
         t_globalChat.setText("                                      *** 전체 채팅 ***\n          ");
-        if(userId != null) {
-            t_globalChat.setText(userId + "님 환영합니다!\n");
-        }
+//        if(userId != null) {
+//            t_globalChat.setText(userId + "님 환영합니다!\n");
+//        }
+        addGlobalChatMessage(userId + "님이 로그인했습니다!");
         t_globalChat.setEditable(false);
 
         JLabel lb_userCharacter = new JLabel(userCharacterIcon);
@@ -120,6 +121,11 @@ public class LobbyFrame extends JFrame {
 
 
         return lobbyRightPane;
+    }
+    public void addGlobalChatMessage(String message) {
+        SwingUtilities.invokeLater(() -> {
+            t_globalChat.append(message + "\n");
+        });
     }
 
     public static void main(String[] args) {
