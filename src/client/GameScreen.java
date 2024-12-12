@@ -57,7 +57,7 @@ class GamePanel extends JPanel implements KeyListener {
     private BufferedImage player1,player2; // 게임 캐릭터 이미지
 
 
-    private BufferedImage b1, b2, b3, b4, b5, b6, b7; // 버블 이미지
+    private BufferedImage b1, b2, b3, b4, b5, b6, b7,bF; // 버블 이미지
     private double angle = 0 ; // 화살표의 현재 각도 (라디안 값)
     private final double maxAngle = Math.toRadians(60); // 최대 각도 (50도)
     private final double minAngle = Math.toRadians(-60); // 최소 각도 (-50도)
@@ -118,6 +118,7 @@ class GamePanel extends JPanel implements KeyListener {
             b5 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubble5.png"));
             b6 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubble6.png"));
             b7 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubble7.png"));
+            bF = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubbleFinish.png"));
             gameBottom = ImageIO.read(getClass().getClassLoader().getResource("assets/game/gamebottom.png"));
             player1 = ImageIO.read(getClass().getClassLoader().getResource("assets/player1.png"));
             player1 = ImageIO.read(getClass().getClassLoader().getResource("assets/player2.png"));
@@ -363,6 +364,19 @@ class GamePanel extends JPanel implements KeyListener {
 
         // 일단 현재 위치에 구슬 배치
         board[row][col] = currentBubbleType;
+
+        // 10번째 줄(인덱스 9)에 구슬이 생기면 모든 구슬을 8로 변경
+        if (row == 9) {
+            for (int i = 0; i < board.length; i++) {
+                for (int j = 0; j < board[i].length; j++) {
+                    if (board[i][j] != 0) {
+                        board[i][j] = 8;  // 8을 finish 상태를 나타내는 값으로 사용
+                    }
+                }
+            }
+            repaint();
+            return;  // 더 이상의 처리 중단
+        }
 
         // 같은 색상의 연결된 구슬 찾기
         Set<Point> connected = new HashSet<>();
@@ -634,6 +648,7 @@ class GamePanel extends JPanel implements KeyListener {
             case 5 -> b5;
             case 6 -> b6;
             case 7 -> b7;
+            case 8 -> bF;
             default -> null;
         };
     }
