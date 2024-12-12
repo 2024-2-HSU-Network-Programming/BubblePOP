@@ -19,12 +19,14 @@ public class LobbyFrame extends JFrame {
     private ImageIcon logoIcon = new ImageIcon(getClass().getResource("/client/assets/logo/logo.png"));
 
     private String userId;
+    private ManageNetwork network;
 
-    public LobbyFrame(String userId) {
+    public LobbyFrame(String userId, ManageNetwork network) {
         setTitle("Lobby");
         setBounds(100,100, 960, 672);
         setResizable(false); // 크기 고정
         this.userId = userId;
+        this.network = network;
 
         lobbyPane = new JPanel();
         lobbyPane.setLayout(new BorderLayout());
@@ -103,7 +105,7 @@ public class LobbyFrame extends JFrame {
         btnCreateRoom.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new MakeRoomDialog(LobbyFrame.this);
+                new MakeRoomDialog(LobbyFrame.this, network);
             }
         });
 
@@ -127,8 +129,12 @@ public class LobbyFrame extends JFrame {
             t_globalChat.append(message + "\n");
         });
     }
-
-    public static void main(String[] args) {
-        new LobbyFrame(null);
+    public void updateRoomList(String roomInfo) {
+        SwingUtilities.invokeLater(() -> {
+            t_globalChat.append("새로운 대기방: " + roomInfo + "\n");
+        });
     }
+//    public static void main(String[] args) {
+//        new LobbyFrame(null, new ManageNetwork());
+//    }
 }

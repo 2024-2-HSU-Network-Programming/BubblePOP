@@ -7,6 +7,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 public class MakeRoomDialog extends JDialog {
@@ -16,8 +17,9 @@ public class MakeRoomDialog extends JDialog {
     LobbyFrame lobbyFrame; // 추후 통신시 삭제
 
     private ObjectOutputStream out;
-
-    public MakeRoomDialog(LobbyFrame lobbyFrame) {
+    private ManageNetwork network;
+    public MakeRoomDialog(LobbyFrame lobbyFrame, ManageNetwork network) {
+        this.network = network;
         this.lobbyFrame = lobbyFrame; // 추후 통신시 삭제
         setTitle("대기방 만들기");
         setBounds(400, 300, 360, 280);
@@ -30,13 +32,14 @@ public class MakeRoomDialog extends JDialog {
 
     }
 
-//    public void sendObject(Object ob) {
-//        try {
-//            out.writeObject(ob);
-//        } catch (IOException e) {
-//            System.out.println("SendObject Error");
-//        }
-//    }
+    public void sendObject(Object ob) {
+        try {
+            out.writeObject(ob);
+            out.flush();
+        } catch (IOException e) {
+            System.out.println("SendObject Error");
+        }
+    }
 
     class MakeRoomPanel extends JPanel {
 
@@ -90,13 +93,24 @@ public class MakeRoomDialog extends JDialog {
             btnCreate.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    String RoomInfo = "방 이름: " + roomTitle.getText()+ ", 방 비밀번호 :" +roomPassword.getText();
+                    String roomName = roomTitle.getText();
+                    String password = new String(roomPassword.getPassword());
 
-                    ChatMsg roomObj = new ChatMsg("yebin", 101, RoomInfo);
-                    //sendObject(roomObj);
+                    // 대기방 정보 생성
+                    String roomInfo = roomName + "|" + password;
+
+                    ChatMsg roomObj = new ChatMsg("yebin", ChatMsg.MODE_TX_CREATEROOM, roomInfo);
+//                    try {
+//                        out.writeObject(roomObj);
+//                        out.flush();
+//                    } catch (IOException ex) {
+//                        System.out.println("대기방 생성 메시지 전송 실패: " + ex.getMessage());
+//                    }
+                    network.sendMessage(roomObj);
                     dispose(); // 다이얼로그 닫기
                     lobbyFrame.dispose();
-                    WaitingRoom.main(new String[]{});
+
+                    //WaitingRoom.main(new String[]{});
 
 
                 }

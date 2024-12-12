@@ -5,16 +5,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a3e92f76-7a23-4d81-b3aa-d28e0e723f73" name="변경" comment="">
+      <change afterPath="$PROJECT_DIR$/src/server/GameRoom.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/server/RoomManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/LobbyFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/LobbyFrame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/LoginFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/LoginFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/MakeRoomDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/MakeRoomDialog.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/ManageNetwork.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/ManageNetwork.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server/ServerMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/ServerMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/shared/ChatMsg.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/ChatMsg.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -38,7 +49,7 @@
     "애플리케이션.ServerMain.executor": "Run"
   }
 }]]></component>
-  <component name="RunManager" selected="애플리케이션.LoginFrame">
+  <component name="RunManager" selected="애플리케이션.ServerMain">
     <configuration name="GameScreen" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="client.GameScreen" />
       <module name="bubblePop" />
@@ -85,8 +96,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="애플리케이션.LoginFrame" />
         <item itemvalue="애플리케이션.ServerMain" />
+        <item itemvalue="애플리케이션.LoginFrame" />
         <item itemvalue="애플리케이션.GameScreen" />
       </list>
     </recent_temporary>

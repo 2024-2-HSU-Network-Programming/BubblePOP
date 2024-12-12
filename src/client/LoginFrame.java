@@ -132,8 +132,8 @@ public class LoginFrame extends JFrame{
             out.writeObject(cmsg);
             out.flush();
 
-            // 로비 화면 생성 및 네트워크 스레드 시작
-            LobbyFrame lobbyFrame = new LobbyFrame(userName);
+            // 로비 화면 생성
+            LobbyFrame lobbyFrame = new LobbyFrame(userName, new ManageNetwork(in, out, socket, null));
             ManageNetwork network = new ManageNetwork(in, out, socket, lobbyFrame);
             network.start();
 

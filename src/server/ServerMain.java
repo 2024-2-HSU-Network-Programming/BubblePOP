@@ -157,6 +157,20 @@ public class ServerMain extends JFrame {
                         }
                         broadcasting(new ChatMsg("Server", ChatMsg.MODE_LOGOUT, userName + "님이 로그아웃했습니다."));
                         return; // 통신 종료
+                    case ChatMsg.MODE_TX_CREATEROOM:
+                        // 대기방 생성 처리
+                        String[] roomData = msg.getMessage().split("\\|");
+                        String roomName = roomData[0];
+                        String password = roomData[1];
+
+                        GameRoom newRoom = RoomManager.createRoom(userName, roomName, password);
+                        System.out.println("대기방 생성: " + newRoom.getRoomName());
+
+                        // 생성된 방 정보를 모든 클라이언트에 브로드캐스트
+                        ChatMsg roomBroadcastMsg = new ChatMsg("Server", ChatMsg.MODE_TX_CREATEROOM,
+                                userName + "|" + newRoom.getRoomName());
+                        broadcasting(roomBroadcastMsg);
+                        break;
 
                     default:
                         t_display.append("알 수 없는 메시지 모드: " + msg.getMode() + "\n");
