@@ -7,8 +7,10 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.List;
+import javax.swing.Timer;
+
 
 public class GameScreen {
     public static void main(String[] args) {
@@ -58,6 +60,15 @@ class GamePanel extends JPanel implements KeyListener {
 
 
     private BufferedImage b1, b2, b3, b4, b5, b6, b7,bF; // 버블 이미지
+    private BufferedImage bP1_1,bP1_2,bP1_3,bP1_4 ; // 버블 팝 이미지
+    private BufferedImage bP2_1,bP2_2,bP2_3,bP2_4 ; // 버블 팝 이미지
+    private BufferedImage bP3_1,bP3_2,bP3_3,bP3_4 ; // 버블 팝 이미지
+    private BufferedImage bP4_1,bP4_2,bP4_3,bP4_4 ; // 버블 팝 이미지
+    private BufferedImage bP5_1,bP5_2,bP5_3,bP5_4 ; // 버블 팝 이미지
+    private BufferedImage bP6_1,bP6_2,bP6_3,bP6_4 ; // 버블 팝 이미지
+    private BufferedImage bP7_1,bP7_2,bP7_3,bP7_4 ; // 버블 팝 이미지
+
+
     private double angle = 0 ; // 화살표의 현재 각도 (라디안 값)
     private final double maxAngle = Math.toRadians(60); // 최대 각도 (50도)
     private final double minAngle = Math.toRadians(-60); // 최소 각도 (-50도)
@@ -78,6 +89,9 @@ class GamePanel extends JPanel implements KeyListener {
     private static final long SHAKE_DURATION = 1000;  // 흔들림 지속 시간 (2초)
     private int shakeOffset = 0;  // 흔들림 오프셋
 
+    private List<BubblePop> popAnimations = new ArrayList<>();
+    //버블이 터지는 시간
+    private static final long POP_DURATION = 400; // 0.4초
 
     private int[][] board = { // 구슬 상태를 저장하는 배열
             {1, 2, 3, 4, 5, 6, 7, 1},   // 첫 번째 줄 (8개)
@@ -119,6 +133,44 @@ class GamePanel extends JPanel implements KeyListener {
             b6 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubble6.png"));
             b7 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubble7.png"));
             bF = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bubbleFinish.png"));
+
+            bP1_1 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble1Pop1.png"));
+            bP1_2 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble1Pop2.png"));
+            bP1_3 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble1Pop3.png"));
+            bP1_4 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble1Pop4.png"));
+
+            bP2_2 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble2Pop2.png"));
+            bP2_3 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble2Pop3.png"));
+            bP2_1 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble2Pop1.png"));
+            bP2_4 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble2Pop4.png"));
+
+            bP3_1 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble3Pop1.png"));
+            bP3_2 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble3Pop2.png"));
+            bP3_3 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble3Pop3.png"));
+            bP3_4 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble3Pop4.png"));
+
+            bP4_1 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble4Pop1.png"));
+            bP4_2 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble4Pop2.png"));
+            bP4_3 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble4Pop3.png"));
+            bP4_4 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble4Pop4.png"));
+
+            bP5_1 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble5Pop1.png"));
+            bP5_2 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble5Pop2.png"));
+            bP5_3 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble5Pop3.png"));
+            bP5_4 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble5Pop4.png"));
+
+            bP6_1 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble6Pop1.png"));
+            bP6_2 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble6Pop2.png"));
+            bP6_3 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble6Pop3.png"));
+            bP6_4 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble6Pop4.png"));
+
+            bP7_1 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble7Pop1.png"));
+            bP7_2 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble7Pop2.png"));
+            bP7_3 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble7Pop3.png"));
+            bP7_4 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble7Pop4.png"));
+
+
+
             gameBottom = ImageIO.read(getClass().getClassLoader().getResource("assets/game/gamebottom.png"));
             player1 = ImageIO.read(getClass().getClassLoader().getResource("assets/player1.png"));
             player1 = ImageIO.read(getClass().getClassLoader().getResource("assets/player2.png"));
@@ -130,7 +182,9 @@ class GamePanel extends JPanel implements KeyListener {
             // 초기 구슬 타입 설정
             currentBubbleType = (int)(Math.random() * 7) + 1;
             nextBubbleType = (int)(Math.random() * 7) + 1;
-
+            // GamePanel 생성자에 추가
+            Timer timer = new Timer(16, e -> repaint());
+            timer.start();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -382,20 +436,34 @@ class GamePanel extends JPanel implements KeyListener {
         Set<Point> connected = new HashSet<>();
         findConnectedBubbles(row, col, currentBubbleType, connected);
 
+        // 3개 이상 연결된 구슬이 있는 경우 처리
         if (connected.size() >= 3) {
-            // 3개 이상 연결되면 제거
+            // 먼저 팝 애니메이션 추가
+            for (Point p : connected) {
+                Point screenPos = new Point(
+                        (p.y * BUBBLE_SIZE) + (p.x % 2 == 0 ? 43 : 67),
+                        65 + (p.x * BUBBLE_SIZE)
+                );
+                popAnimations.add(new BubblePop(screenPos, board[p.x][p.y]));
+            }
+
+            // 연결된 구슬 제거
             for (Point p : connected) {
                 board[p.x][p.y] = 0;
             }
 
-            // 떠있는 구슬들 찾아서 제거
+            // 떠있는 구슬 처리
             Set<Point> floating = findFloatingBubbles();
             for (Point p : floating) {
+                Point screenPos = new Point(
+                        (p.y * BUBBLE_SIZE) + (p.x % 2 == 0 ? 43 : 67),
+                        65 + (p.x * BUBBLE_SIZE)
+                );
+                popAnimations.add(new BubblePop(screenPos, board[p.x][p.y]));
                 board[p.x][p.y] = 0;
             }
         }
     }
-
     // 구슬을 붙일 수 있는 위치 찾기
     private Point findAttachPosition(int row, int col) {
         // 주변 6방향 체크
@@ -635,7 +703,26 @@ class GamePanel extends JPanel implements KeyListener {
             }
         }
 
+        // 팝 애니메이션 그리기
+        Iterator<BubblePop> iterator = popAnimations.iterator();
+        while (iterator.hasNext()) {
+            BubblePop pop = iterator.next();
+            long elapsed = System.currentTimeMillis() - pop.startTime;
 
+            if (elapsed >= POP_DURATION) {
+                iterator.remove();
+                continue;
+            }
+
+            // 프레임 계산 (0.7초를 4단계로 나눔)
+            pop.frame = (int)(elapsed / (POP_DURATION / 4)) + 1;
+            if (pop.frame > 4) pop.frame = 4;
+
+            BufferedImage popImage = getBubblePopImage(pop.type, pop.frame);
+            if (popImage != null) {
+                g.drawImage(popImage, pop.position.x, pop.position.y, null);
+            }
+        }
     }
 
     // 버블 이미지를 반환하는 메서드 추가
@@ -687,4 +774,73 @@ class GamePanel extends JPanel implements KeyListener {
     @Override
     public void keyTyped(KeyEvent e) {
     }
+
+    private class BubblePop {
+        private Point position;
+        private int type;
+        private int frame;
+        private long startTime;
+
+        public BubblePop(Point position, int type) {
+            this.position = position;
+            this.type = type;
+            this.frame = 1;
+            this.startTime = System.currentTimeMillis();
+        }
+    }
+    private BufferedImage getBubblePopImage(int type, int frame) {
+        return switch (type) {
+            case 1 -> switch (frame) {
+                case 1 -> bP1_1;
+                case 2 -> bP1_2;
+                case 3 -> bP1_3;
+                case 4 -> bP1_4;
+                default -> null;
+            };
+            case 2 -> switch (frame) {
+                case 1 -> bP2_1;
+                case 2 -> bP2_2;
+                case 3 -> bP2_3;
+                case 4 -> bP2_4;
+                default -> null;
+            };
+            case 3 -> switch (frame) {
+                case 1 -> bP3_1;
+                case 2 -> bP3_2;
+                case 3 -> bP3_3;
+                case 4 -> bP3_4;
+                default -> null;
+            };
+            case 4 -> switch (frame) {
+                case 1 -> bP4_1;
+                case 2 -> bP4_2;
+                case 3 -> bP4_3;
+                case 4 -> bP4_4;
+                default -> null;
+            };
+            case 5 -> switch (frame) {
+                case 1 -> bP5_1;
+                case 2 -> bP5_2;
+                case 3 -> bP5_3;
+                case 4 -> bP5_4;
+                default -> null;
+            };
+            case 6 -> switch (frame) {
+                case 1 -> bP6_1;
+                case 2 -> bP6_2;
+                case 3 -> bP6_3;
+                case 4 -> bP6_4;
+                default -> null;
+            };
+            case 7 -> switch (frame) {
+                case 1 -> bP7_1;
+                case 2 -> bP7_2;
+                case 3 -> bP7_3;
+                case 4 -> bP7_4;
+                default -> null;
+            };
+            default -> null;
+        };
+    }
+
 }
