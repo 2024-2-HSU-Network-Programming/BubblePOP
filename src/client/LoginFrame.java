@@ -137,7 +137,6 @@ public class LoginFrame extends JFrame{
             ManageNetwork network = new ManageNetwork(in, out, socket, lobbyFrame);
             network.start();
 
-
             setVisible(false);
             //new LobbyFrame();
 

@@ -1,5 +1,6 @@
 package client;
 
+import server.RoomManager;
 import shared.ChatMsg;
 
 import java.io.IOException;
@@ -13,7 +14,7 @@ public class ManageNetwork extends Thread{
     private ObjectOutputStream out;
     private Socket socket;
     private LobbyFrame lobbyFrame;
-
+    private int roomCount = RoomManager.getRoomListSize();
     public ManageNetwork(ObjectInputStream in, ObjectOutputStream out, Socket socket, LobbyFrame lobbyFrame) {
         this.in = in;
         this.out = out;
@@ -57,11 +58,13 @@ public class ManageNetwork extends Thread{
                             System.out.println("새로운 대기방 생성 !: " + cm.getMessage());
                             if (lobbyFrame != null) {
                                 String[] roomInfo = cm.getMessage().split("\\|");
+                                int roomId = ++roomCount;
                                 String ownerName = roomInfo[0];
                                 String roomName = roomInfo[1];
 
+                                lobbyFrame.getRoomListPane().addRoomPane(roomId, roomName);
                                 lobbyFrame.updateRoomList("새로운 대기방 " + roomName + "에 들어오세요!"); // UI에 방 정보 업데이트
-                                WaitingRoom.main(new String[]{});
+                                WaitingRoom.main(new String[]{}); // 대기방으로 이동
                             }
                             break;
                         default:

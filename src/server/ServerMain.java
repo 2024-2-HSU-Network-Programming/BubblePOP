@@ -164,7 +164,7 @@ public class ServerMain extends JFrame {
                         String password = roomData[1];
 
                         GameRoom newRoom = RoomManager.createRoom(userName, roomName, password);
-                        System.out.println("대기방 생성: " + newRoom.getRoomName());
+                        //System.out.println("대기방 생성: " + newRoom.getRoomName());
 
                         // 생성된 방 정보를 모든 클라이언트에 브로드캐스트
                         ChatMsg roomBroadcastMsg = new ChatMsg("Server", ChatMsg.MODE_TX_CREATEROOM,

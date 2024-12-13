@@ -70,7 +70,6 @@ public class LobbyFrame extends JFrame {
         roomListTapPane = new RoomListTapPane();
         lobbyLeftPane.add(roomListTapPane, BorderLayout.CENTER);
 
-
         return lobbyLeftPane;
     }
 
@@ -129,11 +128,17 @@ public class LobbyFrame extends JFrame {
             t_globalChat.append(message + "\n");
         });
     }
+
     public void updateRoomList(String roomInfo) {
         SwingUtilities.invokeLater(() -> {
             t_globalChat.append("새로운 대기방: " + roomInfo + "\n");
         });
     }
+    // roomListTapPane 가져오기
+    public RoomListTapPane getRoomListPane() {
+        return roomListTapPane;
+    }
+
 //    public static void main(String[] args) {
 //        new LobbyFrame(null, new ManageNetwork());
 //    }
