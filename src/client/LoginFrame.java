@@ -116,9 +116,9 @@ public class LoginFrame extends JFrame{
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
 
-            // 총관리 네트워크 설정
-            network = new ManageNetwork(in, out, socket);
-            network.start();
+//            // 총관리 네트워크 설정
+//            network = new ManageNetwork(in, out, socket);
+//            network.start();
 
             // GameUser 객체 생성 및 전송
             String userName = txtUserName.getText();
@@ -132,6 +132,10 @@ public class LoginFrame extends JFrame{
             out.writeObject(cmsg);
             out.flush();
 
+            // 로비 화면 생성
+            LobbyFrame lobbyFrame = new LobbyFrame(userName, new ManageNetwork(in, out, socket, null));
+            ManageNetwork network = new ManageNetwork(in, out, socket, lobbyFrame);
+            network.start();
 
             setVisible(false);
             //new LobbyFrame();

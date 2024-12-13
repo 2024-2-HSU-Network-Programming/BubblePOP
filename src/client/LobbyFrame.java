@@ -19,12 +19,14 @@ public class LobbyFrame extends JFrame {
     private ImageIcon logoIcon = new ImageIcon(getClass().getResource("/client/assets/logo/logo.png"));
 
     private String userId;
+    private ManageNetwork network;
 
-    public LobbyFrame(String userId) {
+    public LobbyFrame(String userId, ManageNetwork network) {
         setTitle("Lobby");
         setBounds(100,100, 960, 672);
         setResizable(false); // 크기 고정
         this.userId = userId;
+        this.network = network;
 
         lobbyPane = new JPanel();
         lobbyPane.setLayout(new BorderLayout());
@@ -46,9 +48,10 @@ public class LobbyFrame extends JFrame {
         t_globalChat.setBounds(20,20,400,150);
         lobbyCenterPane.add(t_globalChat);
         t_globalChat.setText("                                      *** 전체 채팅 ***\n          ");
-        if(userId != null) {
-            t_globalChat.setText(userId + "님 환영합니다!\n");
-        }
+//        if(userId != null) {
+//            t_globalChat.setText(userId + "님 환영합니다!\n");
+//        }
+        addGlobalChatMessage(userId + "님이 로그인했습니다!");
         t_globalChat.setEditable(false);
 
         JLabel lb_userCharacter = new JLabel(userCharacterIcon);
@@ -66,7 +69,6 @@ public class LobbyFrame extends JFrame {
 
         roomListTapPane = new RoomListTapPane();
         lobbyLeftPane.add(roomListTapPane, BorderLayout.CENTER);
-
 
         return lobbyLeftPane;
     }
@@ -102,7 +104,7 @@ public class LobbyFrame extends JFrame {
         btnCreateRoom.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new MakeRoomDialog(LobbyFrame.this);
+                new MakeRoomDialog(LobbyFrame.this, network);
             }
         });
 
@@ -121,8 +123,23 @@ public class LobbyFrame extends JFrame {
 
         return lobbyRightPane;
     }
-
-    public static void main(String[] args) {
-        new LobbyFrame(null);
+    public void addGlobalChatMessage(String message) {
+        SwingUtilities.invokeLater(() -> {
+            t_globalChat.append(message + "\n");
+        });
     }
+
+    public void updateRoomList(String roomInfo) {
+        SwingUtilities.invokeLater(() -> {
+            t_globalChat.append("새로운 대기방: " + roomInfo + "\n");
+        });
+    }
+    // roomListTapPane 가져오기
+    public RoomListTapPane getRoomListPane() {
+        return roomListTapPane;
+    }
+
+//    public static void main(String[] args) {
+//        new LobbyFrame(null, new ManageNetwork());
+//    }
 }
