@@ -58,20 +58,28 @@ public class ManageNetwork extends Thread{
                             System.out.println("새로운 대기방 생성 !: " + cm.getMessage());
                             if (lobbyFrame != null) {
                                 String[] roomInfo = cm.getMessage().split("\\|");
-                                int roomId = ++roomCount;
-                                String ownerName = roomInfo[0];
-                                String roomName = roomInfo[1];
 
-                                lobbyFrame.getRoomListPane().addRoomPane(roomId, roomName);
-                                lobbyFrame.updateRoomList("새로운 대기방 " + roomName + "에 들어오세요!"); // UI에 방 정보 업데이트
-                                WaitingRoom waitingRoom = new WaitingRoom(
-                                        String.valueOf(roomId),
-                                        roomName,
-                                        ownerName,  // 방장 ID
-                                        this       // network 객체
-                                );
-                                waitingRoom.show();
-                                lobbyFrame.dispose();
+                                // 서버에서 할당된 실제 roomId 사용
+                                if (roomInfo.length >= 3) {
+                                    int roomId = Integer.parseInt(roomInfo[0]);
+                                    String ownerName = roomInfo[1];
+                                    String roomName = roomInfo[2];
+
+                                    lobbyFrame.getRoomListPane().addRoomPane(roomId, roomName);
+                                    lobbyFrame.updateRoomList("새로운 대기방 " + roomName + "에 들어오세요!");
+
+                                    // 방 생성자인 경우에만 WaitingRoom 오픈
+                                    if (ownerName.equals(lobbyFrame.getUserId())) {
+                                        WaitingRoom waitingRoom = new WaitingRoom(
+                                                String.valueOf(roomId),
+                                                roomName,
+                                                ownerName,
+                                                this
+                                        );
+                                        waitingRoom.show();
+                                        lobbyFrame.dispose();
+                                    }
+                                }
                             }
                             break;
                         default:

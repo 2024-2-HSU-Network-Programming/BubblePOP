@@ -14,13 +14,13 @@ public class MakeRoomDialog extends JDialog {
     private MakeRoomPanel makeRoomPanel = new MakeRoomPanel();
     private JPasswordField roomPassword;
     private JTextField roomTitle;
-    //LobbyFrame lobbyFrame; // 추후 통신시 삭제
+    LobbyFrame lobbyFrame; // 추후 통신시 삭제
 
     private ObjectOutputStream out;
     private ManageNetwork network;
     public MakeRoomDialog(LobbyFrame lobbyFrame, ManageNetwork network) {
         this.network = network;
-        //this.lobbyFrame = lobbyFrame; // 추후 통신시 삭제
+        this.lobbyFrame = lobbyFrame; // 추후 통신시 삭제
         setTitle("대기방 만들기");
         setBounds(400, 300, 360, 280);
         setModal(true);
@@ -108,6 +108,10 @@ public class MakeRoomDialog extends JDialog {
 //                    }
                     network.sendMessage(roomObj);
                     dispose(); // 다이얼로그 닫기
+                    lobbyFrame.dispose();
+
+                    //WaitingRoom.main(new String[]{});
+
 
                 }
             });

@@ -168,7 +168,7 @@ public class ServerMain extends JFrame {
 
                         // 생성된 방 정보를 모든 클라이언트에 브로드캐스트
                         ChatMsg roomBroadcastMsg = new ChatMsg("Server", ChatMsg.MODE_TX_CREATEROOM,
-                                userName + "|" + newRoom.getRoomName());
+                                newRoom.getRoomId() + "|" + userName + "|" + newRoom.getRoomName());
                         broadcasting(roomBroadcastMsg);
                         break;
 
