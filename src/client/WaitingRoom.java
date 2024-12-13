@@ -4,13 +4,20 @@ import javax.swing.*;
 import java.awt.*;
 
 public class WaitingRoom {
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("대기방");
+    private String userId;
+    private ManageNetwork network;
+    private JFrame frame;
+
+    public WaitingRoom(String roomNumber, String roomName, String userId, ManageNetwork network) {
+        this.userId = userId;
+        this.network = network;
+
+        // 프레임 초기화
+        frame = new JFrame("대기방");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(960, 672);
-        frame.setLayout(null); // 절대 레이아웃 사용
+        frame.setLayout(null);
         frame.getContentPane().setBackground(Color.decode("#181329"));
-        // 프레임 크기 고정
         frame.setResizable(false);
 
         // 한글 폰트 설정
@@ -21,23 +28,27 @@ public class WaitingRoom {
         exitButton.setBounds(25, 50, 550, 50);
         exitButton.setBackground(Color.GREEN);
         exitButton.setFont(koreanFont);
+        exitButton.addActionListener(e -> {
+            frame.dispose();
+            new LobbyFrame(userId, network);
+        });
         frame.add(exitButton);
 
         // 방 제목
-        JLabel roomTitle = new JLabel("나랑 한판 할 사람~~~~(방 이름)", SwingConstants.CENTER); //중앙에
+        JLabel roomTitle = new JLabel(roomName, SwingConstants.CENTER);
         roomTitle.setBounds(0, 100, 600, 50);
         roomTitle.setFont(new Font("맑은 고딕", Font.BOLD, 16));
-        roomTitle.setOpaque(false); // 투명한 배경
-        roomTitle.setForeground(Color.WHITE); // 글자색만!
+        roomTitle.setOpaque(false);
+        roomTitle.setForeground(Color.WHITE);
         frame.add(roomTitle);
 
-        // 플레이어 패널 1
-        JPanel playerPanel1 = createPlayerPanel("아이디 1","assets/chracter/mainPlayer1_1.png", koreanFont);
+        // 플레이어 패널 1 (현재 유저)
+        JPanel playerPanel1 = createPlayerPanel(userId, "assets/chracter/mainPlayer1_1.png", koreanFont);
         playerPanel1.setBounds(50, 170, 200, 250);
         frame.add(playerPanel1);
 
         // 플레이어 패널 2
-        JPanel playerPanel2 = createPlayerPanel("아이디 2", "assets/chracter/mainPlayer2_1.png",koreanFont);
+        JPanel playerPanel2 = createPlayerPanel("대기중", "assets/chracter/mainPlayer2_1.png", koreanFont);
         playerPanel2.setBounds(350, 170, 200, 250);
         frame.add(playerPanel2);
 
@@ -57,10 +68,10 @@ public class WaitingRoom {
         startButton.setFont(new Font("맑은 고딕", Font.BOLD, 18));
         frame.add(startButton);
 
-        // START 버튼 클릭 이벤트 추가
+        // START 버튼 클릭 이벤트
         startButton.addActionListener(e -> {
-            frame.dispose(); // 현재 대기방 프레임 닫기
-            GameScreen.main(new String[]{}); // client.GameScreen 실행
+            frame.dispose();
+            GameScreen.main(new String[]{});
         });
 
         // 채팅 패널
@@ -85,11 +96,9 @@ public class WaitingRoom {
         chatPanel.add(chatInputPanel, BorderLayout.SOUTH);
 
         frame.add(chatPanel);
-
-        frame.setVisible(true);
     }
 
-    private static JPanel createPlayerPanel(String playerName, String imagePath, Font font) {
+    private JPanel createPlayerPanel(String playerName, String imagePath, Font font) {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         panel.setBackground(Color.DARK_GRAY);
@@ -111,5 +120,9 @@ public class WaitingRoom {
         panel.add(nameLabel, BorderLayout.SOUTH);
 
         return panel;
+    }
+
+    public void show() {
+        frame.setVisible(true);
     }
 }

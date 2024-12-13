@@ -23,11 +23,12 @@ public class RoomListTapPane extends JTabbedPane {
     private int nextY = 20; // 다음 RoomPane의 Y 좌표
     private final int roomPaneHeight = 50; // RoomPane 높이
     private int gap = 10;
-
+    private LobbyFrame lobbyFrame;
     private ObjectInputStream in;
 
-    public RoomListTapPane() {
+    public RoomListTapPane(LobbyFrame lobbyFrame) {
         tab1 = new JPanel();
+        this.lobbyFrame = lobbyFrame;
         //tab1.setLayout(new BoxLayout(tab1, BoxLayout.Y_AXIS)); // 세로로 여러 방 추가 가능
         tab1.setLayout(null);
         tab1.setBackground(new Color(40,49,69));
@@ -54,16 +55,16 @@ public class RoomListTapPane extends JTabbedPane {
         roomPane.setBounds(20, nextY, 180, roomPaneHeight); // 패널 크기 설정
 
         // 방 번호 라벨
-        lblRoomNumber = new JLabel(String.valueOf(roomNumber));
+        lblRoomNumber = new JLabel(roomName);
         lblRoomNumber.setBounds(20, 20, 120, 20); // 위치와 크기 설정
         lblRoomNumber.setForeground(Color.WHITE); // 흰색 텍스트
         roomPane.add(lblRoomNumber);
 
-        // 방 이름 라벨
-        lblRoomName = new JLabel(roomName);
-        lblRoomName.setBounds(20, 50, 200, 20); // 위치와 크기 설정
-        lblRoomName.setForeground(Color.WHITE); // 흰색 텍스트
-        roomPane.add(lblRoomName);
+//        // 방 이름 라벨
+//        lblRoomName = new JLabel(roomName);
+//        lblRoomName.setBounds(20, 50, 200, 20); // 위치와 크기 설정
+//        lblRoomName.setForeground(Color.WHITE); // 흰색 텍스트
+//        roomPane.add(lblRoomName);
 
         // 클릭 이벤트 추가
         roomPane.addMouseListener(new MouseAdapter() {
@@ -103,9 +104,19 @@ public class RoomListTapPane extends JTabbedPane {
     private void enterRoom(int roomNumber, String roomName) {
         System.out.println("Entering Room: " + roomName + " (ID: " + roomNumber + ")");
 
-        // 대기방 화면으로 이동
-        SwingUtilities.invokeLater(() -> WaitingRoom.main(new String[]{String.valueOf(roomNumber), roomName}));
+        // 대기방 화면으로 이동하고 로비 창 닫기
+        SwingUtilities.invokeLater(() -> {
+            WaitingRoom waitingRoom = new WaitingRoom(
+                    String.valueOf(roomNumber),  // roomNumber
+                    roomName,                    // roomName
+                    lobbyFrame.getUserId(),      // userId
+                    lobbyFrame.getNetwork()      // network
+            );
+            waitingRoom.show();  // 대기방 표시
+            lobbyFrame.dispose(); // 로비 창 닫기
+        });
     }
+
     // 방 정보를 수신하는 스레드
     private void startListeningForRooms() {
 //        new Thread(() -> {

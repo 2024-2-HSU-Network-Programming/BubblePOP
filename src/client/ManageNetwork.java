@@ -64,7 +64,14 @@ public class ManageNetwork extends Thread{
 
                                 lobbyFrame.getRoomListPane().addRoomPane(roomId, roomName);
                                 lobbyFrame.updateRoomList("새로운 대기방 " + roomName + "에 들어오세요!"); // UI에 방 정보 업데이트
-                                WaitingRoom.main(new String[]{}); // 대기방으로 이동
+                                WaitingRoom waitingRoom = new WaitingRoom(
+                                        String.valueOf(roomId),
+                                        roomName,
+                                        ownerName,  // 방장 ID
+                                        this       // network 객체
+                                );
+                                waitingRoom.show();
+                                lobbyFrame.dispose();
                             }
                             break;
                         default:
