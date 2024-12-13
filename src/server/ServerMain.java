@@ -149,7 +149,6 @@ public class ServerMain extends JFrame {
                         t_display.append(userName + ": " + msg.getMessage() + "\n");
                         broadcasting(msg); // 다른 사용자들에게 메시지 전송
                         break;
-
                     case ChatMsg.MODE_LOGOUT:
                         t_display.append("사용자 로그아웃: " + userName + "\n");
                         synchronized (connectedUsers) {

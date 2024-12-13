@@ -54,6 +54,10 @@ public class ManageNetwork extends Thread{
                             System.out.println("서버에서 연결 종료 메시지 수신: " + cm.getMessage());
                             closeConnection();
                             return; // 쓰레드 종료
+                        case ChatMsg.MODE_TX_STRING:
+                            System.out.println("서버에서 스트링값 수신: " + cm.getMessage());
+                            lobbyFrame.addGlobalChatMessage(cm.getMessage());
+                            break;
                         case ChatMsg.MODE_TX_CREATEROOM:
                             System.out.println("새로운 대기방 생성 !: " + cm.getMessage());
                             if (lobbyFrame != null) {

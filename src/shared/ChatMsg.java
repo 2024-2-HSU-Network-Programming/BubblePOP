@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class ChatMsg implements Serializable {
     public final static int MODE_LOGIN = 100;
     public final static int MODE_LOGOUT = 200;
-    public final static int MODE_TX_STRING = 0x10;
+    public final static int MODE_TX_STRING = 201;
     public final static int MODE_TX_FILE = 300;
     public final static int MODE_TX_IMAGE = 301;
     public final static int MODE_TX_ITEMCHANGE =302;
