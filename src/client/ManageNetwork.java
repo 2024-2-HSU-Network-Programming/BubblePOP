@@ -1,5 +1,6 @@
 package client;
 
+import server.GameRoom;
 import server.RoomManager;
 import shared.ChatMsg;
 
@@ -10,16 +11,25 @@ import java.net.Socket;
 
 public class ManageNetwork extends Thread{
     private GameUser gameUser;
-    private ObjectInputStream in;
-    private ObjectOutputStream out;
+    private ObjectInputStream ois;
+    private ObjectOutputStream oos;
     private Socket socket;
     private LobbyFrame lobbyFrame;
     private int roomCount = RoomManager.getRoomListSize();
-    public ManageNetwork(ObjectInputStream in, ObjectOutputStream out, Socket socket, LobbyFrame lobbyFrame) {
-        this.in = in;
-        this.out = out;
+
+    public ManageNetwork(ObjectInputStream in, ObjectOutputStream out, Socket socket) {
+        this.ois = in;
+        this.oos = out;
         this.socket = socket;
-        this.lobbyFrame = lobbyFrame;
+        //this.lobbyFrame = lobbyFrame;
+    }
+
+    public ObjectInputStream getOIS() {
+        return this.ois;
+    }
+
+    public ObjectOutputStream getOOS() {
+        return this.oos;
     }
 
     @Override
@@ -30,7 +40,7 @@ public class ManageNetwork extends Thread{
             ChatMsg cm;
 
             try {
-                objCm = in.readObject();
+                objCm = ois.readObject();
                 System.out.println("데이터 수신 완료!" + objCm);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -44,6 +54,7 @@ public class ManageNetwork extends Thread{
                     System.out.println(cm.getMode());
                     switch (cm.getMode()) {
                         case ChatMsg.MODE_LOGIN:
+                            lobbyFrame = new LobbyFrame();
                             if (lobbyFrame != null) {
                                 lobbyFrame.addGlobalChatMessage(cm.getMessage());
                             }
@@ -59,31 +70,50 @@ public class ManageNetwork extends Thread{
                             lobbyFrame.addGlobalChatMessage(cm.getMessage());
                             break;
                         case ChatMsg.MODE_TX_CREATEROOM:
-                            System.out.println("새로운 대기방 생성 !: " + cm.getMessage() + "\n");
+                            //System.out.println("새로운 대기방 생성 !: " + cm.getMessage() + "\n");
                             if (lobbyFrame != null) {
                                 String[] roomInfo = cm.getMessage().split("\\|");
                               
                                 // 서버에서 할당된 실제 roomId 사용
-                                if (roomInfo.length >= 3) {
+                                if (roomInfo.length >= 4) {
                                     int roomId = Integer.parseInt(roomInfo[0]);
                                     String ownerName = roomInfo[1];
                                     String roomName = roomInfo[2];
                                     String roomPassword = roomInfo[3];
 
-                                    lobbyFrame.getRoomListPane().addRoomPane(roomId, roomName, roomPassword, 1);
-                                    lobbyFrame.updateRoomList("새로운 대기방 " + roomName + "에 들어오세요!");
+                                    // 방 생성 후 로비 업데이트
+                                    GameRoom room = RoomManager.getGameRoom(Integer.toString(roomId));
 
-                                    // 방 생성자인 경우에만 WaitingRoom 오픈
-                                    if (ownerName.equals(lobbyFrame.getUserId())) {
-                                        WaitingRoom waitingRoom = new WaitingRoom(
-                                                String.valueOf(roomId),
+//                                    lobbyFrame.getRoomListPane().addRoomPane(roomId, roomName, roomPassword, RoomManager.getGameRoom(Integer.toString(roomId)).getUserListSize());
+//                                    lobbyFrame.updateRoomList("새로운 대기방 " + roomName + "에 들어오세요!");
+                                    if (room != null) {
+                                        lobbyFrame.getRoomListPane().addRoomPane(
+                                                roomId,
                                                 roomName,
-                                                ownerName,
-                                                this
+                                                roomPassword,
+                                                room.getUserListSize()
                                         );
-                                        waitingRoom.show();
-                                        lobbyFrame.dispose();
+                                        lobbyFrame.getRoomListPane().refreshRoomList(); // 강제 갱신
+                                        lobbyFrame.updateRoomList("새로운 대기방 " + roomName + "에 들어오세요!");
+
+                                        // 방 생성자인 경우에만 WaitingRoom 오픈
+                                        if (ownerName.equals(lobbyFrame.getUserId())) {
+                                            WaitingRoom waitingRoom = new WaitingRoom(
+                                                    String.valueOf(roomId),
+                                                    roomName,
+                                                    ownerName,
+                                                    this
+                                            );
+                                            waitingRoom.show();
+                                            lobbyFrame.dispose();
+                                        }
+                                    } else {
+                                        System.err.println("RoomManager에서 방을 찾을 수 없습니다: roomId=" + roomId);
                                     }
+
+
+
+
                                 }
                             }
                             break;
@@ -113,8 +143,8 @@ public class ManageNetwork extends Thread{
     // 메시지를 서버로 전송하는 메서드
     public synchronized void sendMessage(ChatMsg msg) {
         try {
-            out.writeObject(msg);
-            out.flush();
+            oos.writeObject(msg);
+            oos.flush();
         } catch (IOException e) {
             System.err.println("메시지 전송 오류: " + e.getMessage());
         }

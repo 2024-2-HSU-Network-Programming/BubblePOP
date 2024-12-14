@@ -19,6 +19,7 @@ public class MakeRoomDialog extends JDialog {
 
     private ObjectOutputStream out;
     private ManageNetwork network;
+    GameUser user = GameUser.getInstance();
 
     public MakeRoomDialog(LobbyFrame lobbyFrame, ManageNetwork network) {
         this.network = network;
@@ -112,8 +113,9 @@ public class MakeRoomDialog extends JDialog {
                         // 대기방 정보 생성
                         String roomInfo = roomName + "|" + password;
 
-                        ChatMsg roomObj = new ChatMsg(network.getName(), ChatMsg.MODE_TX_CREATEROOM, roomInfo);
-                        network.sendMessage(roomObj);
+                        ChatMsg roomObj = new ChatMsg(user.getId(), ChatMsg.MODE_TX_CREATEROOM, roomInfo);
+                        System.out.println("user name: " + network.getName());
+                        user.getNet().sendMessage(roomObj);
                         dispose(); // 다이얼로그 닫기
                         lobbyFrame.dispose();
 

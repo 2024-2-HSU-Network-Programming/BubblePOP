@@ -106,6 +106,7 @@ public class RoomListTapPane extends JTabbedPane {
         tab1.setPreferredSize(new Dimension(215, nextY + gap)); // 패널 크기 갱신
         tab1.revalidate(); // 레이아웃 업데이트
         tab1.repaint(); // 화면 갱신
+        System.out.println("RoomPane 갱신 완료: " + tab1.getComponentCount() + "개의 방");
     }
     // RoomManager로부터 실시간으로 방 정보를 가져와 갱신
     public void refreshRoomList() {
