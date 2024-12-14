@@ -7,30 +7,35 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RoomManager {
     private static List<GameRoom> roomList;
     private static AtomicInteger atomicInteger;
+
     static {
-        roomList = new ArrayList<GameRoom>();
+        roomList = new ArrayList<>();
         atomicInteger = new AtomicInteger();
 
         // 기본 방 추가
         createRoom("admin", "초보자 방", ""); // 방 생성자: owner, roomName, password
         createRoom("admin", "고수 방", "master");
         createRoom("admin", "같이 게임해요", "");
-
     }
-    public RoomManager() {}
 
+    public RoomManager() {
+        // 기본 생성자
+    }
+
+    // 방 생성 메서드
     public static GameRoom createRoom(String owner, String roomName, String password) {
         int roomId = atomicInteger.incrementAndGet();
 
         GameRoom room = new GameRoom(roomId, owner, roomName, password);
-
         roomList.add(room);
 
-        System.out.println("Room Created : "+roomId);
+        // 디버깅용 출력
+        System.out.println("Room Created : " + roomId);
         System.out.println("Room count: " + getRoomListSize());
         return room;
     }
 
+    // 방에 사용자 추가
     public static boolean addUserToRoom(int roomId, String userName) {
         for (GameRoom room : roomList) {
             if (room.getRoomId() == roomId) {
@@ -51,19 +56,7 @@ public class RoomManager {
         return false; // 방을 찾지 못함
     }
 
-
-
-
-        // 디버깅용 로깅 추가
-        System.out.println("RoomManager - 방 생성: ID=" + roomId +
-                ", Owner=" + owner +
-                ", Name=" + roomName);
-        System.out.println("현재 총 방 개수: " + roomList.size());
-
-        return room;
-    }
-
-    //방 떠날때
+    // 방에서 사용자 제거
     public static void leaveRoom(int roomId, String userName) {
         for (GameRoom room : roomList) {
             if (room.getRoomId() == roomId) {
@@ -79,25 +72,23 @@ public class RoomManager {
         }
     }
 
-
-
-
-    public static int whereInUser(String userName) {
-        for(int i=0; i<roomList.size(); i++) {
-            if(roomList.get(i).isUser(userName))
-                return i+1; // �� ��ȣ�� 1���� ����.
-        }
-        return -1;
-    }
-
+    // 특정 방 ID로 방 정보 가져오기
     public static GameRoom getGameRoom(String roomIdStr) {
-        int roomId = (Integer.parseInt(roomIdStr))-1; // �� ��ȣ�� 1���� ����, �ε����� 0���� ����
-        return roomList.get(roomId);
-    }
-    public static List<GameRoom> getRoomList() {
-        return new ArrayList<>(roomList); // GameRoom 타입으로 반환
+        int roomId = Integer.parseInt(roomIdStr);
+        for (GameRoom room : roomList) {
+            if (room.getRoomId() == roomId) {
+                return room;
+            }
+        }
+        return null; // 방을 찾지 못한 경우
     }
 
+    // 방 리스트 반환
+    public static List<GameRoom> getRoomList() {
+        return new ArrayList<>(roomList); // 방 리스트의 복사본 반환
+    }
+
+    // 현재 방 개수 반환
     public static int getRoomListSize() {
         return roomList.size();
     }

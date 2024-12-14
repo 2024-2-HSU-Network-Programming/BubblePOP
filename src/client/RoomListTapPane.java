@@ -25,10 +25,11 @@ public class RoomListTapPane extends JTabbedPane {
     private int gap = 10;
     private LobbyFrame lobbyFrame;
     private ObjectInputStream in;
-
-    public RoomListTapPane(LobbyFrame lobbyFrame) {
+    private ManageNetwork network;
+    public RoomListTapPane(LobbyFrame lobbyFrame, ManageNetwork network) {
         tab1 = new JPanel();
         this.lobbyFrame = lobbyFrame;
+        this.network = network;
         //tab1.setLayout(new BoxLayout(tab1, BoxLayout.Y_AXIS)); // 세로로 여러 방 추가 가능
         tab1.setLayout(null);
         tab1.setBackground(new Color(40,49,69));
@@ -128,7 +129,7 @@ public class RoomListTapPane extends JTabbedPane {
         boolean success = RoomManager.addUserToRoom(roomNumber, currentUser);
         if (success) {
             System.out.println("User successfully entered the room.");
-            SwingUtilities.invokeLater(() -> WaitingRoom.main(new String[]{String.valueOf(roomNumber), roomName}));
+            SwingUtilities.invokeLater(() -> new WaitingRoom(Integer.toString(roomNumber), roomName, currentUser, network));
         } else {
             JOptionPane.showMessageDialog(null, "방이 가득 찼습니다!", "입장 실패", JOptionPane.ERROR_MESSAGE);
         }

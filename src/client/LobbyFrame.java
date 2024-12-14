@@ -100,7 +100,7 @@ public class LobbyFrame extends JFrame {
         lobbyLeftPane.setBackground(new Color(52,74,119));
         lobbyLeftPane.setLayout(new BorderLayout());
 
-        roomListTapPane = new RoomListTapPane(LobbyFrame.this);
+        roomListTapPane = new RoomListTapPane(LobbyFrame.this, network);
         lobbyLeftPane.add(roomListTapPane, BorderLayout.CENTER);
 
         return lobbyLeftPane;
