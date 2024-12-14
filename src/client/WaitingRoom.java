@@ -36,7 +36,7 @@ public class WaitingRoom {
                     roomNumber + "|" + userId);
             network.sendMessage(leaveRoomMsg);
             frame.dispose();
-            new LobbyFrame(userId, network);
+            //new LobbyFrame(userId, network);
         });
         frame.add(exitButton);
 

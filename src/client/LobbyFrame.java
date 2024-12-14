@@ -28,13 +28,16 @@ public class LobbyFrame extends JFrame {
 
     private String userId;
     private ManageNetwork network;
+    GameUser user = GameUser.getInstance();
+    private ObjectInputStream ois;
+    private ObjectOutputStream oos;
 
-    public LobbyFrame(String userId, ManageNetwork network) {
+    public LobbyFrame() {
         setTitle("Lobby");
         setBounds(100,100, 960, 672);
         setResizable(false); // 크기 고정
-        this.userId = userId;
-        this.network = network;
+//        this.userId = userId;
+//        this.network = network;
 
         lobbyPane = new JPanel();
         lobbyPane.setLayout(new BorderLayout());
@@ -47,6 +50,8 @@ public class LobbyFrame extends JFrame {
         setContentPane(lobbyPane);
         setVisible(true); // 프레임 보이도록
 
+        this.ois=user.getNet().getOIS();
+        this.oos=user.getNet().getOOS();
     }
 
     // getter 메서드 추가
@@ -81,8 +86,8 @@ public class LobbyFrame extends JFrame {
         btnSendGlobalChat.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ChatMsg msg = new ChatMsg(userId, ChatMsg.MODE_TX_STRING, userId + "님: " + tf_globalChat.getText());
-                network.sendMessage(msg);
+                ChatMsg msg = new ChatMsg(user.getId(), ChatMsg.MODE_TX_STRING, user.getId() + "님: " + tf_globalChat.getText());
+                user.getNet().sendMessage(msg);
             }
         });
         lobbyCenterPane.add(btnSendGlobalChat);
@@ -137,7 +142,7 @@ public class LobbyFrame extends JFrame {
         btnCreateRoom.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new MakeRoomDialog(LobbyFrame.this, network);
+                new MakeRoomDialog(LobbyFrame.this, user.getNet());
             }
         });
 
@@ -169,6 +174,6 @@ public class LobbyFrame extends JFrame {
         ObjectInputStream in = null; // 초기화 필요
         ObjectOutputStream out = null; // 초기화 필요
         Socket socket = null; // 테스트 목적으로 null 사용
-        new LobbyFrame("TestUser", new ManageNetwork(in, out, socket, null));
+        //new LobbyFrame("TestUser", new ManageNetwork(in, out, socket, null));
     }
 }

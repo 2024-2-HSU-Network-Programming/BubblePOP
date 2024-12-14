@@ -120,22 +120,24 @@ public class LoginFrame extends JFrame{
 //            network = new ManageNetwork(in, out, socket);
 //            network.start();
 
+            // 로비 화면 생성
+    //        LobbyFrame lobbyFrame = new LobbyFrame(userName, new ManageNetwork(in, out, socket, null));
+            ManageNetwork network = new ManageNetwork(in, out, socket);
+            network.start();
+
             // GameUser 객체 생성 및 전송
             String userName = txtUserName.getText();
             String password = new String(txtUserPassword.getPassword());
-            GameUser gameUser = new GameUser(userName, password);
-            out.writeObject(gameUser);
-            out.flush();
+            GameUser gameUser = GameUser.getInstance();
+            gameUser.init(userName, password, network);
+
+//            out.writeObject(gameUser);
+//            out.flush();
 
             // ChatMsg 객체 전송
-            ChatMsg cmsg = new ChatMsg(gameUser.getId(), ChatMsg.MODE_LOGIN, "Login");
-            out.writeObject(cmsg);
+            ChatMsg loginMsg = new ChatMsg(gameUser.getId(), ChatMsg.MODE_LOGIN, "Login");
+            out.writeObject(loginMsg);
             out.flush();
-
-            // 로비 화면 생성
-            LobbyFrame lobbyFrame = new LobbyFrame(userName, new ManageNetwork(in, out, socket, null));
-            ManageNetwork network = new ManageNetwork(in, out, socket, lobbyFrame);
-            network.start();
 
             setVisible(false);
             //new LobbyFrame();

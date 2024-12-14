@@ -17,7 +17,7 @@ import java.util.*;
 public class ServerMain extends JFrame {
     private int port;
     private JTextArea t_display;
-    private Set<String> connectedUsers; // 접속 중인 사용자 목록
+    private Vector<String> connectedUsers; // 접속 중인 사용자 목록
     private Vector<ClientHandler> users;
     private Map<Socket, ObjectOutputStream> clientStreams;
 
@@ -29,7 +29,7 @@ public class ServerMain extends JFrame {
         this.port = port;
         //users = new Vector<>();
 
-        connectedUsers = new HashSet<>();
+        connectedUsers = new Vector<>();
         clientStreams = new HashMap<>(); // 초기화
 
         buildGUI();
@@ -116,35 +116,35 @@ public class ServerMain extends JFrame {
             synchronized (clientStreams) {
                 clientStreams.put(clientSocket, out); // 클라이언트 추가
             }
-            // GameUser 객체 수신
-            GameUser gameUser = (GameUser) in.readObject();
-            cmsg = (ChatMsg) in.readObject();
-            String userName = gameUser.getId();
 
-             //중복 사용자 검사
-            synchronized (connectedUsers) {
-                if (connectedUsers.contains(userName)) {
-                    t_display.append("중복된 사용자: " + userName);
-                    t_display.append("접속 거부: 이미 접속 중입니다.");
-                    clientSocket.close(); // 연결 종료
-                    return;
-                } else {
-                    connectedUsers.add(userName); // 사용자 추가
-                    t_display.append("새 사용자 접속: " + userName + "\n");
-                    t_display.append("현재 참가자 수: " + connectedUsers.size());
-
-                    //out.writeObject(new ChatMsg(userName, ChatMsg.MODE_LOGIN, userName + "님 환영합니다!"));
-//                    out.flush();
-                    ChatMsg welcomeMsg = new ChatMsg(userName, ChatMsg.MODE_LOGIN, userName + "님이 로그인했습니다!");
-                    broadcasting(welcomeMsg);
-                }
-            }
+            // ChatMsg 객체 수신
+//            ChatMsg cmsg = (ChatMsg) in.readObject();
+//            String userName = cmsg.getUserId(); // ChatMsg에서 사용자 ID 추출
+//
 
             // 클라이언트와 계속 통신
             while (true) {
                 ChatMsg msg = (ChatMsg) in.readObject(); // 메시지 수신
-
+                String userName = msg.getUserId();
                 switch (msg.getMode()) {
+                    case ChatMsg.MODE_LOGIN:
+                        //중복 사용자 검사
+                        synchronized (connectedUsers) {
+                            if (connectedUsers.contains(userName)) {
+                                t_display.append("중복된 사용자: " + userName);
+                                t_display.append("접속 거부: 이미 접속 중입니다.");
+                                clientSocket.close(); // 연결 종료
+                                return;
+                            } else {
+                                connectedUsers.add(userName); // 사용자 추가
+                                t_display.append("새 사용자 접속: " + userName + "\n");
+                                t_display.append("현재 참가자 수: " + connectedUsers.size());
+
+                                ChatMsg welcomeMsg = new ChatMsg(userName, ChatMsg.MODE_LOGIN, userName + "님 환영합니다!");
+                                broadcasting(welcomeMsg);
+                            }
+                        }
+                        break;
                     case ChatMsg.MODE_TX_STRING:
                         t_display.append(userName + ": " + msg.getMessage() + "\n");
                         broadcasting(msg); // 다른 사용자들에게 메시지 전송
@@ -165,14 +165,14 @@ public class ServerMain extends JFrame {
                         GameRoom newRoom = RoomManager.createRoom(userName, roomName, password);
 
                         // 디버깅을 위한 로깅 추가
-                        System.out.println("방 생성 정보 - RoomID: " + newRoom.getRoomId() +
+                        t_display.append("방 생성 정보 - RoomID: " + newRoom.getRoomId() +
                                 ", Owner: " + userName +
                                 ", RoomName: " + roomName);
-                        System.out.println("현재 방 목록 크기: " + RoomManager.getRoomListSize());
+                        t_display.append("현재 방 목록 크기: " + RoomManager.getRoomListSize());
 
                         // 생성된 방 정보를 모든 클라이언트에 브로드캐스트
 
-                        ChatMsg roomBroadcastMsg = new ChatMsg("Server", ChatMsg.MODE_TX_CREATEROOM,
+                        ChatMsg roomBroadcastMsg = new ChatMsg(userName, ChatMsg.MODE_TX_CREATEROOM,
                                 newRoom.getRoomId() + "|" + userName + "|" + roomName + "|" + password);
 
                         broadcasting(roomBroadcastMsg);
