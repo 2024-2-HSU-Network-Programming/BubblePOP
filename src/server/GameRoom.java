@@ -32,16 +32,14 @@ public class GameRoom {
             return false;
     }
 
+    // 방이 가득 찼는지 확인
     public Boolean isFullRoom() {
-        if(isFull)
-            return true;
-        else
-            return false;
+        return isFull;
     }
 
     public void enterUser(String user) {
         userList.add(user);
-        if(userList.size() >= 4)
+        if(userList.size() >= 2)
             isFull = true;
         else
             isFull = false;
@@ -96,6 +94,9 @@ public class GameRoom {
     public void setIsPlaying(Boolean isPlaying) {
         this.isPlaying = isPlaying;
     }
+
+
+    public String getRoomPassword() { return roomPassword; }
 
     public void removeUser(String userName) {
         userList.remove(userName);

@@ -14,15 +14,17 @@ public class MakeRoomDialog extends JDialog {
     private MakeRoomPanel makeRoomPanel = new MakeRoomPanel();
     private JPasswordField roomPassword;
     private JTextField roomTitle;
-    LobbyFrame lobbyFrame; // 추후 통신시 삭제
+    LobbyFrame lobbyFrame;
+    private JComboBox<String> roomTypeComboBox;
 
     private ObjectOutputStream out;
     private ManageNetwork network;
+
     public MakeRoomDialog(LobbyFrame lobbyFrame, ManageNetwork network) {
         this.network = network;
         this.lobbyFrame = lobbyFrame; // 추후 통신시 삭제
         setTitle("대기방 만들기");
-        setBounds(400, 300, 360, 280);
+        setBounds(400, 300, 360, 350);
         setModal(true);
         makeRoomPanel.setLayout(null);
         makeRoomPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -44,20 +46,29 @@ public class MakeRoomDialog extends JDialog {
     class MakeRoomPanel extends JPanel {
 
         public MakeRoomPanel() {
+            // 방 유형 선택
+            JLabel lblRoomType = new JLabel("방 유형");
+            lblRoomType.setBounds(45, 10, 100, 20);
+            add(lblRoomType);
+
+            roomTypeComboBox = new JComboBox<>(new String[]{"대기방 생성", "교환방 생성"});
+            roomTypeComboBox.setBounds(45, 35, 282, 30);
+            add(roomTypeComboBox);
+
             // 방 제목 입력
             JLabel lblRoomTitle = new JLabel("방 제목");
-            lblRoomTitle.setBounds(45,10, 100,20);
+            lblRoomTitle.setBounds(45,70, 100,20);
             add(lblRoomTitle);
             roomTitle = new JTextField();
-            roomTitle.setBounds(45, 33, 282, 50);
+            roomTitle.setBounds(45, 95, 282, 30);
             add(roomTitle);
 
             // 방 비밀번호 설정 체크박스
             JCheckBox check = new JCheckBox("");
-            check.setBounds(45, 100, 282, 20);
+            check.setBounds(45, 140, 282, 20);
             add(check);
             JLabel lblSettingPassword = new JLabel("비밀번호 설정");
-            lblSettingPassword.setBounds(80,100, 100,20);
+            lblSettingPassword.setBounds(80,140, 100,20);
             add(lblSettingPassword);
 
             Color enableColor = new Color(225, 225, 225);
@@ -80,38 +91,37 @@ public class MakeRoomDialog extends JDialog {
 
             // 방 비밀번호 입력
             roomPassword = new JPasswordField(10);
-            roomPassword.setBounds(45, 140, 282, 50);
+            roomPassword.setBounds(45, 165, 282, 50);
             roomPassword.setEnabled(false);
             roomPassword.setBackground(enableColor);
             roomPassword.setEchoChar('*');
             add(roomPassword);
 
             JButton btnCreate = new JButton("완료");
-            btnCreate.setBounds(130, 200, 100,40);
+            btnCreate.setBounds(130, 250, 100,40);
             add(btnCreate);
 
             btnCreate.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    String roomName = roomTitle.getText();
-                    String password = new String(roomPassword.getPassword());
+                    String roomType = roomTypeComboBox.getSelectedItem().toString();
+                    if(roomType.equals("대기방 생성")) {
+                        String roomName = roomTitle.getText();
+                        String password = new String(roomPassword.getPassword());
 
-                    // 대기방 정보 생성
-                    String roomInfo = roomName + "|" + password;
+                        // 대기방 정보 생성
+                        String roomInfo = roomName + "|" + password;
 
-                    ChatMsg roomObj = new ChatMsg("yebin", ChatMsg.MODE_TX_CREATEROOM, roomInfo);
-//                    try {
-//                        out.writeObject(roomObj);
-//                        out.flush();
-//                    } catch (IOException ex) {
-//                        System.out.println("대기방 생성 메시지 전송 실패: " + ex.getMessage());
-//                    }
-                    network.sendMessage(roomObj);
-                    dispose(); // 다이얼로그 닫기
-                    lobbyFrame.dispose();
+                        ChatMsg roomObj = new ChatMsg(network.getName(), ChatMsg.MODE_TX_CREATEROOM, roomInfo);
+                        network.sendMessage(roomObj);
+                        dispose(); // 다이얼로그 닫기
+                        lobbyFrame.dispose();
 
-                    //WaitingRoom.main(new String[]{});
+                        //WaitingRoom.main(new String[]{});
 
+                    } else {
+                        return;
+                    }
 
                 }
             });

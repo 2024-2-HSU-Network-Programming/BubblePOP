@@ -149,7 +149,6 @@ public class ServerMain extends JFrame {
                         t_display.append(userName + ": " + msg.getMessage() + "\n");
                         broadcasting(msg); // 다른 사용자들에게 메시지 전송
                         break;
-
                     case ChatMsg.MODE_LOGOUT:
                         t_display.append("사용자 로그아웃: " + userName + "\n");
                         synchronized (connectedUsers) {
@@ -172,8 +171,10 @@ public class ServerMain extends JFrame {
                         System.out.println("현재 방 목록 크기: " + RoomManager.getRoomListSize());
 
                         // 생성된 방 정보를 모든 클라이언트에 브로드캐스트
+
                         ChatMsg roomBroadcastMsg = new ChatMsg("Server", ChatMsg.MODE_TX_CREATEROOM,
-                                newRoom.getRoomId() + "|" + userName + "|" + roomName);
+                                newRoom.getRoomId() + "|" + userName + "|" + roomName + "|" + password);
+
                         broadcasting(roomBroadcastMsg);
                         break;
                     case ChatMsg.MODE_LEAVE_ROOM:

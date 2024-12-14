@@ -1,9 +1,14 @@
 package client;
 
+import shared.ChatMsg;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 
 public class LobbyFrame extends JFrame {
     private JPanel lobbyPane;
@@ -15,6 +20,9 @@ public class LobbyFrame extends JFrame {
     private JButton btnCreateRoom;
     private JButton btnExchangeRoom;
     private JTextArea t_globalChat;
+    private JTextField tf_globalChat;
+    private JButton btnSendGlobalChat;
+
     private ImageIcon userCharacterIcon = new ImageIcon(getClass().getResource("/client/assets/game/user_character.png"));
     private ImageIcon logoIcon = new ImageIcon(getClass().getResource("/client/assets/logo/logo.png"));
 
@@ -54,15 +62,30 @@ public class LobbyFrame extends JFrame {
         lobbyCenterPane = new JPanel();
         lobbyCenterPane.setLayout(null);
         lobbyCenterPane.setBackground(Color.BLACK);
+        // 전체 채팅 칸 추가
         t_globalChat = new JTextArea();
         t_globalChat.setBounds(20,20,400,150);
         lobbyCenterPane.add(t_globalChat);
+
         t_globalChat.setText("                                      *** 전체 채팅 ***\n          ");
-//        if(userId != null) {
-//            t_globalChat.setText(userId + "님 환영합니다!\n");
-//        }
-        addGlobalChatMessage(userId + "님이 로그인했습니다!");
-        t_globalChat.setEditable(false);
+        //addGlobalChatMessage(userId + "님이 로그인했습니다!");
+        t_globalChat.setEditable(false); // 입력 비활성화
+
+        // 전체 채팅 입력칸 추가
+        tf_globalChat = new JTextField();
+        tf_globalChat.setBounds(20, 200, 330, 30);
+        lobbyCenterPane.add(tf_globalChat);
+
+        btnSendGlobalChat = new JButton("보내기");
+        btnSendGlobalChat.setBounds(360,200, 70, 30);
+        btnSendGlobalChat.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ChatMsg msg = new ChatMsg(userId, ChatMsg.MODE_TX_STRING, userId + "님: " + tf_globalChat.getText());
+                network.sendMessage(msg);
+            }
+        });
+        lobbyCenterPane.add(btnSendGlobalChat);
 
         JLabel lb_userCharacter = new JLabel(userCharacterIcon);
         lb_userCharacter.setBounds(120,330, 200,350);
@@ -100,10 +123,10 @@ public class LobbyFrame extends JFrame {
 
         btnItemStore = new JButton("아이템 상점");
         btnCreateRoom = new JButton("대기방 만들기");
-        btnExchangeRoom = new JButton("교환방 만들기");
+        //btnExchangeRoom = new JButton("교환방 만들기");
 
         btnItemStore.setBounds(40, 340, 180,85);
-        btnExchangeRoom.setBounds(40, 440, 180,85);
+        //btnExchangeRoom.setBounds(40, 440, 180,85);
         btnCreateRoom.setBounds(40, 540, 180,85);
 
         btnItemStore.addActionListener(new ActionListener() {
@@ -118,17 +141,10 @@ public class LobbyFrame extends JFrame {
             }
         });
 
-        btnExchangeRoom.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ExchangeRoom.main(new String[]{});
-            }
-        });
 
         lobbyRightPane.add(btnItemStore);
         lobbyRightPane.add(btnCreateRoom);
-        lobbyRightPane.add(btnExchangeRoom);
+        //lobbyRightPane.add(btnExchangeRoom);
 
 
         return lobbyRightPane;
@@ -149,7 +165,10 @@ public class LobbyFrame extends JFrame {
         return roomListTapPane;
     }
 
-//    public static void main(String[] args) {
-//        new LobbyFrame(null, new ManageNetwork());
-//    }
+    public static void main(String[] args) {
+        ObjectInputStream in = null; // 초기화 필요
+        ObjectOutputStream out = null; // 초기화 필요
+        Socket socket = null; // 테스트 목적으로 null 사용
+        new LobbyFrame("TestUser", new ManageNetwork(in, out, socket, null));
+    }
 }

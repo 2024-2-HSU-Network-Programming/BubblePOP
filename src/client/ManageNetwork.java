@@ -54,18 +54,23 @@ public class ManageNetwork extends Thread{
                             System.out.println("서버에서 연결 종료 메시지 수신: " + cm.getMessage());
                             closeConnection();
                             return; // 쓰레드 종료
+                        case ChatMsg.MODE_TX_STRING:
+                            System.out.println("서버에서 스트링값 수신: " + cm.getMessage());
+                            lobbyFrame.addGlobalChatMessage(cm.getMessage());
+                            break;
                         case ChatMsg.MODE_TX_CREATEROOM:
-                            System.out.println("새로운 대기방 생성 !: " + cm.getMessage());
+                            System.out.println("새로운 대기방 생성 !: " + cm.getMessage() + "\n");
                             if (lobbyFrame != null) {
                                 String[] roomInfo = cm.getMessage().split("\\|");
-
+                              
                                 // 서버에서 할당된 실제 roomId 사용
                                 if (roomInfo.length >= 3) {
                                     int roomId = Integer.parseInt(roomInfo[0]);
                                     String ownerName = roomInfo[1];
                                     String roomName = roomInfo[2];
+                                    String roomPassword = roomInfo[3];
 
-                                    lobbyFrame.getRoomListPane().addRoomPane(roomId, roomName);
+                                    lobbyFrame.getRoomListPane().addRoomPane(roomId, roomName, roomPassword, 1);
                                     lobbyFrame.updateRoomList("새로운 대기방 " + roomName + "에 들어오세요!");
 
                                     // 방 생성자인 경우에만 WaitingRoom 오픈
@@ -114,6 +119,7 @@ public class ManageNetwork extends Thread{
             System.err.println("메시지 전송 오류: " + e.getMessage());
         }
     }
+
     private void closeConnection() {
         try {
             if (socket != null) socket.close();

@@ -7,9 +7,10 @@
     <list default="true" id="a3e92f76-7a23-4d81-b3aa-d28e0e723f73" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/LobbyFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/LobbyFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/LoginFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/LoginFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/MakeRoomDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/MakeRoomDialog.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/ManageNetwork.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/ManageNetwork.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/RoomListTapPane.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/RoomListTapPane.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/GameRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/GameRoom.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server/RoomManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/RoomManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server/ServerMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/ServerMain.java" afterDir="false" />
     </list>
@@ -37,19 +38,35 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feat/#13&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;애플리케이션.GameScreen.executor&quot;: &quot;Run&quot;,
-    &quot;애플리케이션.LoginFrame.executor&quot;: &quot;Run&quot;,
-    &quot;애플리케이션.ServerMain.executor&quot;: &quot;Run&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "feat/#13",
+    "kotlin-language-version-configured": "true",
+    "애플리케이션.GameScreen.executor": "Run",
+    "애플리케이션.ItemStoreFrame.executor": "Run",
+    "애플리케이션.LobbyFrame.executor": "Run",
+    "애플리케이션.LoginFrame.executor": "Run",
+    "애플리케이션.ServerMain.executor": "Run",
+    "애플리케이션.WaitingRoom.executor": "Run"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="애플리케이션.LoginFrame">
     <configuration name="GameScreen" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="client.GameScreen" />
+      <module name="bubblePop" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="client.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LobbyFrame" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="client.LobbyFrame" />
       <module name="bubblePop" />
       <extension name="coverage">
         <pattern>
@@ -87,7 +104,22 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="WaitingRoom" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="client.WaitingRoom" />
+      <module name="bubblePop" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="client.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <list>
+      <item itemvalue="애플리케이션.LobbyFrame" />
+      <item itemvalue="애플리케이션.WaitingRoom" />
       <item itemvalue="애플리케이션.GameScreen" />
       <item itemvalue="애플리케이션.LoginFrame" />
       <item itemvalue="애플리케이션.ServerMain" />
@@ -96,6 +128,8 @@
       <list>
         <item itemvalue="애플리케이션.LoginFrame" />
         <item itemvalue="애플리케이션.ServerMain" />
+        <item itemvalue="애플리케이션.LobbyFrame" />
+        <item itemvalue="애플리케이션.WaitingRoom" />
         <item itemvalue="애플리케이션.GameScreen" />
       </list>
     </recent_temporary>
