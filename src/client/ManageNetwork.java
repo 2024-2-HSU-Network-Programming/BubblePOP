@@ -59,15 +59,17 @@ public class ManageNetwork extends Thread{
                             lobbyFrame.addGlobalChatMessage(cm.getMessage());
                             break;
                         case ChatMsg.MODE_TX_CREATEROOM:
-                            System.out.println("새로운 대기방 생성 !: " + cm.getMessage());
+                            System.out.println("새로운 대기방 생성 !: " + cm.getMessage() + "\n");
                             if (lobbyFrame != null) {
                                 String[] roomInfo = cm.getMessage().split("\\|");
                                 int roomId = ++roomCount;
                                 String ownerName = roomInfo[0];
                                 String roomName = roomInfo[1];
+                                String roomPassword = roomInfo[2];
 
-                                lobbyFrame.getRoomListPane().addRoomPane(roomId, roomName);
+                                lobbyFrame.getRoomListPane().addRoomPane(roomId, roomName, roomPassword, 1);
                                 lobbyFrame.updateRoomList("새로운 대기방 " + roomName + "에 들어오세요!"); // UI에 방 정보 업데이트
+                                System.out.println("대기방 갯수: " + RoomManager.getRoomListSize());
                                 WaitingRoom.main(new String[]{}); // 대기방으로 이동
                             }
                             break;
@@ -91,6 +93,7 @@ public class ManageNetwork extends Thread{
             System.err.println("메시지 전송 오류: " + e.getMessage());
         }
     }
+
     private void closeConnection() {
         try {
             if (socket != null) socket.close();

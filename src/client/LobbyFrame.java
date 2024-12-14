@@ -6,6 +6,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 
 public class LobbyFrame extends JFrame {
     private JPanel lobbyPane;
@@ -110,10 +113,10 @@ public class LobbyFrame extends JFrame {
 
         btnItemStore = new JButton("아이템 상점");
         btnCreateRoom = new JButton("대기방 만들기");
-        btnExchangeRoom = new JButton("교환방 만들기");
+        //btnExchangeRoom = new JButton("교환방 만들기");
 
         btnItemStore.setBounds(40, 340, 180,85);
-        btnExchangeRoom.setBounds(40, 440, 180,85);
+        //btnExchangeRoom.setBounds(40, 440, 180,85);
         btnCreateRoom.setBounds(40, 540, 180,85);
 
         btnItemStore.addActionListener(new ActionListener() {
@@ -128,17 +131,10 @@ public class LobbyFrame extends JFrame {
             }
         });
 
-        btnExchangeRoom.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ExchangeRoom.main(new String[]{});
-            }
-        });
 
         lobbyRightPane.add(btnItemStore);
         lobbyRightPane.add(btnCreateRoom);
-        lobbyRightPane.add(btnExchangeRoom);
+        //lobbyRightPane.add(btnExchangeRoom);
 
 
         return lobbyRightPane;
@@ -159,7 +155,10 @@ public class LobbyFrame extends JFrame {
         return roomListTapPane;
     }
 
-//    public static void main(String[] args) {
-//        new LobbyFrame(null, new ManageNetwork());
-//    }
+    public static void main(String[] args) {
+        ObjectInputStream in = null; // 초기화 필요
+        ObjectOutputStream out = null; // 초기화 필요
+        Socket socket = null; // 테스트 목적으로 null 사용
+        new LobbyFrame("TestUser", new ManageNetwork(in, out, socket, null));
+    }
 }
