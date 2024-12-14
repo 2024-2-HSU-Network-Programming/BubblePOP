@@ -1,5 +1,7 @@
 package client;
 
+import shared.ChatMsg;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -29,6 +31,10 @@ public class WaitingRoom {
         exitButton.setBackground(Color.GREEN);
         exitButton.setFont(koreanFont);
         exitButton.addActionListener(e -> {
+            // 서버에 방 나가기 메시지 전송
+            ChatMsg leaveRoomMsg = new ChatMsg(userId, ChatMsg.MODE_LEAVE_ROOM,
+                    roomNumber + "|" + userId);
+            network.sendMessage(leaveRoomMsg);
             frame.dispose();
             new LobbyFrame(userId, network);
         });

@@ -82,6 +82,18 @@ public class ManageNetwork extends Thread{
                                 }
                             }
                             break;
+                        case ChatMsg.MODE_LEAVE_ROOM:
+                            String[] leaveInfo = cm.getMessage().split("\\|");
+                            int leavingRoomId = Integer.parseInt(leaveInfo[0]);
+                            String leavingUser = leaveInfo[1];
+
+                            // UI 업데이트 로직 추가
+                            if (lobbyFrame != null) {
+                                lobbyFrame.updateRoomList(leavingUser + "님이 방에서 나갔습니다.");
+                                lobbyFrame.getRoomListPane().refreshRoomList(); // 방 목록 새로고침
+                            }
+                            break;
+
                         default:
                             System.out.println("알 수 없는 모드: " + cm.getMode());
                     }

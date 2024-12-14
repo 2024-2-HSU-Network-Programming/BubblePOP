@@ -164,13 +164,32 @@ public class ServerMain extends JFrame {
                         String password = roomData[1];
 
                         GameRoom newRoom = RoomManager.createRoom(userName, roomName, password);
-                        //System.out.println("대기방 생성: " + newRoom.getRoomName());
+
+                        // 디버깅을 위한 로깅 추가
+                        System.out.println("방 생성 정보 - RoomID: " + newRoom.getRoomId() +
+                                ", Owner: " + userName +
+                                ", RoomName: " + roomName);
+                        System.out.println("현재 방 목록 크기: " + RoomManager.getRoomListSize());
 
                         // 생성된 방 정보를 모든 클라이언트에 브로드캐스트
                         ChatMsg roomBroadcastMsg = new ChatMsg("Server", ChatMsg.MODE_TX_CREATEROOM,
-                                newRoom.getRoomId() + "|" + userName + "|" + newRoom.getRoomName());
+                                newRoom.getRoomId() + "|" + userName + "|" + roomName);
                         broadcasting(roomBroadcastMsg);
                         break;
+                    case ChatMsg.MODE_LEAVE_ROOM:
+                        String[] leaveRoomData = msg.getMessage().split("\\|");
+                        int roomId = Integer.parseInt(leaveRoomData[0]);
+                        String leavingUser = leaveRoomData[1];
+
+                        RoomManager.leaveRoom(roomId, leavingUser);
+
+                        // 모든 클라이언트에 방 나가기 정보 브로드캐스트
+                        ChatMsg leaveRoomMsg = new ChatMsg("Server", ChatMsg.MODE_LEAVE_ROOM,
+                                roomId + "|" + leavingUser);
+                        broadcasting(leaveRoomMsg);
+                        break;
+
+
 
                     default:
                         t_display.append("알 수 없는 메시지 모드: " + msg.getMode() + "\n");

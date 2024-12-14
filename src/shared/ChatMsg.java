@@ -13,6 +13,7 @@ public class ChatMsg implements Serializable {
     public final static int MODE_TX_ROOMCHAT=304;
     public final static int MODE_TX_GAME=305;
     public final static int MODE_TX_CREATEROOM=400;
+    public final static int MODE_LEAVE_ROOM=410;
 
 
     private String userId;
