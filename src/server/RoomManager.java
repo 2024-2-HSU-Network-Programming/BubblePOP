@@ -25,9 +25,33 @@ public class RoomManager {
         GameRoom room = new GameRoom(roomId, owner, roomName, password);
 
         roomList.add(room);
-        System.out.println("Room Created : "+roomId);
+
+        // 디버깅용 로깅 추가
+        System.out.println("RoomManager - 방 생성: ID=" + roomId +
+                ", Owner=" + owner +
+                ", Name=" + roomName);
+        System.out.println("현재 총 방 개수: " + roomList.size());
+
         return room;
     }
+
+    //방 떠날때
+    public static void leaveRoom(int roomId, String userName) {
+        for (GameRoom room : roomList) {
+            if (room.getRoomId() == roomId) {
+                room.removeUser(userName);
+
+                // 방에 아무도 없으면 방 삭제
+                if (room.getUserListSize() == 0) {
+                    roomList.remove(room);
+                    System.out.println("방 삭제: ID=" + roomId + ", 남은 방 개수: " + roomList.size());
+                }
+                break;
+            }
+        }
+    }
+
+
 
     public static int whereInUser(String userName) {
         for(int i=0; i<roomList.size(); i++) {

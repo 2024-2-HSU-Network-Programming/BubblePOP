@@ -38,6 +38,16 @@ public class LobbyFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setContentPane(lobbyPane);
         setVisible(true); // 프레임 보이도록
+
+    }
+
+    // getter 메서드 추가
+    public String getUserId() {
+        return userId;
+    }
+
+    public ManageNetwork getNetwork() {
+        return network;
     }
 
     private JPanel LobbyCenterPanel() {
@@ -67,7 +77,7 @@ public class LobbyFrame extends JFrame {
         lobbyLeftPane.setBackground(new Color(52,74,119));
         lobbyLeftPane.setLayout(new BorderLayout());
 
-        roomListTapPane = new RoomListTapPane();
+        roomListTapPane = new RoomListTapPane(LobbyFrame.this);
         lobbyLeftPane.add(roomListTapPane, BorderLayout.CENTER);
 
         return lobbyLeftPane;
