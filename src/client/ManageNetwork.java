@@ -62,17 +62,43 @@ public class ManageNetwork extends Thread{
                             System.out.println("새로운 대기방 생성 !: " + cm.getMessage() + "\n");
                             if (lobbyFrame != null) {
                                 String[] roomInfo = cm.getMessage().split("\\|");
-                                int roomId = ++roomCount;
-                                String ownerName = roomInfo[0];
-                                String roomName = roomInfo[1];
-                                String roomPassword = roomInfo[2];
+                              
+                                // 서버에서 할당된 실제 roomId 사용
+                                if (roomInfo.length >= 3) {
+                                    int roomId = Integer.parseInt(roomInfo[0]);
+                                    String ownerName = roomInfo[1];
+                                    String roomName = roomInfo[2];
+                                    String roomPassword = roomInfo[3];
 
-                                lobbyFrame.getRoomListPane().addRoomPane(roomId, roomName, roomPassword, 1);
-                                lobbyFrame.updateRoomList("새로운 대기방 " + roomName + "에 들어오세요!"); // UI에 방 정보 업데이트
-                                System.out.println("대기방 갯수: " + RoomManager.getRoomListSize());
-                                WaitingRoom.main(new String[]{}); // 대기방으로 이동
+                                    lobbyFrame.getRoomListPane().addRoomPane(roomId, roomName, roomPassword, 1);
+                                    lobbyFrame.updateRoomList("새로운 대기방 " + roomName + "에 들어오세요!");
+
+                                    // 방 생성자인 경우에만 WaitingRoom 오픈
+                                    if (ownerName.equals(lobbyFrame.getUserId())) {
+                                        WaitingRoom waitingRoom = new WaitingRoom(
+                                                String.valueOf(roomId),
+                                                roomName,
+                                                ownerName,
+                                                this
+                                        );
+                                        waitingRoom.show();
+                                        lobbyFrame.dispose();
+                                    }
+                                }
                             }
                             break;
+                        case ChatMsg.MODE_LEAVE_ROOM:
+                            String[] leaveInfo = cm.getMessage().split("\\|");
+                            int leavingRoomId = Integer.parseInt(leaveInfo[0]);
+                            String leavingUser = leaveInfo[1];
+
+                            // UI 업데이트 로직 추가
+                            if (lobbyFrame != null) {
+                                lobbyFrame.updateRoomList(leavingUser + "님이 방에서 나갔습니다.");
+                                lobbyFrame.getRoomListPane().refreshRoomList(); // 방 목록 새로고침
+                            }
+                            break;
+
                         default:
                             System.out.println("알 수 없는 모드: " + cm.getMode());
                     }

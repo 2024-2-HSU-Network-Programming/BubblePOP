@@ -95,6 +95,20 @@ public class GameRoom {
         this.isPlaying = isPlaying;
     }
 
+
     public String getRoomPassword() { return roomPassword; }
+
+    public void removeUser(String userName) {
+        userList.remove(userName);
+        // 방장이 나가면 다음 유저를 방장으로 지정 (옵션)
+        if (roomOwner.equals(userName) && !userList.isEmpty()) {
+            roomOwner = userList.get(0);
+        }
+
+        // 사용자 제거 후 방 인원 상태 업데이트
+        isFull = userList.size() >= 4;
+
+        System.out.println("사용자 나감: " + userName + ", 남은 인원: " + userList.size());
+    }
 
 }

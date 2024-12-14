@@ -23,11 +23,12 @@ public class RoomListTapPane extends JTabbedPane {
     private int nextY = 20; // 다음 RoomPane의 Y 좌표
     private final int roomPaneHeight = 80; // RoomPane 높이
     private int gap = 10;
-
+    private LobbyFrame lobbyFrame;
     private ObjectInputStream in;
 
-    public RoomListTapPane() {
+    public RoomListTapPane(LobbyFrame lobbyFrame) {
         tab1 = new JPanel();
+        this.lobbyFrame = lobbyFrame;
         //tab1.setLayout(new BoxLayout(tab1, BoxLayout.Y_AXIS)); // 세로로 여러 방 추가 가능
         tab1.setLayout(null);
         tab1.setBackground(new Color(40,49,69));
@@ -54,6 +55,7 @@ public class RoomListTapPane extends JTabbedPane {
         roomPane.setBounds(20, nextY, 200, roomPaneHeight); // 패널 크기 설정
 
         // 방 번호 라벨
+
         lblRoomNumber = new JLabel(String.valueOf(roomNumber));
         lblRoomNumber.setBounds(20, 20, 20, 20); // 위치와 크기 설정
         lblRoomNumber.setForeground(Color.black); // 흰색 텍스트
@@ -134,7 +136,42 @@ public class RoomListTapPane extends JTabbedPane {
         // 방 상태 갱신
         refreshRoomList();
 
-        // 대기방 화면으로 이동
-        SwingUtilities.invokeLater(() -> WaitingRoom.main(new String[]{String.valueOf(roomNumber), roomName}));
+        // 대기방 화면으로 이동하고 로비 창 닫기
+        SwingUtilities.invokeLater(() -> {
+            WaitingRoom waitingRoom = new WaitingRoom(
+                    String.valueOf(roomNumber),  // roomNumber
+                    roomName,                    // roomName
+                    lobbyFrame.getUserId(),      // userId
+                    lobbyFrame.getNetwork()      // network
+            );
+            waitingRoom.show();  // 대기방 표시
+            lobbyFrame.dispose(); // 로비 창 닫기
+        });
     }
+
+
+    // 방 정보를 수신하는 스레드
+    private void startListeningForRooms() {
+//        new Thread(() -> {
+//            try {
+//                while (true) {
+//                    Object obj = in.readObject(); // 서버로부터 객체 수신
+//                    if (obj instanceof ChatMsg) {
+//                        ChatMsg chatMsg = (ChatMsg) obj;
+//                        if (chatMsg.getMode() == 101) { // 방 생성 메시지라면
+//                            // 방 이름과 번호를 파싱하여 추가
+//                            String[] roomInfo = chatMsg.getMessage().split(", ");
+//                            String roomName = roomInfo[0].split(": ")[1];
+//                            String password = roomInfo[1].split(": ")[1]; // 비밀번호
+//                            int roomNumber = tab1.getComponentCount() + 1; // 새 방 번호
+//                            addRoomPane(roomNumber, roomName);
+//                        }
+//                    }
+//                }
+//            } catch (ClassNotFoundException | IOException e) {
+//                System.out.println("Room 수신 오류: " + e.getMessage());
+//            }
+//        }).start();
+    }
+
 }
