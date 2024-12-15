@@ -11,23 +11,31 @@ public class WaitingRoom {
     private String userId;
     private ManageNetwork network;
     private JFrame frame;
-    private JLabel player2NameLabel; // 상대방 이름 라벨 추가
-    private String roomId;  // 방 ID 저장용
+    private JLabel player2NameLabel;
+    private String roomId;
+    private JButton readyButton;
+    private JButton startButton;
+    private JLabel player1ReadyLabel;  // 플레이어1 준비상태 라벨
+    private JLabel player2ReadyLabel;  // 플레이어2 준비상태 라벨
+    private boolean isReady = false;   // 준비상태 플래그
+    private String roomOwner;          // 방장 ID 저장
 
     // 채팅 관련 필드
     private JTextArea chatArea;
     private JTextField chatInputField;
     private JButton sendButton;
 
+    private ImageIcon userCharacterIcon = new ImageIcon(getClass().getResource("/client/assets/game/user_character.png"));
+    private ImageIcon logoIcon = new ImageIcon(getClass().getResource("/client/assets/logo/logo.png"));
+
     public WaitingRoom(String roomNumber, String roomName, String userId, ManageNetwork network) {
         this.userId = userId;
         this.network = network;
         this.roomId = roomNumber;
+        this.roomOwner = userId;  // 현재 유저가 방장인지 저장
 
-        // network에 현재 WaitingRoom 설정
         network.setWaitingRoom(this);
 
-        // 프레임 초기화
         frame = new JFrame("대기방");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(960, 672);
@@ -35,7 +43,6 @@ public class WaitingRoom {
         frame.getContentPane().setBackground(Color.decode("#181329"));
         frame.setResizable(false);
 
-        // 한글 폰트 설정
         Font koreanFont = new Font("맑은 고딕", Font.PLAIN, 14);
 
         // 로비로 나가기 버튼
@@ -44,13 +51,11 @@ public class WaitingRoom {
         exitButton.setBackground(Color.GREEN);
         exitButton.setFont(koreanFont);
         exitButton.addActionListener(e -> {
-            // 서버에 방 나가기 메시지 전송
             ChatMsg leaveRoomMsg = new ChatMsg(userId, ChatMsg.MODE_LEAVE_ROOM,
                     roomNumber + "|" + userId);
             network.sendMessage(leaveRoomMsg);
             frame.dispose();
 
-            // 새 로비 프레임 생성
             SwingUtilities.invokeLater(() -> {
                 new LobbyFrame();
             });
@@ -70,11 +75,17 @@ public class WaitingRoom {
         playerPanel1.setBounds(50, 170, 200, 250);
         frame.add(playerPanel1);
 
+        // 플레이어1 준비상태 라벨 추가
+        player1ReadyLabel = new JLabel("준비", SwingConstants.CENTER);
+        player1ReadyLabel.setForeground(Color.WHITE);
+        player1ReadyLabel.setFont(new Font("맑은 고딕", Font.BOLD, 14));
+        player1ReadyLabel.setBounds(100, 430, 100, 30);
+        frame.add(player1ReadyLabel);
+
         // 플레이어 패널 2
         JPanel playerPanel2 = createPlayerPanel("대기중", "assets/chracter/mainPlayer2_1.png", koreanFont);
-        // 이름 라벨 저장 수정
         for (Component comp : playerPanel2.getComponents()) {
-            if (comp instanceof JLabel && comp != playerPanel2.getComponent(0)) { // avatarLabel이 아닌 경우
+            if (comp instanceof JLabel && comp != playerPanel2.getComponent(0)) {
                 player2NameLabel = (JLabel)comp;
                 break;
             }
@@ -82,32 +93,49 @@ public class WaitingRoom {
         playerPanel2.setBounds(350, 170, 200, 250);
         frame.add(playerPanel2);
 
-        // 입장 메시지 전송 //주석처리!
-        //중복 메시지 전송 이라
-//        ChatMsg enterMsg = new ChatMsg(userId, ChatMsg.MODE_ENTER_ROOM, roomId + "|" + userId);
-//        network.sendMessage(enterMsg);
+        // 플레이어2 준비상태 라벨 추가
+        player2ReadyLabel = new JLabel("준비", SwingConstants.CENTER);
+        player2ReadyLabel.setForeground(Color.WHITE);
+        player2ReadyLabel.setFont(new Font("맑은 고딕", Font.BOLD, 14));
+        player2ReadyLabel.setBounds(400, 430, 100, 30);
+        frame.add(player2ReadyLabel);
 
         // READY 버튼
-        JButton readyButton = new JButton("READY");
+        readyButton = new JButton("READY");
         readyButton.setBounds(25, 500, 550, 50);
         readyButton.setBackground(Color.YELLOW);
         readyButton.setForeground(Color.BLACK);
         readyButton.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+        readyButton.addActionListener(e -> {
+            isReady = !isReady;  // 준비상태 토글
+            if (isReady) {
+                player1ReadyLabel.setForeground(Color.YELLOW);
+                // 준비완료 메시지 전송
+                ChatMsg readyMsg = new ChatMsg(userId, ChatMsg.MODE_TX_ROOMCHAT,
+                        roomId + "|" + userId + ": 준비완료");
+                network.sendMessage(readyMsg);
+            } else {
+                player1ReadyLabel.setForeground(Color.WHITE);
+                // 준비해제 메시지 전송
+                ChatMsg notReadyMsg = new ChatMsg(userId, ChatMsg.MODE_TX_ROOMCHAT,
+                        roomId + "|" + userId + ": 준비해제");
+                network.sendMessage(notReadyMsg);
+            }
+        });
         frame.add(readyButton);
 
         // START 버튼
-        JButton startButton = new JButton("START");
+        startButton = new JButton("START");
         startButton.setBounds(25, 550, 550, 50);
         startButton.setBackground(Color.RED);
         startButton.setForeground(Color.WHITE);
         startButton.setFont(new Font("맑은 고딕", Font.BOLD, 18));
-        frame.add(startButton);
-
-        // START 버튼 클릭 이벤트
+        startButton.setEnabled(userId.equals(roomOwner));  // 방장인 경우에만 활성화
         startButton.addActionListener(e -> {
             frame.dispose();
             GameScreen.main(new String[]{});
         });
+        frame.add(startButton);
 
         // 채팅 패널
         JPanel chatPanel = new JPanel(new BorderLayout());
@@ -126,7 +154,6 @@ public class WaitingRoom {
         sendButton = new JButton("전송");
         sendButton.setFont(koreanFont);
 
-        // 채팅 전송 이벤트
         chatInputField.addActionListener(e -> sendMessage());
         sendButton.addActionListener(e -> sendMessage());
 
@@ -137,7 +164,30 @@ public class WaitingRoom {
         frame.add(chatPanel);
     }
 
-    // 메시지 전송 메서드
+    // 기존 메서드들...
+
+    public void updatePlayer2Name(String newPlayerName) {
+        System.out.println("Updating player2 name to: " + newPlayerName);
+        if (!newPlayerName.equals(userId)) {
+            SwingUtilities.invokeLater(() -> {
+                System.out.println("이전 이름: " + player2NameLabel.getText());
+                player2NameLabel.setText(newPlayerName);
+                System.out.println("변경된 이름: " + player2NameLabel.getText());
+
+                player2NameLabel.invalidate();
+                frame.validate();
+                frame.repaint();
+            });
+        }
+    }
+
+    // 다른 플레이어의 준비상태 업데이트
+    public void updatePlayer2Ready(boolean ready) {
+        SwingUtilities.invokeLater(() -> {
+            player2ReadyLabel.setForeground(ready ? Color.YELLOW : Color.WHITE);
+        });
+    }
+
     private void sendMessage() {
         String message = chatInputField.getText().trim();
         if (!message.isEmpty()) {
@@ -148,10 +198,17 @@ public class WaitingRoom {
         }
     }
 
-    // 메시지 수신 메서드
     public void receiveMessage(String message) {
         SwingUtilities.invokeLater(() -> {
             chatArea.append(message + "\n");
+            // "준비완료" 메시지 처리
+            if (message.contains("준비완료") && !message.startsWith(userId)) {
+                updatePlayer2Ready(true);
+            }
+            // "준비해제" 메시지 처리
+            else if (message.contains("준비해제") && !message.startsWith(userId)) {
+                updatePlayer2Ready(false);
+            }
             chatArea.setCaretPosition(chatArea.getDocument().getLength());
         });
     }
@@ -182,22 +239,5 @@ public class WaitingRoom {
 
     public void show() {
         frame.setVisible(true);
-    }
-
-    // 상대방 입장 시 호출될 메소드
-    public void updatePlayer2Name(String newPlayerName) {
-        System.out.println("Updating player2 name to: " + newPlayerName);
-        if (!newPlayerName.equals(userId)) {
-            SwingUtilities.invokeLater(() -> {
-                System.out.println("이전 이름: " + player2NameLabel.getText());
-                player2NameLabel.setText(newPlayerName);
-                System.out.println("변경된 이름: " + player2NameLabel.getText());
-
-                // 강제로 UI 업데이트
-                player2NameLabel.invalidate();
-                frame.validate();
-                frame.repaint();
-            });
-        }
     }
 }
