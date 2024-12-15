@@ -6,10 +6,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.Timer;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
@@ -25,7 +22,9 @@ public class OriginalGameScreen extends JFrame {
     private JLabel player2Label;
     private String player2Name;
     private AudioManager audioManager;
-
+    private boolean isSoundButtonHovered = false;
+    private Rectangle soundButtonBounds = new Rectangle(10, 10, 32, 32);
+    private BufferedImage soundOn, soundOff;
 
     // 배경 이미지
     private ImageIcon backgroundImage = new ImageIcon(getClass().getResource("/client/assets/game/two_player_background.png"));
@@ -36,7 +35,73 @@ public class OriginalGameScreen extends JFrame {
         this.isHost = isHost;
         this.player2Name = player2Name;
 
+        try {
+            soundOff = ImageIO.read(getClass().getResourceAsStream("/client/assets/sounds/toolSoundOff.png"));
+            soundOn = ImageIO.read(getClass().getResourceAsStream("/client/assets/sounds/toolSoundOn.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // 전체 게임 UI를 담을 메인 패널
+        JPanel mainPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(backgroundImage.getImage(), 0, 0, getWidth(), getHeight(), this);
+
+                // 사운드 버튼 그리기
+                BufferedImage soundImage = audioManager.isMuted() ? soundOff : soundOn;
+                if (soundImage != null) {
+                    g.drawImage(soundImage, soundButtonBounds.x, soundButtonBounds.y,
+                            soundButtonBounds.width, soundButtonBounds.height, null);
+
+                    // 호버 효과
+                    if (isSoundButtonHovered) {
+                        g.setColor(new Color(255, 255, 255, 50));
+                        g.fillRect(soundButtonBounds.x, soundButtonBounds.y,
+                                soundButtonBounds.width, soundButtonBounds.height);
+                    }
+                }
+            }
+        };
+
+
         initializeFrame();
+
+
+        mainPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (soundButtonBounds.contains(e.getPoint())) {
+                    audioManager.toggleMute();
+                    repaint();
+                }
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (soundButtonBounds.contains(e.getPoint())) {
+                    isSoundButtonHovered = true;
+                    repaint();
+                }
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                isSoundButtonHovered = false;
+                repaint();
+            }
+        });
+
+        mainPanel.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                boolean wasHovered = isSoundButtonHovered;
+                isSoundButtonHovered = soundButtonBounds.contains(e.getPoint());
+                if (wasHovered != isSoundButtonHovered) {
+                    repaint();
+                }
+            }
+        });
         createPanels();
 
         // 오디오 관리자 초기화
@@ -53,14 +118,7 @@ public class OriginalGameScreen extends JFrame {
             }
         });
 
-        // 전체 게임 UI를 담을 메인 패널
-        JPanel mainPanel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                g.drawImage(backgroundImage.getImage(), 0, 0, getWidth(), getHeight(), this);
-            }
-        };
+
         mainPanel.setLayout(null);
         setContentPane(mainPanel);
 
