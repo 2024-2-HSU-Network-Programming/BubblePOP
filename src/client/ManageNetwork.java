@@ -1,6 +1,5 @@
 package client;
 
-import server.GameRoom;
 import server.RoomManager;
 import shared.ChatMsg;
 
@@ -18,6 +17,7 @@ public class ManageNetwork extends Thread{
     private LobbyFrame lobbyFrame;
     private int roomCount = RoomManager.getRoomListSize();
     private WaitingRoom waitingRoom;
+    private OriginalGameScreen originalGameScreen;
 
     public ManageNetwork(ObjectInputStream in, ObjectOutputStream out, Socket socket) {
         this.ois = in;
@@ -140,6 +140,25 @@ public class ManageNetwork extends Thread{
                                 }
                             }
                             break;
+                        case ChatMsg.MODE_GAME_START:
+                            if (waitingRoom != null) {
+                                SwingUtilities.invokeLater(() -> {
+                                    // frame을 dispose 하도록 WaitingRoom에 요청
+                                   waitingRoom.dispose();
+                                    // 게임 화면 시작 (방장이 아님)
+                                    originalGameScreen = new OriginalGameScreen(gameUser.getId(), this, false);
+                                    originalGameScreen.setVisible(true);
+                                });
+                            }
+                            break;
+                        case ChatMsg.MODE_TX_GAME:
+                            // 게임 상태 업데이트 처리
+                            if (originalGameScreen != null) {
+                                originalGameScreen.updateOpponentState(cm.getMessage());
+                            }
+                            break;
+
+
 
                         default:
                             System.out.println("알 수 없는 모드: " + cm.getMode());

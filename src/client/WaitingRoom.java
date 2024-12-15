@@ -1,7 +1,5 @@
 package client;
 
-import client.GameScreen;
-import client.ManageNetwork;
 import shared.ChatMsg;
 
 import javax.swing.*;
@@ -131,10 +129,16 @@ public class WaitingRoom {
         startButton.setForeground(Color.WHITE);
         startButton.setFont(new Font("맑은 고딕", Font.BOLD, 18));
         startButton.setEnabled(userId.equals(roomOwner));  // 방장인 경우에만 활성화
+
         startButton.addActionListener(e -> {
+            // 게임 시작 메시지를 모든 클라이언트에게 전송
+            ChatMsg startMsg = new ChatMsg(userId, ChatMsg.MODE_GAME_START, roomId);
+            network.sendMessage(startMsg);
+            // 게임 화면 시작
             frame.dispose();
-            GameScreen.main(new String[]{});
+            OriginalGameScreen.startGame(userId, network, true);  // true는 방장임을 의미
         });
+
         frame.add(startButton);
 
         // 채팅 패널
@@ -239,5 +243,9 @@ public class WaitingRoom {
 
     public void show() {
         frame.setVisible(true);
+    }
+
+    public void dispose() {
+        frame.dispose();
     }
 }
