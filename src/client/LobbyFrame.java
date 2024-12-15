@@ -56,7 +56,7 @@ public class LobbyFrame extends JFrame {
 
     // getter 메서드 추가
     public String getUserId() {
-        return userId;
+        return user.getId();
     }
 
     public ManageNetwork getNetwork() {
