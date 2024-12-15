@@ -1,5 +1,7 @@
 package client;
 
+import client.GameScreen;
+import client.ManageNetwork;
 import shared.ChatMsg;
 
 import javax.swing.*;
@@ -9,10 +11,16 @@ public class WaitingRoom {
     private String userId;
     private ManageNetwork network;
     private JFrame frame;
+    private JLabel player2NameLabel; // 상대방 이름 라벨 추가
+    private String roomId;  // 방 ID 저장용
 
     public WaitingRoom(String roomNumber, String roomName, String userId, ManageNetwork network) {
         this.userId = userId;
         this.network = network;
+        this.roomId = roomNumber;
+
+        // network에 현재 WaitingRoom 설정
+        network.setWaitingRoom(this);
 
         // 프레임 초기화
         frame = new JFrame("대기방");
@@ -55,8 +63,20 @@ public class WaitingRoom {
 
         // 플레이어 패널 2
         JPanel playerPanel2 = createPlayerPanel("대기중", "assets/chracter/mainPlayer2_1.png", koreanFont);
+        // 이름 라벨 저장 수정
+        for (Component comp : playerPanel2.getComponents()) {
+            if (comp instanceof JLabel && comp != playerPanel2.getComponent(0)) { // avatarLabel이 아닌 경우
+                player2NameLabel = (JLabel)comp;
+                break;
+            }
+        }
         playerPanel2.setBounds(350, 170, 200, 250);
         frame.add(playerPanel2);
+
+        // 입장 메시지 전송 //주석처리!
+        //중복 메시지 전송 이라
+//        ChatMsg enterMsg = new ChatMsg(userId, ChatMsg.MODE_ENTER_ROOM, roomId + "|" + userId);
+//        network.sendMessage(enterMsg);
 
         // READY 버튼
         JButton readyButton = new JButton("READY");
@@ -130,5 +150,22 @@ public class WaitingRoom {
 
     public void show() {
         frame.setVisible(true);
+    }
+
+    // 상대방 입장 시 호출될 메소드
+    public void updatePlayer2Name(String newPlayerName) {
+        System.out.println("Updating player2 name to: " + newPlayerName);
+        if (!newPlayerName.equals(userId)) {
+            SwingUtilities.invokeLater(() -> {
+                System.out.println("이전 이름: " + player2NameLabel.getText());
+                player2NameLabel.setText(newPlayerName);
+                System.out.println("변경된 이름: " + player2NameLabel.getText());
+
+                // 강제로 UI 업데이트
+                player2NameLabel.invalidate();
+                frame.validate();
+                frame.repaint();
+            });
+        }
     }
 }
