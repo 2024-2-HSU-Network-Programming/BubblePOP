@@ -77,7 +77,15 @@ public class OriginalGameScreen extends JFrame {
         if (isHost) {
             player1Panel.setFocusable(true);
             player1Panel.requestFocus();
+        } else {
+            player2Panel.setFocusable(true);
+            player2Panel.requestFocus();
         }
+
+        // 메인 패널에 추가
+        add(player1Panel);
+        add(player2Panel);
+
     }
 
     private void addLabels() {

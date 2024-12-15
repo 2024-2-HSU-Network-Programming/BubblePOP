@@ -17,6 +17,10 @@ public class WaitingRoom {
     private JLabel player2ReadyLabel;  // 플레이어2 준비상태 라벨
     private boolean isReady = false;   // 준비상태 플래그
     private String roomOwner;          // 방장 ID 저장
+    private boolean player1Ready = false;  // 자신의 준비 상태
+    private boolean player2Ready = false;  // 상대방의 준비 상태
+    private GameUser gameUser;
+
 
     // 채팅 관련 필드
     private JTextArea chatArea;
@@ -31,6 +35,7 @@ public class WaitingRoom {
         this.network = network;
         this.roomId = roomNumber;
         this.roomOwner = userId;  // 현재 유저가 방장인지 저장
+        this.gameUser = GameUser.getInstance();// GameUser 초기화
 
         network.setWaitingRoom(this);
 
@@ -106,19 +111,19 @@ public class WaitingRoom {
         readyButton.setFont(new Font("맑은 고딕", Font.BOLD, 18));
         readyButton.addActionListener(e -> {
             isReady = !isReady;  // 준비상태 토글
+            player1Ready = isReady;  // 자신의 준비 상태 업데이트
             if (isReady) {
                 player1ReadyLabel.setForeground(Color.YELLOW);
-                // 준비완료 메시지 전송
                 ChatMsg readyMsg = new ChatMsg(userId, ChatMsg.MODE_TX_ROOMCHAT,
                         roomId + "|" + userId + ": 준비완료");
                 network.sendMessage(readyMsg);
             } else {
                 player1ReadyLabel.setForeground(Color.WHITE);
-                // 준비해제 메시지 전송
                 ChatMsg notReadyMsg = new ChatMsg(userId, ChatMsg.MODE_TX_ROOMCHAT,
                         roomId + "|" + userId + ": 준비해제");
                 network.sendMessage(notReadyMsg);
             }
+            updateStartButton();  // START 버튼 상태 업데이트
         });
         frame.add(readyButton);
 
@@ -131,12 +136,18 @@ public class WaitingRoom {
         startButton.setEnabled(userId.equals(roomOwner));  // 방장인 경우에만 활성화
 
         startButton.addActionListener(e -> {
-            // 게임 시작 메시지를 모든 클라이언트에게 전송
-            ChatMsg startMsg = new ChatMsg(userId, ChatMsg.MODE_GAME_START, roomId);
-            network.sendMessage(startMsg);
-            // 게임 화면 시작
-            frame.dispose();
-            OriginalGameScreen.startGame(userId, network, true);  // true는 방장임을 의미
+
+            if (player1Ready && player2Ready) {
+                if(roomOwner.equals(userId)) {
+                    // 게임 시작 메시지를 모든 클라이언트에게 전송
+                    ChatMsg startMsg = new ChatMsg(userId, ChatMsg.MODE_GAME_START, roomId);
+                    network.sendMessage(startMsg);
+
+                    // 현재 대기방 닫기
+                    dispose();
+
+                }
+                }
         });
 
         frame.add(startButton);
@@ -188,8 +199,11 @@ public class WaitingRoom {
     // 다른 플레이어의 준비상태 업데이트
     public void updatePlayer2Ready(boolean ready) {
         SwingUtilities.invokeLater(() -> {
+            player2Ready = ready;  // 상대방의 준비 상태 업데이트
             player2ReadyLabel.setForeground(ready ? Color.YELLOW : Color.WHITE);
+            updateStartButton();  // START 버튼 상태 업데이트
         });
+
     }
 
     private void sendMessage() {
@@ -248,4 +262,16 @@ public class WaitingRoom {
     public void dispose() {
         frame.dispose();
     }
+
+    // START 버튼 활성화 상태를 업데이트하는 메서드 추가
+    private void updateStartButton() {
+        if (userId.equals(roomOwner)) {
+            startButton.setEnabled(player1Ready && player2Ready);
+        }
+    }
+
+    public String getRoomOwner() {
+        return roomOwner;
+    }
+
 }

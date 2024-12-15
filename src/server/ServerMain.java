@@ -235,6 +235,23 @@ public class ServerMain extends JFrame {
                             // 서버 로그에 출력
                             printMessage("[방 " + roomChatId + "] " + chatMessage);
                         }
+                    case ChatMsg.MODE_GAME_START:
+                        // 게임 시작 메시지를 모든 클라이언트에게 브로드캐스트
+                        t_display.append("게임 시작: " + msg.getMessage() + "\n");
+                        broadcasting(msg);
+                        break;
+
+                    case ChatMsg.MODE_TX_GAME:
+                        // 게임 상태 업데이트를 모든 클라이언트에게 브로드캐스트
+                        broadcasting(msg);
+                        break;
+
+                    case ChatMsg.MODE_GAME_ACTION:
+                    case ChatMsg.MODE_BUBBLE_POP:
+                    case ChatMsg.MODE_GAME_SYNC:
+                    case ChatMsg.MODE_GAME_OVER:
+                        broadcasting(msg);
+                        break;
 
                     default:
                         t_display.append("알 수 없는 메시지 모드: " + msg.getMode() + "\n");

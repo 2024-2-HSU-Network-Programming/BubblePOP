@@ -143,9 +143,15 @@ public class ManageNetwork extends Thread{
                         case ChatMsg.MODE_GAME_START:
                             if (waitingRoom != null) {
                                 SwingUtilities.invokeLater(() -> {
-                                    // frame을 dispose 하도록 WaitingRoom에 요청
-                                   waitingRoom.dispose();
-                                    // 게임 화면 시작 (방장이 아님)
+                                    // 대기방 창 닫기
+                                    waitingRoom.dispose();
+
+                                    // gameUser가 null이면 초기화
+                                    if (gameUser == null) {
+                                        gameUser = GameUser.getInstance();
+                                    }
+
+                                    // 게임 화면 시작
                                     originalGameScreen = new OriginalGameScreen(gameUser.getId(), this, false);
                                     originalGameScreen.setVisible(true);
                                 });
