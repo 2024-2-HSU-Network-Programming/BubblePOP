@@ -4,6 +4,7 @@ import server.GameRoom;
 import server.RoomManager;
 import shared.ChatMsg;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -70,50 +71,34 @@ public class ManageNetwork extends Thread{
                             lobbyFrame.addGlobalChatMessage(cm.getMessage());
                             break;
                         case ChatMsg.MODE_TX_CREATEROOM:
-                            //System.out.println("새로운 대기방 생성 !: " + cm.getMessage() + "\n");
                             if (lobbyFrame != null) {
                                 String[] roomInfo = cm.getMessage().split("\\|");
-                              
-                                // 서버에서 할당된 실제 roomId 사용
                                 if (roomInfo.length >= 4) {
                                     int roomId = Integer.parseInt(roomInfo[0]);
                                     String ownerName = roomInfo[1];
                                     String roomName = roomInfo[2];
                                     String roomPassword = roomInfo[3];
+                                    RoomManager.getInstance().createRoom(ownerName, roomName, roomPassword); // 방 생성
+                                    lobbyFrame.getRoomListPane().refreshRoomList(); // UI 갱신
+                                    // UI 갱신 작업은 SwingUtilities.invokeLater를 통해 실행
+                                    SwingUtilities.invokeLater(() -> {
+                                        lobbyFrame.getRoomListPane().addRoomPane(roomId, roomName, roomPassword, 1);
+                                        System.out.println("Adding RoomPane: RoomID=" + roomId + ", RoomName=" + roomName);
 
-                                    // 방 생성 후 로비 업데이트
-                                    GameRoom room = RoomManager.getGameRoom(Integer.toString(roomId));
-
-//                                    lobbyFrame.getRoomListPane().addRoomPane(roomId, roomName, roomPassword, RoomManager.getGameRoom(Integer.toString(roomId)).getUserListSize());
-//                                    lobbyFrame.updateRoomList("새로운 대기방 " + roomName + "에 들어오세요!");
-                                    if (room != null) {
-                                        lobbyFrame.getRoomListPane().addRoomPane(
-                                                roomId,
+                                        lobbyFrame.getRoomListPane().refreshRoomList(); // 강제 UI 갱신
+                                        lobbyFrame.updateRoomList("새로운 대기방 " + roomName + "에 들어오세요!\n");
+                                    });
+                                    // 방 생성자인 경우에만 WaitingRoom 오픈
+                                    if (ownerName.equals(lobbyFrame.getUserId())) {
+                                        WaitingRoom waitingRoom = new WaitingRoom(
+                                                String.valueOf(roomId),
                                                 roomName,
-                                                roomPassword,
-                                                room.getUserListSize()
+                                                ownerName,
+                                                this
                                         );
-                                        lobbyFrame.getRoomListPane().refreshRoomList(); // 강제 갱신
-                                        lobbyFrame.updateRoomList("새로운 대기방 " + roomName + "에 들어오세요!");
-
-                                        // 방 생성자인 경우에만 WaitingRoom 오픈
-                                        if (ownerName.equals(lobbyFrame.getUserId())) {
-                                            WaitingRoom waitingRoom = new WaitingRoom(
-                                                    String.valueOf(roomId),
-                                                    roomName,
-                                                    ownerName,
-                                                    this
-                                            );
-                                            waitingRoom.show();
-                                            lobbyFrame.dispose();
-                                        }
-                                    } else {
-                                        System.err.println("RoomManager에서 방을 찾을 수 없습니다: roomId=" + roomId);
+                                        waitingRoom.show();
+                                        lobbyFrame.dispose();
                                     }
-
-
-
-
                                 }
                             }
                             break;

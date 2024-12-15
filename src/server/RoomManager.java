@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class RoomManager {
     //private static List<GameRoom> roomList;
+    private static RoomManager instance = new RoomManager();
     private static Map<String, GameRoom> rooms = new HashMap<>();
     private static AtomicInteger atomicInteger;
     private static int roomIdCounter = 1;
@@ -39,8 +40,11 @@ public class RoomManager {
 //        System.out.println("Room count: " + getRoomListSize());
 //        return room;
 //    }
+public static RoomManager getInstance() {
+    return instance;
+}
 // 방 생성 메서드
-public static GameRoom createRoom(String ownerName, String roomName, String password) {
+public synchronized GameRoom createRoom(String ownerName, String roomName, String password) {
     int roomId = roomIdCounter++;
     GameRoom newRoom = new GameRoom(roomId, ownerName, roomName, password);
     rooms.put(Integer.toString(roomId), newRoom);
@@ -111,6 +115,11 @@ public static boolean addUserToRoom(int roomId, String userName) {
 //        }
 //        return null; // 방을 찾지 못한 경우
 //    }
+// 모든 방 반환 메서드
+public synchronized List<GameRoom> getAllRooms() {
+    System.out.println("getAllRooms 호출됨. 현재 방 개수: " + rooms.size());
+    return new ArrayList<>(rooms.values());
+}
 // 방 검색 메서드
 public static GameRoom getGameRoom(String roomId) {
     return rooms.get(roomId);

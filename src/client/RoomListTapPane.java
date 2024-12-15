@@ -26,6 +26,8 @@ public class RoomListTapPane extends JTabbedPane {
     private LobbyFrame lobbyFrame;
     private ObjectInputStream in;
     private ManageNetwork network;
+    GameUser user = GameUser.getInstance();
+
     public RoomListTapPane(LobbyFrame lobbyFrame, ManageNetwork network) {
         tab1 = new JPanel();
         this.lobbyFrame = lobbyFrame;
@@ -100,6 +102,7 @@ public class RoomListTapPane extends JTabbedPane {
 
     // 새로운 RoomPane 추가 메서드
     public void addRoomPane(int roomNumber, String roomName, String password, int userListSize) {
+        System.out.println("addRoomPane 호출: RoomID=" + roomNumber + ", RoomName=" + roomName);
         JPanel newRoomPane = RoomPane(roomNumber, roomName, password, userListSize);
         tab1.add(newRoomPane); // tab1에 추가
         nextY += roomPaneHeight + gap; // 다음 RoomPane의 Y 좌표 갱신
@@ -111,26 +114,37 @@ public class RoomListTapPane extends JTabbedPane {
     // RoomManager로부터 실시간으로 방 정보를 가져와 갱신
     public void refreshRoomList() {
         tab1.removeAll(); // 기존 RoomPane 제거
+        tab1.setLayout(null); // 레이아웃을 명시적으로 재설정
         nextY = 20; // 초기 Y 좌표로 리셋
+        List<GameRoom> rooms = RoomManager.getInstance().getAllRooms();
+        System.out.println("RoomManager에서 반환된 방 개수: " + rooms.size());
 
-        List<GameRoom> roomList = RoomManager.getRoomList();
-
-        for (GameRoom room : roomList) {
+        for (GameRoom room : rooms) {
+            System.out.println("Room 갱신 중: RoomID=" + room.getRoomId() + ", RoomName=" + room.getRoomName());
             addRoomPane(room.getRoomId(), room.getRoomName(), room.getRoomPassword(), room.getUserListSize());
         }
 
+        System.out.println(RoomManager.getInstance().getAllRooms());
         tab1.revalidate();
         tab1.repaint();
     }
 
     private void enterRoom(int roomNumber, String roomName) {
         System.out.println("Entering Room: " + roomName + " (ID: " + roomNumber + ")");
-        String currentUser = "TestUser"; // 현재 사용자를 가져오는 로직 추가 필요
+        String currentUser = user.getId(); // 현재 사용자를 가져오는 로직 추가 필요
 
-        boolean success = RoomManager.addUserToRoom(roomNumber, currentUser);
+        //boolean success = RoomManager.addUserToRoom(roomNumber, currentUser);
+        boolean success = RoomManager.getInstance().addUserToRoom(roomNumber, currentUser);
+
         if (success) {
             System.out.println("User successfully entered the room.");
-            SwingUtilities.invokeLater(() -> new WaitingRoom(Integer.toString(roomNumber), roomName, currentUser, network));
+            SwingUtilities.invokeLater(() ->
+                    {
+                        WaitingRoom waitingRoom = new WaitingRoom(Integer.toString(roomNumber), roomName, currentUser, network);
+                        waitingRoom.show();
+                    }
+
+            );
         } else {
             JOptionPane.showMessageDialog(null, "방이 가득 찼습니다!", "입장 실패", JOptionPane.ERROR_MESSAGE);
         }
@@ -138,17 +152,17 @@ public class RoomListTapPane extends JTabbedPane {
         // 방 상태 갱신
         refreshRoomList();
 
-        // 대기방 화면으로 이동하고 로비 창 닫기
-        SwingUtilities.invokeLater(() -> {
-            WaitingRoom waitingRoom = new WaitingRoom(
-                    String.valueOf(roomNumber),  // roomNumber
-                    roomName,                    // roomName
-                    lobbyFrame.getUserId(),      // userId
-                    lobbyFrame.getNetwork()      // network
-            );
-            waitingRoom.show();  // 대기방 표시
-            lobbyFrame.dispose(); // 로비 창 닫기
-        });
+//        // 대기방 화면으로 이동하고 로비 창 닫기
+//        SwingUtilities.invokeLater(() -> {
+//            WaitingRoom waitingRoom = new WaitingRoom(
+//                    String.valueOf(roomNumber),  // roomNumber
+//                    roomName,                    // roomName
+//                    lobbyFrame.getUserId(),      // userId
+//                    lobbyFrame.getNetwork()      // network
+//            );
+//            waitingRoom.show();  // 대기방 표시
+//            lobbyFrame.dispose(); // 로비 창 닫기
+//        });
     }
 
 

@@ -6,12 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="a3e92f76-7a23-4d81-b3aa-d28e0e723f73" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/GameUser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/GameUser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/LobbyFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/LobbyFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/LoginFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/LoginFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/MakeRoomDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/MakeRoomDialog.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/ManageNetwork.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/ManageNetwork.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/WaitingRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/WaitingRoom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/RoomListTapPane.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/RoomListTapPane.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server/RoomManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/RoomManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server/ServerMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/ServerMain.java" afterDir="false" />
     </list>
