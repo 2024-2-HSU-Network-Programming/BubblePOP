@@ -143,17 +143,22 @@ public class ManageNetwork extends Thread{
                         case ChatMsg.MODE_GAME_START:
                             if (waitingRoom != null) {
                                 SwingUtilities.invokeLater(() -> {
-                                    // 대기방 창 닫기
-                                    waitingRoom.dispose();
-
                                     // gameUser가 null이면 초기화
                                     if (gameUser == null) {
                                         gameUser = GameUser.getInstance();
                                     }
 
+                                    // 대기방 창 닫기
+                                    waitingRoom.dispose();
+
                                     // 게임 화면 시작
-                                    originalGameScreen = new OriginalGameScreen(gameUser.getId(), this, false);
-                                    originalGameScreen.setVisible(true);
+                                    OriginalGameScreen gameScreen = new OriginalGameScreen(
+                                            gameUser.getId(),
+                                            this,
+                                            waitingRoom.getRoomOwner().equals(gameUser.getId())
+                                    );
+                                    gameScreen.setVisible(true);
+                                    originalGameScreen = gameScreen;
                                 });
                             }
                             break;

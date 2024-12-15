@@ -136,18 +136,20 @@ public class WaitingRoom {
         startButton.setEnabled(userId.equals(roomOwner));  // 방장인 경우에만 활성화
 
         startButton.addActionListener(e -> {
-
             if (player1Ready && player2Ready) {
-                if(roomOwner.equals(userId)) {
-                    // 게임 시작 메시지를 모든 클라이언트에게 전송
-                    ChatMsg startMsg = new ChatMsg(userId, ChatMsg.MODE_GAME_START, roomId);
-                    network.sendMessage(startMsg);
+                // 게임 시작 메시지를 모든 클라이언트에게 전송
+                ChatMsg startMsg = new ChatMsg(userId, ChatMsg.MODE_GAME_START, roomId);
+                network.sendMessage(startMsg);
 
-                    // 현재 대기방 닫기
-                    dispose();
-
-                }
-                }
+                // 현재 대기방 닫기
+                dispose();
+//
+//                // 게임 화면 시작
+//                SwingUtilities.invokeLater(() -> {
+//                    OriginalGameScreen gameScreen = new OriginalGameScreen(userId, network, roomOwner.equals(userId));
+//                    gameScreen.setVisible(true);
+//                });
+            }
         });
 
         frame.add(startButton);
