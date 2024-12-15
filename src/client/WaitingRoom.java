@@ -280,4 +280,8 @@ public class WaitingRoom {
         return roomOwner;
     }
 
+    public String getPlayer2Name() {
+        return player2NameLabel.getText();
+    }
+
 }

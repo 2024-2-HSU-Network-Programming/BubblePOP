@@ -8,6 +8,8 @@ import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
@@ -21,18 +23,35 @@ public class OriginalGameScreen extends JFrame {
     private boolean isHost;
     private JLabel player1Label;
     private JLabel player2Label;
+    private String player2Name;
+    private AudioManager audioManager;
+
 
     // 배경 이미지
     private ImageIcon backgroundImage = new ImageIcon(getClass().getResource("/client/assets/game/two_player_background.png"));
 
-    public OriginalGameScreen(String userId, ManageNetwork network, boolean isHost) {
+    public OriginalGameScreen(String userId, ManageNetwork network, boolean isHost, String player2Name) {
         this.userId = userId;
         this.network = network;
         this.isHost = isHost;
+        this.player2Name = player2Name;
 
         initializeFrame();
         createPanels();
-        addLabels();
+
+        // 오디오 관리자 초기화
+        audioManager = new AudioManager();
+        audioManager.playBGM(); // 게임 시작 시 배경음악 재생
+
+        // 창 닫힐 때 BGM 정지 리스너 추가
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (audioManager != null) {
+                    audioManager.stopBGM();
+                }
+            }
+        });
 
         // 전체 게임 UI를 담을 메인 패널
         JPanel mainPanel = new JPanel() {
@@ -66,6 +85,10 @@ public class OriginalGameScreen extends JFrame {
         mainPanel.add(player1Label);
         mainPanel.add(player2Label);
 
+        // 라벨을 항상 최상위에 표시
+        mainPanel.setComponentZOrder(player1Label, 0);
+        mainPanel.setComponentZOrder(player2Label, 0);
+
         startGameLoop();
     }
 
@@ -93,16 +116,21 @@ public class OriginalGameScreen extends JFrame {
             player1Panel.setFocusable(true);
             player1Panel.requestFocus();
         }
+        addLabels(player2Name);
     }
 
-    private void addLabels() {
+    private void addLabels(String player2Name) {
         player1Label = new JLabel(isHost ? "Host: " + userId : "Player: " + userId);
-        player1Label.setBounds(65, 35, 200, 30);
-        player1Label.setForeground(Color.WHITE);
+        player1Label.setBounds(345, 550, 200, 15);
+        player1Label.setForeground(Color.BLACK);
+        player1Label.setFont(new Font("Arial", Font.BOLD, 13));  // 폰트 크기와 스타일 변경
 
-        player2Label = new JLabel("Waiting for opponent...");
-        player2Label.setBounds(322, 35, 200, 30);
-        player2Label.setForeground(Color.WHITE);
+
+        player2Label = new JLabel(player2Name);
+        player2Label.setBounds(850, 550, 200, 15);
+        player2Label.setForeground(Color.BLACK);
+        player1Label.setFont(new Font("Arial", Font.BOLD, 13));  // 폰트 크기와 스타일 변경
+
     }
 
     // 상대방 정보 업데이트
@@ -116,15 +144,16 @@ public class OriginalGameScreen extends JFrame {
     public void updateOpponentState(String gameState) {
         try {
             String[] stateData = gameState.split("\\|");
-            if (stateData.length >= 4) {
+            if (stateData.length >= 6) {
                 int bubbleX = Integer.parseInt(stateData[0]);
                 int bubbleY = Integer.parseInt(stateData[1]);
                 double angle = Double.parseDouble(stateData[2]);
                 String boardState = stateData[3];
+                int currentBubbleType = Integer.parseInt(stateData[4]);  // 현재 구슬 타입
+                int nextBubbleType = Integer.parseInt(stateData[5]);     // 다음 구슬 타입
 
-                // 상대방의 게임 상태만 player2Panel에 업데이트
                 SwingUtilities.invokeLater(() -> {
-                    player2Panel.updateFromNetwork(bubbleX, bubbleY, angle, boardState);
+                    player2Panel.updateFromNetwork(bubbleX, bubbleY, angle, boardState, currentBubbleType, nextBubbleType);
                     repaint();
                 });
             }
@@ -135,28 +164,27 @@ public class OriginalGameScreen extends JFrame {
 
     // 게임 루프 시작
     private void startGameLoop() {
-        Timer gameLoop = new Timer(50, e -> {
+        Timer gameLoop = new Timer(25, e -> {
             // 자신의 게임 상태만 서버로 전송
-            String gameState = String.format("%d|%d|%f|%s",
+            String gameState = String.format("%d|%d|%f|%s|%d|%d",
                     player1Panel.getBubbleX(),
                     player1Panel.getBubbleY(),
                     player1Panel.getAngle(),
-                    player1Panel.getBoardState()
+                    player1Panel.getBoardState(),
+                    player1Panel.getCurrentBubbleType(),  // 현재 구슬 타입 추가
+                    player1Panel.getNextBubbleType()      // 다음 구슬 타입 추가
             );
 
-            // 게임 상태 전송
             network.sendMessage(new ChatMsg(userId, ChatMsg.MODE_TX_GAME, gameState));
-
-            // 자신의 패널만 갱신
             player1Panel.repaint();
         });
         gameLoop.start();
     }
 
     // 게임 시작을 위한 정적 메서드
-    public static void startGame(String userId, ManageNetwork network, boolean isHost) {
+    public static void startGame(String userId, ManageNetwork network, boolean isHost, String player2Name) {
         SwingUtilities.invokeLater(() -> {
-            OriginalGameScreen game = new OriginalGameScreen(userId, network, isHost);
+            OriginalGameScreen game = new OriginalGameScreen(userId, network, isHost, player2Name);
             game.setVisible(true);
         });
     }
@@ -318,6 +346,15 @@ public class OriginalGameScreen extends JFrame {
             }
         }
 
+        // GamePanel 클래스에 getter 메서드 추가
+        public int getCurrentBubbleType() {
+            return currentBubbleType;
+        }
+
+        public int getNextBubbleType() {
+            return nextBubbleType;
+        }
+
         /////
         // DFS를 이용한 구슬 매칭 및 제거 메서드
         private void removeBubbles(int row, int col, int targetType, Set<int[]> connectedBubbles) {
@@ -420,7 +457,6 @@ public class OriginalGameScreen extends JFrame {
         @Override
         public void keyPressed(KeyEvent e) {
             if (!isControllable) return;
-            // ... (기존 keyPressed 구현)
             {
 
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
@@ -442,6 +478,8 @@ public class OriginalGameScreen extends JFrame {
                         isBubbleMoving = true;
                         double startX = bubbleX;
                         double startY = bubbleY;
+
+                        ((OriginalGameScreen)SwingUtilities.getWindowAncestor(this)).audioManager.playShotSound();
 
                         dx = Math.cos(angle - Math.PI / 2) * bubbleSpeed;
                         dy = Math.sin(angle - Math.PI / 2) * bubbleSpeed;
@@ -515,6 +553,7 @@ public class OriginalGameScreen extends JFrame {
             }
 
         }
+
 
         private Point findNearestGridPosition(int x, int y) {
             int row = (y - BOARD_TOP + BUBBLE_SIZE) / BUBBLE_SIZE;
@@ -979,10 +1018,13 @@ public class OriginalGameScreen extends JFrame {
                 default -> null;
             };
         }
-        public void updateFromNetwork(int bubbleX, int bubbleY, double angle, String boardState) {
+        public void updateFromNetwork(int bubbleX, int bubbleY, double angle, String boardState,
+                                      int currentBubbleType, int nextBubbleType) {
             this.bubbleX = bubbleX;
             this.bubbleY = bubbleY;
             this.angle = angle;
+            this.currentBubbleType = currentBubbleType;  // 현재 구슬 타입 업데이트
+            this.nextBubbleType = nextBubbleType;        // 다음 구슬 타입 업데이트
             updateBoardState(boardState);
             repaint();
         }

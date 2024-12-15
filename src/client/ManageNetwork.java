@@ -148,14 +148,18 @@ public class ManageNetwork extends Thread{
                                         gameUser = GameUser.getInstance();
                                     }
 
+                                    // player2의 이름 가져오기
+                                    String player2Name = waitingRoom.getPlayer2Name(); // 이 메서드를 WaitingRoom에 추가해야 함
+
                                     // 대기방 창 닫기
                                     waitingRoom.dispose();
 
-                                    // 게임 화면 시작
+                                    // 게임 화면 시작 (player2Name 전달)
                                     OriginalGameScreen gameScreen = new OriginalGameScreen(
                                             gameUser.getId(),
                                             this,
-                                            waitingRoom.getRoomOwner().equals(gameUser.getId())
+                                            waitingRoom.getRoomOwner().equals(gameUser.getId()),
+                                            player2Name  // 상대방 이름 전달
                                     );
                                     gameScreen.setVisible(true);
                                     originalGameScreen = gameScreen;
