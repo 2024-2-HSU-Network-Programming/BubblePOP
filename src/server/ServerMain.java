@@ -224,20 +224,17 @@ public class ServerMain extends JFrame {
                         int roomChatId = Integer.parseInt(roomChatData[0]);
                         String chatMessage = msg.getMessage().split("\\|", 2)[1];
 
-                        // 서버에서 해당 방의 모든 유저에게 메시지 브로드캐스트
+                        // 서버에서 해당 방의 모든 유저에게 한 번만 브로드캐스트
                         GameRoom room = RoomManager.getInstance().getGameRoom(String.valueOf(roomChatId));
                         if (room != null) {
-                            List<String> roomUsers = room.getUserList();
-                            for (String user : roomUsers) {
-                                ChatMsg roomChatMsg = new ChatMsg(userName, ChatMsg.MODE_TX_ROOMCHAT,
-                                        roomChatId + "|" + chatMessage);
-                                broadcasting(roomChatMsg);
-                            }
+                            // 방 전체에 대해 한 번만 브로드캐스트
+                            ChatMsg roomChatMsg = new ChatMsg(userName, ChatMsg.MODE_TX_ROOMCHAT,
+                                    roomChatId + "|" + chatMessage);
+                            broadcasting(roomChatMsg);
 
                             // 서버 로그에 출력
                             printMessage("[방 " + roomChatId + "] " + chatMessage);
                         }
-                        break;
 
                     default:
                         t_display.append("알 수 없는 메시지 모드: " + msg.getMode() + "\n");
