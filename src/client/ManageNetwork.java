@@ -132,6 +132,14 @@ public class ManageNetwork extends Thread{
                                 System.out.println("WaitingRoom is null");
                             }
                             break;
+                        case ChatMsg.MODE_TX_ROOMCHAT:
+                            if (waitingRoom != null) {
+                                String[] roomChatData = cm.getMessage().split("\\|", 2);
+                                if (roomChatData.length == 2) {
+                                    waitingRoom.receiveMessage(roomChatData[1]);
+                                }
+                            }
+                            break;
 
                         default:
                             System.out.println("알 수 없는 모드: " + cm.getMode());

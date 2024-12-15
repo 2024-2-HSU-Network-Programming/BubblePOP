@@ -14,6 +14,11 @@ public class WaitingRoom {
     private JLabel player2NameLabel; // 상대방 이름 라벨 추가
     private String roomId;  // 방 ID 저장용
 
+    // 채팅 관련 필드
+    private JTextArea chatArea;
+    private JTextField chatInputField;
+    private JButton sendButton;
+
     public WaitingRoom(String roomNumber, String roomName, String userId, ManageNetwork network) {
         this.userId = userId;
         this.network = network;
@@ -44,7 +49,11 @@ public class WaitingRoom {
                     roomNumber + "|" + userId);
             network.sendMessage(leaveRoomMsg);
             frame.dispose();
-            //new LobbyFrame(userId, network);
+
+            // 새 로비 프레임 생성
+            SwingUtilities.invokeLater(() -> {
+                new LobbyFrame();
+            });
         });
         frame.add(exitButton);
 
@@ -101,27 +110,50 @@ public class WaitingRoom {
         });
 
         // 채팅 패널
-        JPanel chatPanel = new JPanel();
-        chatPanel.setLayout(new BorderLayout());
+        JPanel chatPanel = new JPanel(new BorderLayout());
         chatPanel.setBounds(630, 50, 300, 550);
         chatPanel.setBackground(Color.LIGHT_GRAY);
 
-        JTextArea chatArea = new JTextArea();
+        chatArea = new JTextArea();
         chatArea.setEditable(false);
         chatArea.setFont(koreanFont);
         JScrollPane chatScrollPane = new JScrollPane(chatArea);
         chatPanel.add(chatScrollPane, BorderLayout.CENTER);
 
         JPanel chatInputPanel = new JPanel(new BorderLayout());
-        JTextField chatInputField = new JTextField();
+        chatInputField = new JTextField();
         chatInputField.setFont(koreanFont);
-        JButton sendButton = new JButton("전송");
+        sendButton = new JButton("전송");
         sendButton.setFont(koreanFont);
+
+        // 채팅 전송 이벤트
+        chatInputField.addActionListener(e -> sendMessage());
+        sendButton.addActionListener(e -> sendMessage());
+
         chatInputPanel.add(chatInputField, BorderLayout.CENTER);
         chatInputPanel.add(sendButton, BorderLayout.EAST);
         chatPanel.add(chatInputPanel, BorderLayout.SOUTH);
 
         frame.add(chatPanel);
+    }
+
+    // 메시지 전송 메서드
+    private void sendMessage() {
+        String message = chatInputField.getText().trim();
+        if (!message.isEmpty()) {
+            ChatMsg chatMsg = new ChatMsg(userId, ChatMsg.MODE_TX_ROOMCHAT,
+                    roomId + "|" + userId + ": " + message);
+            network.sendMessage(chatMsg);
+            chatInputField.setText("");
+        }
+    }
+
+    // 메시지 수신 메서드
+    public void receiveMessage(String message) {
+        SwingUtilities.invokeLater(() -> {
+            chatArea.append(message + "\n");
+            chatArea.setCaretPosition(chatArea.getDocument().getLength());
+        });
     }
 
     private JPanel createPlayerPanel(String playerName, String imagePath, Font font) {

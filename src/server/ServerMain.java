@@ -219,6 +219,26 @@ public class ServerMain extends JFrame {
                         }
                         break;
 
+                    case ChatMsg.MODE_TX_ROOMCHAT:
+                        String[] roomChatData = msg.getMessage().split("\\|");
+                        int roomChatId = Integer.parseInt(roomChatData[0]);
+                        String chatMessage = msg.getMessage().split("\\|", 2)[1];
+
+                        // 서버에서 해당 방의 모든 유저에게 메시지 브로드캐스트
+                        GameRoom room = RoomManager.getInstance().getGameRoom(String.valueOf(roomChatId));
+                        if (room != null) {
+                            List<String> roomUsers = room.getUserList();
+                            for (String user : roomUsers) {
+                                ChatMsg roomChatMsg = new ChatMsg(userName, ChatMsg.MODE_TX_ROOMCHAT,
+                                        roomChatId + "|" + chatMessage);
+                                broadcasting(roomChatMsg);
+                            }
+
+                            // 서버 로그에 출력
+                            printMessage("[방 " + roomChatId + "] " + chatMessage);
+                        }
+                        break;
+
                     default:
                         t_display.append("알 수 없는 메시지 모드: " + msg.getMode() + "\n");
                 }
@@ -281,6 +301,7 @@ public class ServerMain extends JFrame {
                             server.printMessage(userId + ": " + msg.getMessage());
                             server.broadcasting(msg);
                             break;
+
 
                         default:
                             server.printMessage("알 수 없는 메시지 모드: " + msg.getMode());
