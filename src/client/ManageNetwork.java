@@ -165,7 +165,11 @@ public class ManageNetwork extends Thread{
                         case ChatMsg.MODE_TX_GAME:
                             // 게임 상태 업데이트 처리
                             if (originalGameScreen != null) {
-                                originalGameScreen.updateOpponentState(cm.getMessage());
+                                // 메시지를 보낸 사용자가 현재 사용자가 아닐 때만 업데이트
+                                String senderId = cm.getUserId();
+                                if (!senderId.equals(gameUser.getId())) {
+                                    originalGameScreen.updateOpponentState(cm.getMessage());
+                                }
                             }
                             break;
 

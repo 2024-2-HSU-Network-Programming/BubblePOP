@@ -46,6 +46,21 @@ public class OriginalGameScreen extends JFrame {
         setContentPane(mainPanel);
 
         // 게임 패널들을 메인 패널에 추가
+        if (isHost) {
+            // 호스트인 경우: 왼쪽이 자신, 오른쪽이 상대방
+            player1Panel = new GamePanel(true);  // 자신의 패널 (조작 가능)
+            player2Panel = new GamePanel(false); // 상대방 패널 (조작 불가능)
+        } else {
+            // 게스트인 경우: 왼쪽이 자신, 오른쪽이 상대방
+            player1Panel = new GamePanel(true);  // 자신의 패널 (조작 가능)
+            player2Panel = new GamePanel(false); // 상대방 패널 (조작 불가능)
+        }
+
+        player1Panel.setBounds(0, 0, 450, 650);
+        player2Panel.setBounds(475, 0, 450, 650);
+        player1Panel.setOpaque(false);
+        player2Panel.setOpaque(false);
+
         mainPanel.add(player1Panel);
         mainPanel.add(player2Panel);
         mainPanel.add(player1Label);
@@ -77,15 +92,7 @@ public class OriginalGameScreen extends JFrame {
         if (isHost) {
             player1Panel.setFocusable(true);
             player1Panel.requestFocus();
-        } else {
-            player2Panel.setFocusable(true);
-            player2Panel.requestFocus();
         }
-
-        // 메인 패널에 추가
-        add(player1Panel);
-        add(player2Panel);
-
     }
 
     private void addLabels() {
@@ -115,7 +122,11 @@ public class OriginalGameScreen extends JFrame {
                 double angle = Double.parseDouble(stateData[2]);
                 String boardState = stateData[3];
 
-                player2Panel.updateFromNetwork(bubbleX, bubbleY, angle, boardState);
+                // 상대방의 게임 상태만 player2Panel에 업데이트
+                SwingUtilities.invokeLater(() -> {
+                    player2Panel.updateFromNetwork(bubbleX, bubbleY, angle, boardState);
+                    repaint();
+                });
             }
         } catch (Exception e) {
             System.err.println("Error updating opponent state: " + e.getMessage());
@@ -125,7 +136,7 @@ public class OriginalGameScreen extends JFrame {
     // 게임 루프 시작
     private void startGameLoop() {
         Timer gameLoop = new Timer(50, e -> {
-            // 자신의 게임 상태를 서버로 전송
+            // 자신의 게임 상태만 서버로 전송
             String gameState = String.format("%d|%d|%f|%s",
                     player1Panel.getBubbleX(),
                     player1Panel.getBubbleY(),
@@ -136,8 +147,8 @@ public class OriginalGameScreen extends JFrame {
             // 게임 상태 전송
             network.sendMessage(new ChatMsg(userId, ChatMsg.MODE_TX_GAME, gameState));
 
-            // 화면 갱신
-            repaint();
+            // 자신의 패널만 갱신
+            player1Panel.repaint();
         });
         gameLoop.start();
     }

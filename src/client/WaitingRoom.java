@@ -1,5 +1,6 @@
 package client;
 
+import server.RoomManager;
 import shared.ChatMsg;
 
 import javax.swing.*;
@@ -34,8 +35,11 @@ public class WaitingRoom {
         this.userId = userId;
         this.network = network;
         this.roomId = roomNumber;
-        this.roomOwner = userId;  // 현재 유저가 방장인지 저장
-        this.gameUser = GameUser.getInstance();// GameUser 초기화
+        this.gameUser = GameUser.getInstance();
+
+        // ChatMsg에서 받은 방 생성 정보로부터 방장 ID를 설정
+        String ownerFromServer = RoomManager.getInstance().getGameRoom(roomNumber).getRoomOwner();
+        this.roomOwner = ownerFromServer;  // 서버에서 받은 실제 방장 ID로 설정
 
         network.setWaitingRoom(this);
 
