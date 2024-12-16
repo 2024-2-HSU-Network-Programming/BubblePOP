@@ -2,6 +2,8 @@ package client;
 
 import server.GameRoom;
 import server.RoomManager;
+import shared.ChatMsg;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -131,38 +133,31 @@ public class RoomListTapPane extends JTabbedPane {
 
     private void enterRoom(int roomNumber, String roomName) {
         System.out.println("Entering Room: " + roomName + " (ID: " + roomNumber + ")");
-        String currentUser = user.getId(); // 현재 사용자를 가져오는 로직 추가 필요
+        String currentUser = user.getId();
 
-        //boolean success = RoomManager.addUserToRoom(roomNumber, currentUser);
+        // 먼저 입장 메시지를 서버로 전송
+        ChatMsg enterMsg = new ChatMsg(currentUser, ChatMsg.MODE_ENTER_ROOM, roomNumber + "|" + currentUser);
+        user.getNet().sendMessage(enterMsg);
+
         boolean success = RoomManager.getInstance().addUserToRoom(roomNumber, currentUser);
 
         if (success) {
             System.out.println("User successfully entered the room.");
-            SwingUtilities.invokeLater(() ->
-                    {
-                        WaitingRoom waitingRoom = new WaitingRoom(Integer.toString(roomNumber), roomName, currentUser, network);
-                        waitingRoom.show();
-                    }
-
-            );
+            SwingUtilities.invokeLater(() -> {
+                WaitingRoom waitingRoom = new WaitingRoom(
+                        String.valueOf(roomNumber),
+                        roomName,
+                        currentUser,
+                        user.getNet()
+                );
+                waitingRoom.show();
+                lobbyFrame.dispose();
+            });
         } else {
             JOptionPane.showMessageDialog(null, "방이 가득 찼습니다!", "입장 실패", JOptionPane.ERROR_MESSAGE);
         }
 
-        // 방 상태 갱신
         refreshRoomList();
-
-//        // 대기방 화면으로 이동하고 로비 창 닫기
-//        SwingUtilities.invokeLater(() -> {
-//            WaitingRoom waitingRoom = new WaitingRoom(
-//                    String.valueOf(roomNumber),  // roomNumber
-//                    roomName,                    // roomName
-//                    lobbyFrame.getUserId(),      // userId
-//                    lobbyFrame.getNetwork()      // network
-//            );
-//            waitingRoom.show();  // 대기방 표시
-//            lobbyFrame.dispose(); // 로비 창 닫기
-//        });
     }
 
 

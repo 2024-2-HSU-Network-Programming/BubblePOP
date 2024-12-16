@@ -13,6 +13,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
+import java.util.List;
 
 public class ServerMain extends JFrame {
     private int port;
@@ -185,8 +186,72 @@ public class ServerMain extends JFrame {
                                 roomId + "|" + leavingUser);
                         broadcasting(leaveRoomMsg);
                         break;
+                    case ChatMsg.MODE_ENTER_ROOM:
+                        String[] enterRoomData = msg.getMessage().split("\\|");
+                        int enterRoomId = Integer.parseInt(enterRoomData[0]);
+                        String enteringUser = enterRoomData[1];
 
+                        // 방에 유저 추가 시도
+                        boolean success = RoomManager.addUserToRoom(enterRoomId, enteringUser);
 
+                        if(success) {
+                            // 서버 로그
+                            t_display.append(enteringUser + "님이 " + enterRoomId + "번 방에 입장했습니다.\n");
+
+                            // 해당 방의 모든 유저 정보 가져오기
+                            GameRoom room = RoomManager.getInstance().getGameRoom(String.valueOf(enterRoomId));
+                            if(room != null) {
+                                // 약간의 딜레이를 주어 두 번째 클라이언트의 WaitingRoom이 생성될 시간을 줌
+                                try {
+                                    Thread.sleep(100);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+
+                                // 방의 모든 유저들에 대해 메시지 전송
+                                List<String> users = room.getUserList();
+                                for(String user : users) {
+                                    ChatMsg enterRoomMsg = new ChatMsg("Server", ChatMsg.MODE_ENTER_ROOM,
+                                            enterRoomId + "|" + user);
+                                    broadcasting(enterRoomMsg);
+                                }
+                            }
+                        }
+                        break;
+
+                    case ChatMsg.MODE_TX_ROOMCHAT:
+                        String[] roomChatData = msg.getMessage().split("\\|");
+                        int roomChatId = Integer.parseInt(roomChatData[0]);
+                        String chatMessage = msg.getMessage().split("\\|", 2)[1];
+
+                        // 서버에서 해당 방의 모든 유저에게 한 번만 브로드캐스트
+                        GameRoom room = RoomManager.getInstance().getGameRoom(String.valueOf(roomChatId));
+                        if (room != null) {
+                            // 방 전체에 대해 한 번만 브로드캐스트
+                            ChatMsg roomChatMsg = new ChatMsg(userName, ChatMsg.MODE_TX_ROOMCHAT,
+                                    roomChatId + "|" + chatMessage);
+                            broadcasting(roomChatMsg);
+
+                            // 서버 로그에 출력
+                            printMessage("[방 " + roomChatId + "] " + chatMessage);
+                        }
+                    case ChatMsg.MODE_GAME_START:
+                        // 게임 시작 메시지를 모든 클라이언트에게 브로드캐스트
+                        t_display.append("게임 시작: " + msg.getMessage() + "\n");
+                        broadcasting(msg);
+                        break;
+
+                    case ChatMsg.MODE_TX_GAME:
+                        // 게임 상태 업데이트를 모든 클라이언트에게 브로드캐스트
+                        broadcasting(msg);
+                        break;
+
+                    case ChatMsg.MODE_GAME_ACTION:
+                    case ChatMsg.MODE_BUBBLE_POP:
+                    case ChatMsg.MODE_GAME_SYNC:
+                    case ChatMsg.MODE_GAME_OVER:
+                        broadcasting(msg);
+                        break;
 
                     default:
                         t_display.append("알 수 없는 메시지 모드: " + msg.getMode() + "\n");
@@ -250,6 +315,7 @@ public class ServerMain extends JFrame {
                             server.printMessage(userId + ": " + msg.getMessage());
                             server.broadcasting(msg);
                             break;
+
 
                         default:
                             server.printMessage("알 수 없는 메시지 모드: " + msg.getMode());

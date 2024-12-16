@@ -1,6 +1,5 @@
 package client;
 
-import server.GameRoom;
 import server.RoomManager;
 import shared.ChatMsg;
 
@@ -17,12 +16,17 @@ public class ManageNetwork extends Thread{
     private Socket socket;
     private LobbyFrame lobbyFrame;
     private int roomCount = RoomManager.getRoomListSize();
+    private WaitingRoom waitingRoom;
+    private OriginalGameScreen originalGameScreen;
 
     public ManageNetwork(ObjectInputStream in, ObjectOutputStream out, Socket socket) {
         this.ois = in;
         this.oos = out;
         this.socket = socket;
         //this.lobbyFrame = lobbyFrame;
+    }
+    public void setWaitingRoom(WaitingRoom waitingRoom) {
+        this.waitingRoom = waitingRoom;
     }
 
     public ObjectInputStream getOIS() {
@@ -35,6 +39,9 @@ public class ManageNetwork extends Thread{
 
     @Override
     public void run() {
+        // lobbyFrame 초기화를 여기서 한 번만 수행
+        lobbyFrame = new LobbyFrame();
+
         while(true) {
             Object objCm = null;
             String msg = null;
@@ -55,21 +62,20 @@ public class ManageNetwork extends Thread{
                     System.out.println(cm.getMode());
                     switch (cm.getMode()) {
                         case ChatMsg.MODE_LOGIN:
-                            lobbyFrame = new LobbyFrame();
+                            // 로비 프레임은 이미 생성되어 있으므로 메시지만 추가
                             if (lobbyFrame != null) {
                                 lobbyFrame.addGlobalChatMessage(cm.getMessage());
                             }
-                            //lobbyFrame = new LobbyFrame(this, cm.getUserId());
-                            //lobbyFrame.addGlobalChatMessage(cm.getUserId() + "님이 로그인했습니다!");
                             break;
-                        case ChatMsg.MODE_LOGOUT:
-                            System.out.println("서버에서 연결 종료 메시지 수신: " + cm.getMessage());
-                            closeConnection();
-                            return; // 쓰레드 종료
+
                         case ChatMsg.MODE_TX_STRING:
-                            System.out.println("서버에서 스트링값 수신: " + cm.getMessage());
-                            lobbyFrame.addGlobalChatMessage(cm.getMessage());
+                            if (lobbyFrame != null) {
+                                System.out.println("서버에서 스트링값 수신: " + cm.getMessage());
+                                lobbyFrame.addGlobalChatMessage(cm.getMessage());
+                                lobbyFrame.getRoomListPane().refreshRoomList(); // UI 갱신 추가
+                            }
                             break;
+
                         case ChatMsg.MODE_TX_CREATEROOM:
                             if (lobbyFrame != null) {
                                 String[] roomInfo = cm.getMessage().split("\\|");
@@ -78,16 +84,14 @@ public class ManageNetwork extends Thread{
                                     String ownerName = roomInfo[1];
                                     String roomName = roomInfo[2];
                                     String roomPassword = roomInfo[3];
-                                    RoomManager.getInstance().createRoom(ownerName, roomName, roomPassword); // 방 생성
-                                    lobbyFrame.getRoomListPane().refreshRoomList(); // UI 갱신
-                                    // UI 갱신 작업은 SwingUtilities.invokeLater를 통해 실행
-                                    SwingUtilities.invokeLater(() -> {
-                                        lobbyFrame.getRoomListPane().addRoomPane(roomId, roomName, roomPassword, 1);
-                                        System.out.println("Adding RoomPane: RoomID=" + roomId + ", RoomName=" + roomName);
 
-                                        lobbyFrame.getRoomListPane().refreshRoomList(); // 강제 UI 갱신
+                                    // 방 생성 및 UI 갱신
+                                    RoomManager.getInstance().createRoom(ownerName, roomName, roomPassword);
+                                    SwingUtilities.invokeLater(() -> {
+                                        lobbyFrame.getRoomListPane().refreshRoomList();
                                         lobbyFrame.updateRoomList("새로운 대기방 " + roomName + "에 들어오세요!\n");
                                     });
+
                                     // 방 생성자인 경우에만 WaitingRoom 오픈
                                     if (ownerName.equals(lobbyFrame.getUserId())) {
                                         WaitingRoom waitingRoom = new WaitingRoom(
@@ -113,6 +117,67 @@ public class ManageNetwork extends Thread{
                                 lobbyFrame.getRoomListPane().refreshRoomList(); // 방 목록 새로고침
                             }
                             break;
+                        case ChatMsg.MODE_ENTER_ROOM:
+                            String[] enterInfo = cm.getMessage().split("\\|");
+                            int enterRoomId = Integer.parseInt(enterInfo[0]);
+                            String enteringUser = enterInfo[1];
+
+                            System.out.println("Received ENTER_ROOM message: " + cm.getMessage());
+
+                            // waitingRoom이 null이 아닐 때만 업데이트
+                            if (waitingRoom != null) {
+                                waitingRoom.updatePlayer2Name(enteringUser);
+                                System.out.println("Updated waiting room with user: " + enteringUser);
+                            } else {
+                                System.out.println("WaitingRoom is null");
+                            }
+                            break;
+                        case ChatMsg.MODE_TX_ROOMCHAT:
+                            if (waitingRoom != null) {
+                                String[] roomChatData = cm.getMessage().split("\\|", 2);
+                                if (roomChatData.length == 2) {
+                                    waitingRoom.receiveMessage(roomChatData[1]);
+                                }
+                            }
+                            break;
+                        case ChatMsg.MODE_GAME_START:
+                            if (waitingRoom != null) {
+                                SwingUtilities.invokeLater(() -> {
+                                    // gameUser가 null이면 초기화
+                                    if (gameUser == null) {
+                                        gameUser = GameUser.getInstance();
+                                    }
+
+                                    // player2의 이름 가져오기
+                                    String player2Name = waitingRoom.getPlayer2Name(); // 이 메서드를 WaitingRoom에 추가해야 함
+
+                                    // 대기방 창 닫기
+                                    waitingRoom.dispose();
+
+                                    // 게임 화면 시작 (player2Name 전달)
+                                    OriginalGameScreen gameScreen = new OriginalGameScreen(
+                                            gameUser.getId(),
+                                            this,
+                                            waitingRoom.getRoomOwner().equals(gameUser.getId()),
+                                            player2Name  // 상대방 이름 전달
+                                    );
+                                    gameScreen.setVisible(true);
+                                    originalGameScreen = gameScreen;
+                                });
+                            }
+                            break;
+                        case ChatMsg.MODE_TX_GAME:
+                            // 게임 상태 업데이트 처리
+                            if (originalGameScreen != null) {
+                                // 메시지를 보낸 사용자가 현재 사용자가 아닐 때만 업데이트
+                                String senderId = cm.getUserId();
+                                if (!senderId.equals(gameUser.getId())) {
+                                    originalGameScreen.updateOpponentState(cm.getMessage());
+                                }
+                            }
+                            break;
+
+
 
                         default:
                             System.out.println("알 수 없는 모드: " + cm.getMode());
@@ -143,4 +208,6 @@ public class ManageNetwork extends Thread{
         }
         System.out.println("클라이언트 연결 종료");
     }
+
+
 }
