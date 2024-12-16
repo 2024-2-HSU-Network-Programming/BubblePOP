@@ -531,7 +531,17 @@ public class OriginalGameScreen extends JFrame {
                         angle = maxAngle;
                     }
                     repaint();
-                } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                } else if (e.getKeyCode() == KeyEvent.VK_Q) {
+                // Q키: 현재 발사할 구슬 색상 변경
+                currentBubbleType = (currentBubbleType % 7) + 1;
+                repaint();
+            } else if (e.getKeyCode() == KeyEvent.VK_W) {
+                // W키: 맨 아래 라인 폭발
+                explodeBottomLine();
+                repaint();
+            }
+
+                else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                     if (!isBubbleMoving) {
                         isBubbleMoving = true;
                         double startX = bubbleX;
@@ -608,8 +618,45 @@ public class OriginalGameScreen extends JFrame {
                         }).start();
                     }
                 }
+
+
             }
 
+        }
+
+        // 맨 아래 라인 폭발
+        private void explodeBottomLine() {
+            // 맨 아래부터 위로 올라가며 첫 번째로 구슬이 있는 줄을 찾음
+            for (int row = board.length - 1; row >= 0; row--) {
+                boolean hasAnyBubble = false;
+                for (int col = 0; col < board[row].length; col++) {
+                    if (board[row][col] != 0) {
+                        hasAnyBubble = true;
+                        // 폭발 애니메이션 추가
+                        Point screenPos = new Point(
+                                (col * BUBBLE_SIZE) + (row % 2 == 0 ? 43 : 67),
+                                65 + (row * BUBBLE_SIZE)
+                        );
+                        popAnimations.add(new BubblePop(screenPos, board[row][col]));
+                        // 구슬 제거
+                        board[row][col] = 0;
+                    }
+                }
+
+                if (hasAnyBubble) {
+                    // 떠 있는 구슬들 처리
+                    Set<Point> floating = findFloatingBubbles();
+                    for (Point p : floating) {
+                        Point screenPos = new Point(
+                                (p.y * BUBBLE_SIZE) + (p.x % 2 == 0 ? 43 : 67),
+                                65 + (p.x * BUBBLE_SIZE)
+                        );
+                        popAnimations.add(new BubblePop(screenPos, board[p.x][p.y]));
+                        board[p.x][p.y] = 0;
+                    }
+                    break;  // 한 줄만 폭발시키고 종료
+                }
+            }
         }
 
 
