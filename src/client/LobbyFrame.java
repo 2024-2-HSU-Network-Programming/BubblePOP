@@ -2,10 +2,13 @@ package client;
 
 import shared.ChatMsg;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -25,6 +28,8 @@ public class LobbyFrame extends JFrame {
     private ImageIcon userCharacterIcon = new ImageIcon(getClass().getResource("/client/assets/game/user_character.png"));
     private ImageIcon logoIcon = new ImageIcon(getClass().getResource("/client/assets/logo/logo.png"));
 
+    private BufferedImage changeBubble, linebomb, bomb;
+
     private String userId;
     private ManageNetwork network;
     GameUser user = GameUser.getInstance();
@@ -37,6 +42,18 @@ public class LobbyFrame extends JFrame {
         setResizable(false); // 크기 고정
 //        this.userId = userId;
 //        this.network = network;
+
+        try {
+            changeBubble = ImageIO.read(getClass().getResourceAsStream("/client/assets/item/change-bubble.png"));
+            linebomb = ImageIO.read(getClass().getResourceAsStream("/client/assets/item/line-explosion.png"));
+            bomb = ImageIO.read(getClass().getResourceAsStream("/client/assets/item/bomb.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            changeBubble = null;
+            linebomb = null;
+            bomb = null;
+        }
+
 
         lobbyPane = new JPanel();
         lobbyPane.setLayout(new BorderLayout());
@@ -87,28 +104,32 @@ public class LobbyFrame extends JFrame {
         coinLabel.setBounds(100, 260, 200, 30);
         lobbyCenterPane.add(coinLabel);
 
-        // 보유 아이템 패널
-        JPanel itemPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        itemPanel.setBackground(new Color(52, 74, 119));
-        itemPanel.setBounds(50, 290, 330, 90);
-        lobbyCenterPane.add(itemPanel);
 
-        // 아이템 아이콘과 수량 표시
-        if (user.getChangeBubbleColor() > 0) {
-            addItemDisplay(itemPanel, "/client/assets/item/change-bubble.png", user.getChangeBubbleColor());
-        }
-        if (user.getLineExplosion() > 0) {
-            addItemDisplay(itemPanel, "/client/assets/item/line-explosion.png", user.getLineExplosion());
-        }
-        if (user.getBomb() > 0) {
-            addItemDisplay(itemPanel, "/client/assets/item/bomb.png", user.getBomb());
-        }
+        // 이미지 크기 조정 및 추가
+        addScaledImage(lobbyCenterPane, changeBubble, 50, 300, 40, 40); // changeBubble
+        addScaledImage(lobbyCenterPane, linebomb, 180, 300, 40, 40); // linebomb
+        addScaledImage(lobbyCenterPane, bomb, 300, 300, 40, 40); // bomb
 
+        // 구슬전환 아이템 갯수 getChangeBubbleColor
+        JLabel changeBubbleNum = new JLabel("x " + user.getChangeBubbleColor());
+        changeBubbleNum.setForeground(Color.WHITE);
+        changeBubbleNum.setFont(new Font("Arial", Font.BOLD, 16));
+        changeBubbleNum.setBounds(90, 305, 90, 30);
+        lobbyCenterPane.add(changeBubbleNum);
 
-//        userInfoPanel.add(userIdLabel);
-//        userInfoPanel.add(coinLabel);
-//        userInfoPanel.add(itemPanel);
-//        lobbyCenterPane.add(userInfoPanel);
+// 한줄 제거 아이템 갯수 getLineExplosion
+        JLabel linebombNum = new JLabel("x " + user.getLineExplosion());
+        linebombNum.setForeground(Color.WHITE);
+        linebombNum.setFont(new Font("Arial", Font.BOLD, 16));
+        linebombNum.setBounds(225, 305, 95, 30);
+        lobbyCenterPane.add(linebombNum);
+
+// 폭탄 구슬 아이템 갯수 getBomb
+        JLabel bombNum = new JLabel("x " + user.getBomb());
+        bombNum.setForeground(Color.WHITE);
+        bombNum.setFont(new Font("Arial", Font.BOLD, 16));
+        bombNum.setBounds(350, 305, 90, 30);
+        lobbyCenterPane.add(bombNum);
 
 
 
@@ -218,25 +239,25 @@ public class LobbyFrame extends JFrame {
     }
 
     // 아이템 표시를 위한 헬퍼 메소드
-    private void addItemDisplay(JPanel panel, String imagePath, int count) {
-        ImageIcon originalIcon = new ImageIcon(getClass().getResource(imagePath));
-        Image scaledImage = originalIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
-        ImageIcon scaledIcon = new ImageIcon(scaledImage);
-
-        JPanel itemContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        itemContainer.setLayout(null);
-        itemContainer.setBackground(new Color(52, 74, 119));
-
-        JLabel iconLabel = new JLabel(scaledIcon);
-        JLabel countLabel = new JLabel("x " + count);
-        countLabel.setForeground(Color.WHITE);
-        countLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        countLabel .setBounds(10, 10, 200, 30);
-
-        itemContainer.add(iconLabel);
-        itemContainer.add(countLabel);
-        panel.add(itemContainer);
-    }
+//    private void addItemDisplay(JPanel panel, String imagePath, int count) {
+//        ImageIcon originalIcon = new ImageIcon(getClass().getResource(imagePath));
+//        Image scaledImage = originalIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+//        ImageIcon scaledIcon = new ImageIcon(scaledImage);
+//
+//        JPanel itemContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+//        itemContainer.setLayout(null);
+//        itemContainer.setBackground(new Color(52, 74, 119));
+//
+//        JLabel iconLabel = new JLabel(scaledIcon);
+//        JLabel countLabel = new JLabel("x " + count);
+//        countLabel.setForeground(Color.WHITE);
+//        countLabel.setFont(new Font("Arial", Font.BOLD, 14));
+//        countLabel .setBounds(10, 10, 200, 30);
+//
+//        itemContainer.add(iconLabel);
+//        itemContainer.add(countLabel);
+//        panel.add(itemContainer);
+//    }
 
     public void updateCoinDisplay() {
         SwingUtilities.invokeLater(() -> {
@@ -249,6 +270,37 @@ public class LobbyFrame extends JFrame {
             }
         });
     }
+
+    private void addScaledImage(JPanel panel, BufferedImage image, int x, int y, int width, int height) {
+        if (image != null) {
+            Image scaledImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH); // 스케일 조정
+            JLabel imageLabel = new JLabel(new ImageIcon(scaledImage));
+            imageLabel.setBounds(x, y, width, height); // 위치와 크기 설정
+            panel.add(imageLabel);
+        }
+    }
+
+
+    public void updateItemDisplay() {
+        SwingUtilities.invokeLater(() -> {
+            for (Component comp : lobbyCenterPane.getComponents()) {
+                if (comp instanceof JLabel) { //아이템 수량 라벨 동적으로 찾아서 업데이트!
+                    JLabel label = (JLabel) comp;
+                    String text = label.getText();
+                    if (text != null && text.startsWith("x ")) {  // null 체크 추가
+                        if (label.getBounds().x == 90) { // 구슬 색변경
+                            label.setText("x " + user.getChangeBubbleColor());
+                        } else if (label.getBounds().x == 225) { //라인 폭발
+                            label.setText("x " + user.getLineExplosion());
+                        } else if (label.getBounds().x == 350) {//폭탄
+                            label.setText("x " + user.getBomb());
+                        }
+                    }
+                }
+            }
+        });
+    }
+
 
 
 //    public void refreshUserInfo() {

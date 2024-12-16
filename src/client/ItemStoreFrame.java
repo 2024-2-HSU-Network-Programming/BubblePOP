@@ -210,7 +210,8 @@ public class ItemStoreFrame extends JFrame {
                     SwingUtilities.invokeLater(() -> {
                         this.refreshMyItems();
                         if (lobbyFrame != null) {
-                            lobbyFrame.updateCoinDisplay();
+                            lobbyFrame.updateCoinDisplay();//잔여 코인 업데이트
+                            lobbyFrame.updateItemDisplay(); // 아이템 수량 업데이트
                         }
                     }); // 사용한 코인이 로비에도 반영되게
                     JOptionPane.showMessageDialog(null, "구매가 완료되었습니다!", "구매 성공", JOptionPane.INFORMATION_MESSAGE);
@@ -280,7 +281,8 @@ public class ItemStoreFrame extends JFrame {
                     SwingUtilities.invokeLater(() -> {
                         this.refreshMyItems();
                         if (lobbyFrame != null) {
-                            lobbyFrame.updateCoinDisplay();
+                            lobbyFrame.updateCoinDisplay();//잔여 코인 업데이트
+                            lobbyFrame.updateItemDisplay(); // 아이템 수량 업데이트
                         }
                     });// 로비에 코인이 반영되게
                     JOptionPane.showMessageDialog(null, "판매가 완료되었습니다!", "판매 성공", JOptionPane.INFORMATION_MESSAGE);
