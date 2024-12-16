@@ -183,6 +183,9 @@ public class ManageNetwork extends Thread{
                             String[] exchangeEnterInfo = cm.getMessage().split("\\|");
                             roomId = Integer.parseInt(exchangeEnterInfo[0]);
                             String[] usersInRoom = exchangeEnterInfo[1].split(",");
+                            String player2ItemData = exchangeEnterInfo[2]; // 유저2 아이템 데이터
+                            // 유저2 아이템 데이터 파싱
+                            String[] player2Items = player2ItemData.split("|");
 
                             System.out.println("Received ENTER_EXCHANGEROOM message: RoomID=" + roomId + ", Users=" + exchangeEnterInfo[1]);
 
@@ -208,6 +211,7 @@ public class ManageNetwork extends Thread{
                                             gameUser.getId(),
                                             gameUser.getNet()
                                     );
+                                    exchangeWaitingRoom.updatePlayer2Items(player2Items);
                                     exchangeWaitingRoom.show();
                                 } else {
                                     // 기존 교환방 UI 업데이트
@@ -303,7 +307,31 @@ public class ManageNetwork extends Thread{
                                 }
                             }
                             break;
-
+//                        case ChatMsg.MODE_TX_IMAGE:
+//                            SwingUtilities.invokeLater(() -> {
+//                                // 유저2의 화면에 유저1의 이미지를 표시
+//                                exchangeWaitingRoom.addUserImage(cm.getImage().toString(), false);
+////                                exchangeWaitingRoom.updateSelectedItemImage(cm.getImage());
+////                                exchangeWaitingRoom.addUserImage(cm.getImage().toString()); // 유저2 UI에 이미지 추가
+//                            });
+//                            break;
+                        case ChatMsg.MODE_TX_IMAGE:
+                            SwingUtilities.invokeLater(() -> {
+                                if (exchangeWaitingRoom != null) {
+                                    // 유저 ID와 이미지를 전달하여 처리
+                                    exchangeWaitingRoom.addUserImage(cm.getUserId(), cm.getImage());
+                                }
+                            });
+                            break;
+                        case ChatMsg.MODE_EXCHANGEITEM:
+                            // 교환 완료 메시지 표시
+                            SwingUtilities.invokeLater(() -> {
+                                String exchangeResult = cm.getMessage();
+                                if (exchangeWaitingRoom != null) {
+                                    exchangeWaitingRoom.receiveMessage(exchangeResult); // 교환 완료 메시지를 채팅창에 표시
+                                }
+                            });
+                            break;
 
 
                         default:

@@ -5,6 +5,7 @@ import shared.ChatMsg;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 public class ExchangeWaitingRoom {
     private String userId;
@@ -13,7 +14,7 @@ public class ExchangeWaitingRoom {
     private JLabel player2NameLabel;
     private String roomId;
     private JButton readyButton;
-    private JButton startButton;
+    private JButton exchangeButton;
     private JLabel player1ReadyLabel;  // 플레이어1 준비상태 라벨
     private JLabel player2ReadyLabel;  // 플레이어2 준비상태 라벨
     private boolean isReady = false;   // 준비상태 플래그
@@ -27,6 +28,10 @@ public class ExchangeWaitingRoom {
     private JTextArea chatArea;
     private JTextField chatInputField;
     private JButton sendButton;
+    // 필드 추가
+    private JLabel selectedItemLabel; // 선택한 아이템 이미지 라벨
+    private JButton selectItemButton; // 아이템 선택 버튼
+    private String selectedItemPath; // 선택한 아이템 이미지 경로
 
     private ImageIcon userCharacterIcon = new ImageIcon(getClass().getResource("/client/assets/game/user_character.png"));
     private ImageIcon logoIcon = new ImageIcon(getClass().getResource("/client/assets/logo/logo.png"));
@@ -82,12 +87,59 @@ public class ExchangeWaitingRoom {
         playerPanel1.setBounds(50, 170, 200, 250);
         frame.add(playerPanel1);
 
-        // 플레이어1 준비상태 라벨 추가
-        player1ReadyLabel = new JLabel("준비", SwingConstants.CENTER);
-        player1ReadyLabel.setForeground(Color.WHITE);
-        player1ReadyLabel.setFont(new Font("맑은 고딕", Font.BOLD, 14));
-        player1ReadyLabel.setBounds(100, 430, 100, 30);
-        frame.add(player1ReadyLabel);
+//        // 플레이어1 아이템 패널
+//        String[] player1Items = gameUser.getItemList();
+//        JPanel player1ItemPanel = createItemPanel(player1Items, koreanFont);
+//        player1ItemPanel.setBounds(50, 530, 200, 100);
+//        frame.add(player1ItemPanel);
+
+//        // 플레이어1 준비상태 라벨 추가
+//        player1ReadyLabel = new JLabel("교환아이템", SwingConstants.CENTER);
+//        player1ReadyLabel.setForeground(Color.WHITE);
+//        player1ReadyLabel.setFont(new Font("맑은 고딕", Font.BOLD, 14));
+//        player1ReadyLabel.setBounds(100, 430, 100, 30);
+//        frame.add(player1ReadyLabel);
+        // 교환하기 버튼 아래에 아이템 선택 UI 추가
+        selectItemButton = new JButton("아이템 선택");
+        selectItemButton.setBounds(250, 500, 100, 50);
+        selectItemButton.setBackground(Color.white);
+        selectItemButton.setForeground(Color.black);
+        selectItemButton.setFont(new Font("맑은 고딕", Font.BOLD, 14));
+        frame.add(selectItemButton);
+
+// 선택된 아이템 이미지 라벨
+        selectedItemLabel = new JLabel("선택한 아이템", SwingConstants.CENTER);
+        selectedItemLabel.setBounds(100, 450, 100, 100);
+        selectedItemLabel.setBackground(Color.LIGHT_GRAY);
+        selectedItemLabel.setOpaque(true);
+        frame.add(selectedItemLabel);
+
+        selectItemButton.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+
+            // 초기 파일 경로 설정
+            File initialDirectory = new File("/Users/yebin/BubblePOP/src/client/assets/item");
+            fileChooser.setCurrentDirectory(initialDirectory);
+
+            fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+                    "Image files", "png", "jpg", "jpeg", "gif"
+            ));
+            int result = fileChooser.showOpenDialog(frame);
+
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                selectedItemPath = selectedFile.getAbsolutePath();
+
+                /// 유저1의 화면에 이미지 표시
+                ImageIcon selectedImage = new ImageIcon(selectedItemPath);
+                addUserImage(userId, selectedImage);
+
+
+                // 선택한 이미지를 서버로 전송
+                sendSelectedItemImage();
+            }
+        });
+
 
         // 플레이어 패널 2
         JPanel playerPanel2 = createPlayerPanel("대기중", "assets/chracter/mainPlayer2_1.png", koreanFont);
@@ -97,66 +149,41 @@ public class ExchangeWaitingRoom {
                 break;
             }
         }
+
+        // 플레이어2 아이템 패널
+//        String[] player2Items = gameUser.getItemList();
+//        JPanel player2ItemPanel = createItemPanel(player2Items, koreanFont);
+//        player2ItemPanel.setBounds(150, 480, 200, 100);
+//        frame.add(player2ItemPanel);
         playerPanel2.setBounds(350, 170, 200, 250);
         frame.add(playerPanel2);
 
         // 플레이어2 준비상태 라벨 추가
-        player2ReadyLabel = new JLabel("준비", SwingConstants.CENTER);
+        player2ReadyLabel = new JLabel("", SwingConstants.CENTER);
         player2ReadyLabel.setForeground(Color.WHITE);
         player2ReadyLabel.setFont(new Font("맑은 고딕", Font.BOLD, 14));
         player2ReadyLabel.setBounds(400, 430, 100, 30);
         frame.add(player2ReadyLabel);
 
-        // READY 버튼
-        readyButton = new JButton("READY");
-        readyButton.setBounds(25, 500, 550, 50);
-        readyButton.setBackground(Color.YELLOW);
-        readyButton.setForeground(Color.BLACK);
-        readyButton.setFont(new Font("맑은 고딕", Font.BOLD, 18));
-        readyButton.addActionListener(e -> {
-            isReady = !isReady;  // 준비상태 토글
-            player1Ready = isReady;  // 자신의 준비 상태 업데이트
-            if (isReady) {
-                player1ReadyLabel.setForeground(Color.YELLOW);
-                ChatMsg readyMsg = new ChatMsg(userId, ChatMsg.MODE_TX_ROOMCHAT,
-                        roomId + "|" + userId + ": 준비완료");
-                network.sendMessage(readyMsg);
-            } else {
-                player1ReadyLabel.setForeground(Color.WHITE);
-                ChatMsg notReadyMsg = new ChatMsg(userId, ChatMsg.MODE_TX_ROOMCHAT,
-                        roomId + "|" + userId + ": 준비해제");
-                network.sendMessage(notReadyMsg);
-            }
-            updateStartButton();  // START 버튼 상태 업데이트
-        });
-        frame.add(readyButton);
+        // 교환하기 버튼
+        exchangeButton = new JButton("교환하기");
+        exchangeButton.setBounds(250, 430, 100, 50);
+        exchangeButton.setBackground(Color.RED);
+        exchangeButton.setForeground(Color.white);
+        exchangeButton.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+        exchangeButton.setEnabled(userId.equals(roomOwner));  // 방장인 경우에만 활성화
 
-        // START 버튼
-        startButton = new JButton("START");
-        startButton.setBounds(25, 550, 550, 50);
-        startButton.setBackground(Color.RED);
-        startButton.setForeground(Color.WHITE);
-        startButton.setFont(new Font("맑은 고딕", Font.BOLD, 18));
-        startButton.setEnabled(userId.equals(roomOwner));  // 방장인 경우에만 활성화
+        exchangeButton.addActionListener(e -> {
+            // 교환 요청 데이터 생성
+            String exchangeData = userId + "|" + player2NameLabel.getText();
 
-        startButton.addActionListener(e -> {
-            if (player1Ready && player2Ready) {
-                // 게임 시작 메시지를 모든 클라이언트에게 전송
-                ChatMsg startMsg = new ChatMsg(userId, ChatMsg.MODE_GAME_START, roomId);
-                network.sendMessage(startMsg);
+            // 서버로 교환 요청 전송
+            ChatMsg exchangeRequest = new ChatMsg(userId, ChatMsg.MODE_EXCHANGEITEM, exchangeData);
+            network.sendMessage(exchangeRequest);
 
-                // 현재 대기방 닫기
-                dispose();
-//
-//                // 게임 화면 시작
-//                SwingUtilities.invokeLater(() -> {
-//                    OriginalGameScreen gameScreen = new OriginalGameScreen(userId, network, roomOwner.equals(userId));
-//                    gameScreen.setVisible(true);
-//                });
-            }
         });
 
-        frame.add(startButton);
+        frame.add(exchangeButton);
 
         // 채팅 패널
         JPanel chatPanel = new JPanel(new BorderLayout());
@@ -183,6 +210,41 @@ public class ExchangeWaitingRoom {
         chatPanel.add(chatInputPanel, BorderLayout.SOUTH);
 
         frame.add(chatPanel);
+    }
+
+    private JPanel createItemPanel(String[] items, Font font) {
+        JPanel itemPanel = new JPanel();
+        itemPanel.setLayout(new GridLayout(0, 1)); // 아이템 수만큼 세로로 나열
+        itemPanel.setBackground(Color.LIGHT_GRAY);
+
+        for (String item : items) {
+            String[] parts = item.split("\\|");
+            String itemTitle = parts[0];
+            int itemQuantity = Integer.parseInt(parts[1]);
+            System.out.println(itemTitle);
+
+            JPanel singleItemPanel = new JPanel(new BorderLayout());
+            singleItemPanel.setBackground(Color.WHITE);
+
+            // 아이템 이미지
+            String imagePath = GameUser.getItemImagePath(itemTitle);
+            ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
+            Image scaledImage = icon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+            JLabel imageLabel = new JLabel(new ImageIcon(scaledImage));
+
+            // 아이템 이름과 수량
+            JLabel textLabel = new JLabel(itemTitle + ": " + itemQuantity);
+            textLabel.setFont(font);
+            textLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+            // 이미지와 텍스트 결합
+            singleItemPanel.add(imageLabel, BorderLayout.WEST);
+            singleItemPanel.add(textLabel, BorderLayout.CENTER);
+
+            itemPanel.add(singleItemPanel);
+        }
+
+        return itemPanel;
     }
 
     // 기존 메서드들...
@@ -212,6 +274,18 @@ public class ExchangeWaitingRoom {
         }
     }
 
+    // 플레이어2 아이템 데이터를 업데이트하는 메서드
+    public void updatePlayer2Items(String[] items) {
+        System.out.println("player2 items: " + items);
+        SwingUtilities.invokeLater(() -> {
+            JPanel player2ItemPanel = createItemPanel(items, new Font("맑은 고딕", Font.PLAIN, 12));
+            player2ItemPanel.setBounds(400, 480, 200, 100);
+
+            frame.add(player2ItemPanel);
+            frame.repaint();
+            frame.validate();
+        });
+    }
 
     // 다른 플레이어의 준비상태 업데이트
     public void updatePlayer2Ready(boolean ready) {
@@ -236,14 +310,6 @@ public class ExchangeWaitingRoom {
     public void receiveMessage(String message) {
         SwingUtilities.invokeLater(() -> {
             chatArea.append(message + "\n");
-            // "준비완료" 메시지 처리
-            if (message.contains("준비완료") && !message.startsWith(userId)) {
-                updatePlayer2Ready(true);
-            }
-            // "준비해제" 메시지 처리
-            else if (message.contains("준비해제") && !message.startsWith(userId)) {
-                updatePlayer2Ready(false);
-            }
             chatArea.setCaretPosition(chatArea.getDocument().getLength());
         });
     }
@@ -271,6 +337,27 @@ public class ExchangeWaitingRoom {
 
         return panel;
     }
+//    private void sendSelectedItemImage() {
+//        if (selectedItemPath != null) {
+//            ImageIcon imageIcon = new ImageIcon(selectedItemPath);
+//            ChatMsg imageMsg = new ChatMsg(userId, ChatMsg.MODE_TX_IMAGE, "SelectedItem", imageIcon);
+//            network.sendMessage(imageMsg);
+//        }
+//    }
+private void sendSelectedItemImage() {
+    if (selectedItemPath != null) {
+        ImageIcon imageIcon = new ImageIcon(selectedItemPath);
+        ChatMsg imageMsg = new ChatMsg(userId, ChatMsg.MODE_TX_IMAGE, "SelectedItem", imageIcon);
+        network.sendMessage(imageMsg);
+    }
+}
+
+    // 선택된 아이템 이미지 업데이트
+    public void updateSelectedItemImage(ImageIcon image) {
+        selectedItemLabel.setIcon(new ImageIcon(image.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+        selectedItemLabel.setText(""); // 텍스트 제거
+    }
+
 
     public void show() {
         frame.setVisible(true);
@@ -283,7 +370,7 @@ public class ExchangeWaitingRoom {
     // START 버튼 활성화 상태를 업데이트하는 메서드 추가
     private void updateStartButton() {
         if (userId.equals(roomOwner)) {
-            startButton.setEnabled(player1Ready && player2Ready);
+            exchangeButton.setEnabled(player1Ready && player2Ready);
         }
     }
 
@@ -297,5 +384,27 @@ public class ExchangeWaitingRoom {
     public String getRoomId() {
         return this.roomId;
     }
+
+    public void addUserImage(String userId, ImageIcon image) {
+        SwingUtilities.invokeLater(() -> {
+            ImageIcon scaledImage = new ImageIcon(image.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+
+            if (this.userId.equals(userId)) {
+                // 본인의 이미지 -> 왼쪽에 표시
+                selectedItemLabel.setIcon(scaledImage);
+                selectedItemLabel.setText(""); // 텍스트 제거
+            } else {
+                // 상대방의 이미지 -> 오른쪽에 표시
+                player2ReadyLabel = new JLabel(scaledImage);
+                player2ReadyLabel.setText("");
+                player2ReadyLabel.setBounds(400, 450, 100, 100); // 오른쪽 위치에 배치
+                player2ReadyLabel.setBackground(Color.LIGHT_GRAY);
+                player2ReadyLabel.setOpaque(true);
+                frame.add(player2ReadyLabel);
+                frame.repaint();
+            }
+        });
+    }
+
 
 }

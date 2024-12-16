@@ -5,13 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a3e92f76-7a23-4d81-b3aa-d28e0e723f73" name="변경" comment="">
-      <change afterPath="$PROJECT_DIR$/src/client/ExchangeWaitingRoom.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/ExchangeRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/ExchangeRoom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/ExchangeWaitingRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/ExchangeWaitingRoom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/GameUser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/GameUser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/ManageNetwork.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/ManageNetwork.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/RoomListTapPane.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/RoomListTapPane.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/ExchangeRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/ExchangeRoom.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/RoomManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/RoomManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server/ServerMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/ServerMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/shared/ChatMsg.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/ChatMsg.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,7 +64,7 @@
       <recent name="$PROJECT_DIR$/src/client/assets/item" />
     </key>
   </component>
-  <component name="RunManager" selected="애플리케이션.LoginFrame">
+  <component name="RunManager" selected="애플리케이션.ServerMain">
     <configuration name="GameScreen" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="client.GameScreen" />
       <module name="bubblePop" />
@@ -139,8 +139,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="애플리케이션.LoginFrame" />
         <item itemvalue="애플리케이션.ServerMain" />
+        <item itemvalue="애플리케이션.LoginFrame" />
         <item itemvalue="애플리케이션.GameScreen" />
       </list>
     </recent_temporary>
@@ -159,6 +159,16 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Changes" />
     <option name="LAST_COMMIT_MESSAGE" value="Changes" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.NullPointerException" package="java.lang" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/BubblePOP$LoginFrame.ic" NAME="LoginFrame 커버리지 결과" MODIFIED="1733939055085" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">

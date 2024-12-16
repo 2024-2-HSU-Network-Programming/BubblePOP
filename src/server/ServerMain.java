@@ -290,7 +290,7 @@ public class ServerMain extends JFrame {
                                 ChatMsg updateMsg = new ChatMsg(
                                         "Server",
                                         ChatMsg.MODE_ENTER_EXCHANGEROOM,
-                                        exchangeRoomId + "|" + userList.toString()
+                                        exchangeRoomId + "|" + userList.toString() + "|" + GameUser.getInstance().getItemList()
                                 );
                                 broadcasting(updateMsg);
                             }
@@ -299,6 +299,41 @@ public class ServerMain extends JFrame {
 //                            out.writeObject(errorMsg);
                         }
                         break;
+                    // 서버가 수신한 이미지 메시지를 다른 클라이언트에게 브로드캐스트
+                    case ChatMsg.MODE_TX_IMAGE:
+                        // 이미지 데이터 수신
+                        t_display.append("이미지 수신: " + msg.getMessage() + "\n");
+
+                        // 모든 클라이언트에 이미지 브로드캐스트
+                        synchronized (clientStreams) {
+                            for (ObjectOutputStream clientOut : clientStreams.values()) {
+                                try {
+                                    // 메시지와 이미지 데이터를 포함한 객체를 전송
+                                    clientOut.writeObject(new ChatMsg(msg.getUserId(), ChatMsg.MODE_TX_IMAGE, msg.getMessage(), msg.getImage()));
+                                    clientOut.flush();
+                                } catch (IOException e) {
+                                    t_display.append("이미지 브로드캐스트 오류: " + e.getMessage() + "\n");
+                                }
+                            }
+                        }
+
+                        break;
+                    case ChatMsg.MODE_EXCHANGEITEM:
+                        // 메시지에서 필요한 데이터 분리
+                        String[] exchangeData = msg.getMessage().split("\\|");
+                        String sender = exchangeData[0];  // 교환 요청자
+                        String receiver = exchangeData[1];  // 교환 상대
+//                        String exchangeItem = exchangeData[2]; // 교환된 아이템 정보
+
+                        // 교환 성공 메시지 생성 및 브로드캐스트
+                        String exchangeResult = "교환 완료!";
+                        ChatMsg exchangeMsg = new ChatMsg("Server", ChatMsg.MODE_EXCHANGEITEM, exchangeResult);
+                        broadcasting(exchangeMsg);
+
+                        t_display.append(exchangeResult + "\n"); // 서버 로그 출력
+                        break;
+
+
 //                    case ChatMsg.MODE_ENTER_EXCHANGEROOM:
 //                        String[] enterExchangeRoomData = msg.getMessage().split("\\|");
 //                        int enterExchangeRoomId = Integer.parseInt(enterExchangeRoomData[0]);
