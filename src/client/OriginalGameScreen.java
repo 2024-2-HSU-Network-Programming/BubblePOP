@@ -43,6 +43,10 @@ public class OriginalGameScreen extends JFrame {
 
     GameUser user = GameUser.getInstance();
 
+    private JLabel changeBubbleNum;
+    private JLabel linebombNum;
+    private JLabel bombNum;
+
 
 
     // 배경 이미지
@@ -126,19 +130,19 @@ public class OriginalGameScreen extends JFrame {
         addScaledImage(itemPanel, bomb, 320, 5, 40, 40);
 
         // 아이템 개수 라벨 추가
-        JLabel changeBubbleNum = new JLabel("x " + user.getChangeBubbleColor());
+        changeBubbleNum = new JLabel("x " + user.getChangeBubbleColor());
         changeBubbleNum.setForeground(Color.WHITE);
         changeBubbleNum.setFont(new Font("Arial", Font.BOLD, 16));
         changeBubbleNum.setBounds(110, 5, 90, 30);
         itemPanel.add(changeBubbleNum);
 
-        JLabel linebombNum = new JLabel("x " + user.getLineExplosion());
+        linebombNum = new JLabel("x " + user.getLineExplosion());
         linebombNum.setForeground(Color.WHITE);
         linebombNum.setFont(new Font("Arial", Font.BOLD, 16));
         linebombNum.setBounds(245, 5, 95, 30);
         itemPanel.add(linebombNum);
 
-        JLabel bombNum = new JLabel("x " + user.getBomb());
+        bombNum = new JLabel("x " + user.getBomb());
         bombNum.setForeground(Color.WHITE);
         bombNum.setFont(new Font("Arial", Font.BOLD, 16));
         bombNum.setBounds(370, 5, 90, 30);
@@ -165,12 +169,12 @@ public class OriginalGameScreen extends JFrame {
         player1ScoreLabel = new JLabel("SCORE : 0");
         player1ScoreLabel.setFont(new Font("Arial", Font.BOLD, 20));
         player1ScoreLabel.setForeground(Color.YELLOW);
-        player1ScoreLabel.setBounds(325, 620, 200, 30);
+        player1ScoreLabel.setBounds(325, 610, 200, 30);
 
         player2ScoreLabel = new JLabel("SCORE: 0");
         player2ScoreLabel.setFont(new Font("Arial", Font.BOLD, 20));
         player2ScoreLabel.setForeground(Color.YELLOW);
-        player2ScoreLabel.setBounds(820, 620, 200, 30);
+        player2ScoreLabel.setBounds(820, 610, 200, 30);
 
         // 메인 패널에 추가
         mainPanel.add(timerLabel);
@@ -757,31 +761,42 @@ public class OriginalGameScreen extends JFrame {
             {
 
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    // 기존 왼쪽 회전 로직 유지
+                    // 왼쪽키: 왼쪽 회전
                     angle -= rotationSpeed;
                     if (angle < minAngle) {
                         angle = minAngle;
                     }
                     repaint();
                 } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    // 기존 오른쪽 회전 로직 유지
+                    // 오른쪽키: 오른쪽 회전
                     angle += rotationSpeed;
                     if (angle > maxAngle) {
                         angle = maxAngle;
                     }
                     repaint();
                 } else if (e.getKeyCode() == KeyEvent.VK_Q) {
-                // Q키: 현재 발사할 구슬 색상 변경
-                currentBubbleType = (currentBubbleType % 7) + 1;
-                repaint();
-            } else if (e.getKeyCode() == KeyEvent.VK_W) {
-                // W키: 맨 아래 라인 폭발
-                explodeBottomLine();
-                repaint();
-            }else if(e.getKeyCode() == KeyEvent.VK_E) {
-                    // E키: 폭탄 구슬로 변경
-                    if (!isBubbleMoving) {
+                    // Q키: 구슬색 변경 아이템 사용
+                    if (user.getChangeBubbleColor() > 0) {
+                        if (user.getChangeBubbleColor() > 0) {
+                            currentBubbleType = (currentBubbleType % 7) + 1;
+                            user.useItem("구슬색 변경");
+                            ((OriginalGameScreen)SwingUtilities.getWindowAncestor(this)).updateItemLabels();
+                            repaint();
+                        }
+                    }
+                } else if (e.getKeyCode() == KeyEvent.VK_W) {
+                    // W키: 라인 폭발 아이템 사용
+                    if (user.getLineExplosion() > 0) {
+                        explodeBottomLine();
+                        user.useItem("라인 폭발");
+                        ((OriginalGameScreen)SwingUtilities.getWindowAncestor(this)).updateItemLabels();
+                        repaint();
+                    }
+                } else if(e.getKeyCode() == KeyEvent.VK_E) {
+                    // E키: 폭탄 구슬 아이템 사용
+                    if (!isBubbleMoving && user.getBomb() > 0) {
                         isBombBubble = true;
+                        user.useItem("폭탄");
                         repaint();
                     }
                 }
@@ -1455,5 +1470,13 @@ public class OriginalGameScreen extends JFrame {
             });
         }
 
+    }
+
+    private void updateItemLabels() {
+        SwingUtilities.invokeLater(() -> {
+            changeBubbleNum.setText("x " + user.getChangeBubbleColor());
+            linebombNum.setText("x " + user.getLineExplosion());
+            bombNum.setText("x " + user.getBomb());
+        });
     }
 }

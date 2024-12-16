@@ -42,6 +42,21 @@ public class GameUser {
         }
     }
 
+    //게임내 아이템 사용
+    public void useItem(String itemName) {
+        switch (itemName) {
+            case "구슬색 변경":
+                changeBubbleColor--;
+                break;
+            case "라인 폭발":
+                lineExplosion--;
+                break;
+            case "폭탄":
+                bomb--;
+                break;
+        }
+    }
+
     public void deductCoin(int amount) {
         if (amount > 0 && this.coin >= amount) {
             this.coin -= amount;
