@@ -26,6 +26,8 @@ public class OriginalGameScreen extends JFrame {
     private Rectangle soundButtonBounds = new Rectangle(10, 10, 32, 32);
     private BufferedImage soundOn, soundOff;
     private BufferedImage player1, player2; // 게임 캐릭터 이미지
+    private BufferedImage changeBubble, linebomb,bomb;
+
     //게임 캐릭터 이미지 라벨
     private JLabel player1ImageLabel;
     private JLabel player2ImageLabel;
@@ -38,6 +40,8 @@ public class OriginalGameScreen extends JFrame {
     public  JLabel player2ScoreLabel;
 
     private Timer gameLoop;
+
+    GameUser user = GameUser.getInstance();
 
 
 
@@ -55,6 +59,9 @@ public class OriginalGameScreen extends JFrame {
             soundOn = ImageIO.read(getClass().getResourceAsStream("/client/assets/sounds/toolSoundOn.png"));
             player1 = ImageIO.read(getClass().getClassLoader().getResource("client/assets/player1.png"));
             player2 = ImageIO.read(getClass().getClassLoader().getResource("client/assets/player2.png"));
+            changeBubble = ImageIO.read(getClass().getResourceAsStream("/client/assets/item/change-bubble.png"));
+            linebomb = ImageIO.read(getClass().getResourceAsStream("/client/assets/item/line-explosion.png"));
+            bomb = ImageIO.read(getClass().getResourceAsStream("/client/assets/item/bomb.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -70,22 +77,14 @@ public class OriginalGameScreen extends JFrame {
                 if (soundImage != null) {
                     g.drawImage(soundImage, soundButtonBounds.x, soundButtonBounds.y,
                             soundButtonBounds.width, soundButtonBounds.height, null);
-
                     // 호버 효과
                     if (isSoundButtonHovered) {
                         g.setColor(new Color(255, 255, 255, 50));
                         g.fillRect(soundButtonBounds.x, soundButtonBounds.y,
                                 soundButtonBounds.width, soundButtonBounds.height);
                     }
-
-//                    if (player1 != null) {
-//                        g.drawImage(player1, 150, 550, null);
-//                    }
-//                    if (player2 != null) {
-//                        g.drawImage(player2, 625, 550, null);
-//                    }
-
                 }
+
             }
         };
 
@@ -117,26 +116,61 @@ public class OriginalGameScreen extends JFrame {
             }
         });
 
+        // 아이템 패널 생성 및 추가
+        JPanel itemPanel = new JPanel(null);  // null layout 사용
+        itemPanel.setOpaque(false);
+
+        // 아이템 이미지 추가
+        addScaledImage(itemPanel, changeBubble, 70, 5, 40, 40);
+        addScaledImage(itemPanel, linebomb, 200, 5, 40, 40);
+        addScaledImage(itemPanel, bomb, 320, 5, 40, 40);
+
+        // 아이템 개수 라벨 추가
+        JLabel changeBubbleNum = new JLabel("x " + user.getChangeBubbleColor());
+        changeBubbleNum.setForeground(Color.WHITE);
+        changeBubbleNum.setFont(new Font("Arial", Font.BOLD, 16));
+        changeBubbleNum.setBounds(110, 5, 90, 30);
+        itemPanel.add(changeBubbleNum);
+
+        JLabel linebombNum = new JLabel("x " + user.getLineExplosion());
+        linebombNum.setForeground(Color.WHITE);
+        linebombNum.setFont(new Font("Arial", Font.BOLD, 16));
+        linebombNum.setBounds(245, 5, 95, 30);
+        itemPanel.add(linebombNum);
+
+        JLabel bombNum = new JLabel("x " + user.getBomb());
+        bombNum.setForeground(Color.WHITE);
+        bombNum.setFont(new Font("Arial", Font.BOLD, 16));
+        bombNum.setBounds(370, 5, 90, 30);
+        itemPanel.add(bombNum);
+
+        itemPanel.setBounds(0, 0, getWidth(), getHeight());
+        mainPanel.add(itemPanel);
+
         player1Score = new GameScore();
         player2Score = new GameScore();
 
         // 타이머 레이블 생성 및 위치 설정
         timerLabel = new JLabel("30");
         timerLabel.setFont(new Font("Arial", Font.BOLD, 36));
-        timerLabel.setForeground(Color.WHITE);
-        timerLabel.setBounds(450, 50, 100, 50);
+        timerLabel.setForeground(Color.RED);
+        timerLabel.setBounds(430, 50, 100, 50);
         timerLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        // 점수 레이블 생성 및 위치 설정
-        player1ScoreLabel = new JLabel("점수: 0");
-        player1ScoreLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        player1ScoreLabel.setForeground(Color.WHITE);
-        player1ScoreLabel.setBounds(50, 50, 150, 30);
 
-        player2ScoreLabel = new JLabel("점수: 0");
+//        player2Label.setBounds(850, 550, 200, 15);
+//        player1Label.setBounds(345, 550, 200, 15);
+
+        // 점수 레이블 생성 및 위치 설정
+        player1ScoreLabel = new JLabel("SCORE : 0");
+        player1ScoreLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        player1ScoreLabel.setForeground(Color.YELLOW);
+        player1ScoreLabel.setBounds(325, 620, 200, 30);
+
+        player2ScoreLabel = new JLabel("SCORE: 0");
         player2ScoreLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        player2ScoreLabel.setForeground(Color.WHITE);
-        player2ScoreLabel.setBounds(760, 50, 150, 30);
+        player2ScoreLabel.setForeground(Color.YELLOW);
+        player2ScoreLabel.setBounds(820, 620, 200, 30);
 
         // 메인 패널에 추가
         mainPanel.add(timerLabel);
@@ -214,6 +248,15 @@ public class OriginalGameScreen extends JFrame {
         startGameLoop();
     }
 
+    private void addScaledImage(JPanel panel, BufferedImage image, int x, int y, int width, int height) {
+        if (image != null) {
+            Image scaledImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH); // 스케일 조정
+            JLabel imageLabel = new JLabel(new ImageIcon(scaledImage));
+            imageLabel.setBounds(x, y, width, height); // 위치와 크기 설정
+            panel.add(imageLabel);
+        }
+    }
+
     // 타이머 업데이트 메서드
     public void updateTimer(int remainingTime) {
         SwingUtilities.invokeLater(() -> {
@@ -239,8 +282,8 @@ public class OriginalGameScreen extends JFrame {
 
             String resultMessage;
             if (myScore > opponentScore) {
-                // 승리 시 코인 추가 (예: 승리 점수의 10%를 코인으로 변환)
-                int coinReward = myScore / 10;
+                // 승리 시 코인 추가 ( 승리 점수의 50%를 코인으로 변환)
+                int coinReward = myScore / 50;
                 GameUser.getInstance().addCoin(coinReward);
 
                 resultMessage = String.format(

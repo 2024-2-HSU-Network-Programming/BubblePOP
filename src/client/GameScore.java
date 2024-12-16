@@ -38,7 +38,7 @@ public class GameScore {
 }
 
 class GameTimer extends Thread {
-    private int remainingTime = 7; // 30초 타이머
+    private int remainingTime = 20; // 30초 타이머
     private boolean isRunning = true;
     private final OriginalGameScreen gameScreen;
 
