@@ -11,6 +11,7 @@ public class GameRoom {
     private String roomPassword;
     private Boolean isFull;
     private Boolean isPlaying;
+    private int score;
 
     public GameRoom(int roomId, String roomOwner, String roomName,String roomPassword) {
         this.roomId = roomId;
@@ -69,6 +70,9 @@ public class GameRoom {
         return userList.size();
     }
 
+    public void setScore(int score) {
+        this.score = score;
+    }
 
     public String getRoomOwner() {
         return roomOwner;

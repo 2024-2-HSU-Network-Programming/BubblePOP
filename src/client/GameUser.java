@@ -8,7 +8,7 @@ public class GameUser {
     private String id;
     private String password;
 
-    private int coin = 300;
+    private int coin = 3000;
     private int changeBubbleColor = 0;
     private int lineExplosion = 0;
     private int bomb = 0;

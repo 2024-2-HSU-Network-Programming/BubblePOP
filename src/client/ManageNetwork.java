@@ -252,6 +252,21 @@ public class ManageNetwork extends Thread{
                             }
                             break;
 
+                        case ChatMsg.MODE_GAME_SCORE:
+                            if (originalGameScreen != null) {
+                                String senderId = cm.getUserId();
+                                if (!senderId.equals(gameUser.getId())) {
+                                    int score = Integer.parseInt(cm.getMessage());
+                                    // 점수를 누적하지 않고 직접 설정
+                                    SwingUtilities.invokeLater(() -> {
+                                        originalGameScreen.player2Score.setScore(score);
+                                        originalGameScreen.player2ScoreLabel.setText("점수: " + score);
+                                    });
+                                }
+                            }
+                            break;
+
+
 
 
                         default:
@@ -284,5 +299,8 @@ public class ManageNetwork extends Thread{
         System.out.println("클라이언트 연결 종료");
     }
 
+    public void setGameScreen(OriginalGameScreen gameScreen) {
+        this.originalGameScreen = gameScreen;
+    }
 
 }

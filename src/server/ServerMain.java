@@ -339,6 +339,12 @@ public class ServerMain extends JFrame {
                         broadcasting(msg);
                         break;
 
+                    case ChatMsg.MODE_GAME_SCORE:
+                        // 게임 점수 업데이트를 모든 클라이언트에게 브로드캐스트
+                        t_display.append("게임 점수 업데이트: " + userName + " - " + msg.getMessage() + "\n");
+                        broadcasting(msg);
+                        break;
+
                     default:
                         t_display.append("알 수 없는 메시지 모드: " + msg.getMode() + "\n");
                 }
