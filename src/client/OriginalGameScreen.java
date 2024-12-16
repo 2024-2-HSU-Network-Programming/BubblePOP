@@ -279,7 +279,7 @@ public class OriginalGameScreen extends JFrame {
     }
 
     // GamePanel 클래스는 이전 구현을 그대로 사용하되, 생성자에서 조작 가능 여부를 받도록 수정
-    private class GamePanel extends JPanel implements KeyListener {        // ... (기존 GamePanel 코드는 유지)
+    private class GamePanel extends JPanel implements KeyListener {
         //기존
         private static final int BOARD_TOP = 65;
         private static final int BUBBLE_SIZE = 48;
@@ -348,7 +348,6 @@ public class OriginalGameScreen extends JFrame {
 
         public GamePanel(boolean isControllable) {
             this.isControllable = isControllable;
-            // ... (기존 초기화 코드)
 
             try {
                 // 화살표 이미지 로드
@@ -783,7 +782,7 @@ public class OriginalGameScreen extends JFrame {
             }
         }
 
-        // 폭탄 구슬 폭발 처리 메서드 추가
+        // 폭탄 구슬 폭발 처리 메서드
         private void explodeBombBubble(int row, int col) {
             // 주변 6방향 체크를 위한 방향 배열
             int[][] directions;
@@ -1089,7 +1088,7 @@ public class OriginalGameScreen extends JFrame {
             }
         }
 
-        // 버블 이미지를 반환하는 메서드 추가
+        // 버블 이미지를 반환하는 메서드
         private BufferedImage getBubbleImage(int bubbleNumber) {
             return switch (bubbleNumber) {
                 case 1 -> b1;
@@ -1213,9 +1212,32 @@ public class OriginalGameScreen extends JFrame {
             this.bubbleX = bubbleX;
             this.bubbleY = bubbleY;
             this.angle = angle;
-            this.currentBubbleType = currentBubbleType;  // 현재 구슬 타입 업데이트
-            this.nextBubbleType = nextBubbleType;        // 다음 구슬 타입 업데이트
+            this.currentBubbleType = currentBubbleType;
+            this.nextBubbleType = nextBubbleType;
+
+            // 이전 보드 상태 저장
+            int[][] oldBoard = new int[board.length][board[0].length];
+            for (int i = 0; i < board.length; i++) {
+                oldBoard[i] = board[i].clone();
+            }
+
+            // 새로운 보드 상태로 업데이트
             updateBoardState(boardState);
+
+            // 변경된 위치에 대해 팝 애니메이션 추가
+            for (int row = 0; row < board.length; row++) {
+                for (int col = 0; col < board[0].length; col++) {
+                    if (oldBoard[row][col] != 0 && board[row][col] == 0) {
+                        // 구슬이 사라진 위치에 애니메이션 추가
+                        Point screenPos = new Point(
+                                (col * BUBBLE_SIZE) + (row % 2 == 0 ? 43 : 67),
+                                65 + (row * BUBBLE_SIZE)
+                        );
+                        popAnimations.add(new BubblePop(screenPos, oldBoard[row][col]));
+                    }
+                }
+            }
+
             repaint();
         }
 
