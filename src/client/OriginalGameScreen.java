@@ -300,8 +300,7 @@ public class OriginalGameScreen extends JFrame {
         private BufferedImage bP5_1, bP5_2, bP5_3, bP5_4; // 버블 팝 이미지
         private BufferedImage bP6_1, bP6_2, bP6_3, bP6_4; // 버블 팝 이미지
         private BufferedImage bP7_1, bP7_2, bP7_3, bP7_4; // 버블 팝 이미지
-
-
+        private BufferedImage bombB; //폭탄 버블 이미지
 
         private double angle = 0; // 화살표의 현재 각도 (라디안 값)
         private final double maxAngle = Math.toRadians(60); // 최대 각도 (50도)
@@ -315,6 +314,9 @@ public class OriginalGameScreen extends JFrame {
         private double dx, dy; // 구슬의 이동 방향 멤버 변수로 ...
         private int currentBubbleType = 1; // 현재 발사할 구슬의 타입 (1~7)
         private int nextBubbleType = 2;    // 다음 발사할 구슬의 타입 (1~7)
+
+        private boolean isBombBubble = false; // 현재 구슬이 폭탄인지 여부
+
 
         // 구슬 흔들기
         private int shotCount = 0;  // 발사 횟수를 추적
@@ -407,6 +409,8 @@ public class OriginalGameScreen extends JFrame {
                 bP7_2 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble7Pop2.png"));
                 bP7_3 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble7Pop3.png"));
                 bP7_4 = ImageIO.read(getClass().getClassLoader().getResource("assets/bubblePop/bubble7Pop4.png"));
+
+                bombB = ImageIO.read(getClass().getClassLoader().getResource("assets/bubble/bombBubble.png"));
 
 
                 gameBottom = ImageIO.read(getClass().getClassLoader().getResource("assets/game/gamebottom.png"));
@@ -569,8 +573,13 @@ public class OriginalGameScreen extends JFrame {
                 // W키: 맨 아래 라인 폭발
                 explodeBottomLine();
                 repaint();
-            }
-
+            }else if(e.getKeyCode() == KeyEvent.VK_E) {
+                    // E키: 폭탄 구슬로 변경
+                    if (!isBubbleMoving) {
+                        isBombBubble = true;
+                        repaint();
+                    }
+                }
                 else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                     if (!isBubbleMoving) {
                         isBubbleMoving = true;
@@ -723,39 +732,41 @@ public class OriginalGameScreen extends JFrame {
                 }
             }
 
-            // 일단 현재 위치에 구슬 배치
+            if (isBombBubble) {
+                // 폭탄 구슬 폭발 처리
+                explodeBombBubble(row, col);
+                isBombBubble = false;  // 폭발 후 폭탄 상태 해제
+                return;  // 폭발 후 추가 처리 없이 종료
+            }
+
+            // 일반 구슬 처리
             board[row][col] = currentBubbleType;
 
-            // 10번째 줄(인덱스 9)에 구슬이 생기면 모든 구슬을 8로 변경
+            // 10번째 줄 처리
             if (row == 9) {
                 for (int i = 0; i < board.length; i++) {
                     for (int j = 0; j < board[i].length; j++) {
                         if (board[i][j] != 0) {
-                            board[i][j] = 8;  // 8을 finish 상태를 나타내는 값으로 사용
+                            board[i][j] = 8;
                         }
                     }
                 }
                 repaint();
-                return;  // 더 이상의 처리 중단
+                return;
             }
 
-            // 같은 색상의 연결된 구슬 찾기
+            // 같은 색상 매칭 처리
             Set<Point> connected = new HashSet<>();
             findConnectedBubbles(row, col, currentBubbleType, connected);
 
-            // 3개 이상 연결된 구슬이 있는 경우 처리
             if (connected.size() >= 3) {
-                // 먼저 팝 애니메이션 추가
+                // 연결된 구슬 제거
                 for (Point p : connected) {
                     Point screenPos = new Point(
                             (p.y * BUBBLE_SIZE) + (p.x % 2 == 0 ? 43 : 67),
                             65 + (p.x * BUBBLE_SIZE)
                     );
-                    popAnimations.add(new GamePanel.BubblePop(screenPos, board[p.x][p.y]));
-                }
-
-                // 연결된 구슬 제거
-                for (Point p : connected) {
+                    popAnimations.add(new BubblePop(screenPos, board[p.x][p.y]));
                     board[p.x][p.y] = 0;
                 }
 
@@ -766,9 +777,53 @@ public class OriginalGameScreen extends JFrame {
                             (p.y * BUBBLE_SIZE) + (p.x % 2 == 0 ? 43 : 67),
                             65 + (p.x * BUBBLE_SIZE)
                     );
-                    popAnimations.add(new GamePanel.BubblePop(screenPos, board[p.x][p.y]));
+                    popAnimations.add(new BubblePop(screenPos, board[p.x][p.y]));
                     board[p.x][p.y] = 0;
                 }
+            }
+        }
+
+        // 폭탄 구슬 폭발 처리 메서드 추가
+        private void explodeBombBubble(int row, int col) {
+            // 주변 6방향 체크를 위한 방향 배열
+            int[][] directions;
+            if (row % 2 == 0) {
+                directions = new int[][]{
+                        {-1, 0}, {-1, -1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}
+                };
+            } else {
+                directions = new int[][]{
+                        {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, 0}, {1, 1}
+                };
+            }
+
+            // 주변 구슬 폭발
+            for (int[] dir : directions) {
+                int newRow = row + dir[0];
+                int newCol = col + dir[1];
+
+                if (newRow >= 0 && newRow < board.length && newCol >= 0 && newCol < board[newRow].length) {
+                    if (board[newRow][newCol] != 0) {
+                        // 폭발 애니메이션 추가
+                        Point screenPos = new Point(
+                                (newCol * BUBBLE_SIZE) + (newRow % 2 == 0 ? 43 : 67),
+                                65 + (newRow * BUBBLE_SIZE)
+                        );
+                        popAnimations.add(new BubblePop(screenPos, board[newRow][newCol]));
+                        board[newRow][newCol] = 0;
+                    }
+                }
+            }
+
+            // 떠 있는 구슬 처리
+            Set<Point> floating = findFloatingBubbles();
+            for (Point p : floating) {
+                Point screenPos = new Point(
+                        (p.y * BUBBLE_SIZE) + (p.x % 2 == 0 ? 43 : 67),
+                        65 + (p.x * BUBBLE_SIZE)
+                );
+                popAnimations.add(new BubblePop(screenPos, board[p.x][p.y]));
+                board[p.x][p.y] = 0;
             }
         }
 
@@ -998,16 +1053,15 @@ public class OriginalGameScreen extends JFrame {
 
             // 발사대 구슬 출력
             if (!isBubbleMoving) {
-                BufferedImage bubbleImage = getBubbleImage(currentBubbleType);
+                BufferedImage bubbleImage = isBombBubble ? bombB : getBubbleImage(currentBubbleType);
                 if (bubbleImage != null) {
                     g.drawImage(bubbleImage, bubbleX, bubbleY, null);
                 }
             }
 
-
             // 발사 중인 구슬 출력
             if (isBubbleMoving) {
-                BufferedImage bubbleImage = getBubbleImage(currentBubbleType);
+                BufferedImage bubbleImage = isBombBubble ? bombB : getBubbleImage(currentBubbleType);
                 if (bubbleImage != null) {
                     g.drawImage(bubbleImage, bubbleX, bubbleY, null);
                 }
