@@ -233,14 +233,34 @@ public class OriginalGameScreen extends JFrame {
             if (audioManager != null) {
                 audioManager.stopBGM();
             }
+            // 점수 비교 및 코인 추가
+            int myScore = player1Score.getScore();
+            int opponentScore = player2Score.getScore();
 
-            // 게임 종료 메시지와 최종 점수 표시
-            JOptionPane.showMessageDialog(this,
-                    String.format("게임 종료!\n내 점수: %d\n상대방 점수: %d",
-                            player1Score.getScore(),
-                            player2Score.getScore()),
-                    "게임 종료",
-                    JOptionPane.INFORMATION_MESSAGE);
+            String resultMessage;
+            if (myScore > opponentScore) {
+                // 승리 시 코인 추가 (예: 승리 점수의 10%를 코인으로 변환)
+                int coinReward = myScore / 10;
+                GameUser.getInstance().addCoin(coinReward);
+
+                resultMessage = String.format(
+                        "게임 종료! 승리!\n내 점수: %d\n상대방 점수: %d\n보상 코인: %d",
+                        myScore, opponentScore, coinReward
+                );
+            } else if (myScore < opponentScore) {
+                resultMessage = String.format(
+                        "게임 종료! 패배\n내 점수: %d\n상대방 점수: %d",
+                        myScore, opponentScore
+                );
+            } else {
+                resultMessage = String.format(
+                        "게임 종료! 무승부\n내 점수: %d\n상대방 점수: %d",
+                        myScore, opponentScore
+                );
+            }
+
+            // 게임 결과 메시지 표시
+            JOptionPane.showMessageDialog(this, resultMessage, "게임 종료", JOptionPane.INFORMATION_MESSAGE);
 
             // ManageNetwork에서 게임 화면 참조 제거
             if (network != null) {
