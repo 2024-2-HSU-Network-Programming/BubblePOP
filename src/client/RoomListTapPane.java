@@ -58,7 +58,7 @@ public class RoomListTapPane extends JTabbedPane {
 
     }
 
-    private JPanel RoomPane(int roomNumber, String roomName, String password, int userListSize) {
+    private JPanel RoomPane(int roomNumber, String roomName, String password, int userListSize, boolean isExchangeRoom) {
         roomPane = new JPanel();
         roomPane.setBackground(Color.WHITE);
         roomPane.setLayout(null); // 절대 레이아웃 사용
@@ -101,38 +101,73 @@ public class RoomListTapPane extends JTabbedPane {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("RoomPane clicked: " + roomName);
-                //enterRoom(roomNumber, roomName);
-                if(finalPasswordStatus.equals("비공개")) {
-                    // 비밀번호 입력 다이얼로그
-                    String inputPassword = JOptionPane.showInputDialog(
-                            null,
-                            "비밀번호를 입력하세요:",
-                            "비공개 방 입장",
-                            JOptionPane.PLAIN_MESSAGE
-                    );
-                    if (inputPassword != null) { // 사용자가 비밀번호를 입력했을 때
-                        // 서버로 입력된 비밀번호를 검증하는 로직 추가 필요
-                        boolean isPasswordCorrect = checkPassword(roomNumber, inputPassword);
-                        if (isPasswordCorrect) {
-                            enterRoom(roomNumber, roomName); // 비밀번호 검증 성공 시 방 입장
-                        } else {
-                            JOptionPane.showMessageDialog(
-                                    null,
-                                    "비밀번호가 올바르지 않습니다!",
-                                    "입장 실패",
-                                    JOptionPane.ERROR_MESSAGE
-                            );
-                        }
-                    }
-                } else {
-                    enterRoom(roomNumber, roomName);
-                }
+                handleRoomClick(roomNumber, roomName, finalPasswordStatus, isExchangeRoom);
+//                //enterRoom(roomNumber, roomName);
+//                if(finalPasswordStatus.equals("비공개")) {
+//                    // 비밀번호 입력 다이얼로그
+//                    String inputPassword = JOptionPane.showInputDialog(
+//                            null,
+//                            "비밀번호를 입력하세요:",
+//                            "비공개 방 입장",
+//                            JOptionPane.PLAIN_MESSAGE
+//                    );
+//                    if (inputPassword != null) { // 사용자가 비밀번호를 입력했을 때
+//                        // 서버로 입력된 비밀번호를 검증하는 로직 추가 필요
+//                        boolean isPasswordCorrect = checkPassword(roomNumber, inputPassword);
+//                        if (isPasswordCorrect) {
+//                            enterRoom(roomNumber, roomName); // 비밀번호 검증 성공 시 방 입장
+//                        } else {
+//                            JOptionPane.showMessageDialog(
+//                                    null,
+//                                    "비밀번호가 올바르지 않습니다!",
+//                                    "입장 실패",
+//                                    JOptionPane.ERROR_MESSAGE
+//                            );
+//                        }
+//                    }
+//                } else {
+//                    enterRoom(roomNumber, roomName);
+//                }
 
             }
         });
 
         return roomPane;
     }
+    private void handleRoomClick(int roomNumber, String roomName, String passwordStatus, boolean isExchangeRoom) {
+        if (passwordStatus.equals("비공개")) {
+            // 비밀번호 입력 다이얼로그
+            String inputPassword = JOptionPane.showInputDialog(
+                    null,
+                    "비밀번호를 입력하세요:",
+                    "비공개 방 입장",
+                    JOptionPane.PLAIN_MESSAGE
+            );
+            if (inputPassword == null || inputPassword.isBlank()) {
+                return; // 입력이 취소되었거나 비어있는 경우
+            }
+            // 비밀번호 확인
+            boolean isPasswordCorrect = isExchangeRoom
+                    ? checkExchangeRoomPassword(roomNumber, inputPassword)
+                    : checkPassword(roomNumber, inputPassword);
+            if (!isPasswordCorrect) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "비밀번호가 올바르지 않습니다!",
+                        "입장 실패",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+        }
+        // 방 입장 처리
+        if (isExchangeRoom) {
+            enterExchangeRoom(roomNumber, roomName);
+        } else {
+            enterRoom(roomNumber, roomName);
+        }
+    }
+
     // 비밀번호 체크 함수
     private boolean checkPassword(int roomNumber, String inputPassword) {
         // RoomManager에서 해당 방 가져오기
@@ -163,11 +198,27 @@ public class RoomListTapPane extends JTabbedPane {
         // 예를 들어, 서버에서 결과를 콜백으로 받을 수 있다면 콜백 함수에서 결과를 처리합니다.
         //return network.waitForPasswordCheckResult(roomNumber); // 이 메서드는 서버 응답 대기 후 결과를 반환
     }
+    // 교환방 비밀번호 체크 함수
+    private boolean checkExchangeRoomPassword(int roomNumber, String inputPassword) {
+        ExchangeRoom room = RoomManager.getInstance().getExchangeRoom(String.valueOf(roomNumber));
+        if (room == null) {
+            System.out.println("교환방을 찾을 수 없습니다: RoomID=" + roomNumber);
+            JOptionPane.showMessageDialog(
+                    null,
+                    "교환방을 찾을 수 없습니다.",
+                    "오류",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            return false;
+        }
+        System.out.println("입력된 비밀번호: " + inputPassword + ", 방 비밀번호: " + room.getRoomPassword());
+        return room.getRoomPassword().equals(inputPassword);
+    }
 
     // 새로운 RoomPane 추가 메서드
-    public void addRoomPane(int roomNumber, String roomName, String password, int userListSize, JPanel tab) {
+    public void addRoomPane(int roomNumber, String roomName, String password, int userListSize, JPanel tab, boolean isExchangeRoom) {
         System.out.println("addRoomPane 호출: RoomID=" + roomNumber + ", RoomName=" + roomName);
-        JPanel newRoomPane = RoomPane(roomNumber, roomName, password, userListSize);
+        JPanel newRoomPane = RoomPane(roomNumber, roomName, password, userListSize, isExchangeRoom);
         tab.add(newRoomPane); // 선택한 탭에 추가
         nextY += roomPaneHeight + gap; // 다음 RoomPane의 Y 좌표 갱신
         tab.setPreferredSize(new Dimension(215, nextY + gap)); // 패널 크기 갱신
@@ -186,7 +237,7 @@ public class RoomListTapPane extends JTabbedPane {
 
         for (GameRoom room : rooms) {
             System.out.println("Room 갱신 중: RoomID=" + room.getRoomId() + ", RoomName=" + room.getRoomName());
-            addRoomPane(room.getRoomId(), room.getRoomName(), room.getRoomPassword(), room.getUserListSize(), tab1);
+            addRoomPane(room.getRoomId(), room.getRoomName(), room.getRoomPassword(), room.getUserListSize(), tab1, false);
         }
 
         System.out.println(RoomManager.getInstance().getAllRooms());
@@ -199,8 +250,8 @@ public class RoomListTapPane extends JTabbedPane {
         List<ExchangeRoom> exchangeRooms = RoomManager.getInstance().getAllExchangeRooms(); // 교환방만 가져오기
         System.out.println("RoomManager에서 반환된 교환방 개수: " + exchangeRooms.size());
         for (ExchangeRoom room : exchangeRooms) {
-            System.out.println("교환방 갱신 중: RoomID=" + room.getRoomId() + ", RoomName=" + room.getRoomName());
-            addRoomPane(room.getRoomId(), room.getRoomName(), room.getPassword(), room.getUserListSize(), tab2);
+            System.out.println("교환방 갱신 중: RoomID=" + room.getRoomId() + ", RoomName=" + room.getRoomName() + "UserListSize= " + room.getUserListSize());
+            addRoomPane(room.getRoomId(), room.getRoomName(), room.getRoomPassword(), room.getUserListSize(), tab2, true);
         }
         tab2.revalidate();
         tab2.repaint();
@@ -234,5 +285,59 @@ public class RoomListTapPane extends JTabbedPane {
 
         refreshRoomList();
     }
+
+//    private void enterExchangeRoom(int roomNumber, String roomName) {
+//        System.out.println("Entering Exchange Room: " + roomName + " (ID: " + roomNumber + ")");
+//        String currentUser = user.getId();
+//
+//        // 서버로 입장 메시지 전송
+//        ChatMsg enterMsg = new ChatMsg(currentUser, ChatMsg.MODE_ENTER_EXCHANGEROOM, roomNumber + "|" + currentUser);
+//        user.getNet().sendMessage(enterMsg);
+//        boolean success = RoomManager.getInstance().addUserToExchangeRoom(roomNumber, currentUser);
+//        if (success) {
+//            System.out.println("User successfully entered the exchange room.");
+//            SwingUtilities.invokeLater(() -> {
+//                ExchangeWaitingRoom exchangeRoom = new ExchangeWaitingRoom(
+//                        String.valueOf(roomNumber),
+//                        roomName,
+//                        currentUser,
+//                        user.getNet()
+//                );
+//                exchangeRoom.show();
+//                lobbyFrame.dispose();
+//            });
+//        } else {
+//            JOptionPane.showMessageDialog(null, "방이 가득 찼습니다!", "입장 실패", JOptionPane.ERROR_MESSAGE);
+//        }
+//        refreshRoomList();
+//    }
+private void enterExchangeRoom(int roomNumber, String roomName) {
+    System.out.println("Entering Exchange Room: " + roomName + " (ID: " + roomNumber + ")");
+    String currentUser = user.getId();
+
+    // 서버로 입장 메시지 전송
+    ChatMsg enterMsg = new ChatMsg(currentUser, ChatMsg.MODE_ENTER_EXCHANGEROOM, roomNumber + "|" + currentUser);
+    user.getNet().sendMessage(enterMsg);
+
+    // 교환방 UI는 서버 응답을 기반으로 동기화
+    System.out.println("입장 요청 메시지를 서버로 전송했습니다.");
+    boolean success = RoomManager.getInstance().addUserToExchangeRoom(roomNumber, currentUser);
+
+    if (success) {
+        System.out.println("User successfully entered the room.");
+        SwingUtilities.invokeLater(() -> {
+            ExchangeWaitingRoom waitingRoom = new ExchangeWaitingRoom(
+                    String.valueOf(roomNumber),
+                    roomName,
+                    currentUser,
+                    user.getNet()
+            );
+            waitingRoom.show();
+            lobbyFrame.dispose();
+        });
+
+    }
+}
+
 
 }

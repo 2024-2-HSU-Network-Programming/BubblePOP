@@ -151,7 +151,7 @@ public class ServerMain extends JFrame {
                                 // 현재 존재하는 모든 교환방 정보를 전송
                                 for (ExchangeRoom room : RoomManager.getInstance().getAllExchangeRooms()) {
                                     ChatMsg existingExchangeRoomMsg = new ChatMsg("Server", ChatMsg.MODE_TX_CREATEEXCHANGEROOM,
-                                            room.getRoomId() + "|" + room.getOwner() + "|" + room.getRoomName() + "|" + room.getPassword());
+                                            room.getRoomId() + "|" + room.getRoomOwner() + "|" + room.getRoomName() + "|" + room.getRoomPassword());
                                     out.writeObject(existingExchangeRoomMsg);
                                 }
 
@@ -267,6 +267,70 @@ public class ServerMain extends JFrame {
                             }
                         }
                         break;
+                    case ChatMsg.MODE_ENTER_EXCHANGEROOM:
+                        String[] enterExchangeRoomData = msg.getMessage().split("\\|");
+                        int exchangeRoomId = Integer.parseInt(enterExchangeRoomData[0]);
+                        enteringUser = enterExchangeRoomData[1];
+
+                        // 교환방에 사용자 추가
+                        success = RoomManager.addUserToExchangeRoom(exchangeRoomId, enteringUser);
+                        if (success) {
+                            ExchangeRoom exchangeRoom = RoomManager.getInstance().getExchangeRoom(String.valueOf(exchangeRoomId));
+                            if (exchangeRoom != null) {
+                                // 모든 유저 정보와 함께 브로드캐스트
+                                StringBuilder userList = new StringBuilder();
+                                for (String user : exchangeRoom.getUserList()) {
+                                    userList.append(user).append(",");
+                                }
+                                // 마지막 쉼표 제거
+                                if (userList.length() > 0) {
+                                    userList.setLength(userList.length() - 1);
+                                }
+
+                                ChatMsg updateMsg = new ChatMsg(
+                                        "Server",
+                                        ChatMsg.MODE_ENTER_EXCHANGEROOM,
+                                        exchangeRoomId + "|" + userList.toString()
+                                );
+                                broadcasting(updateMsg);
+                            }
+                        } else {
+//                            ChatMsg errorMsg = new ChatMsg("Server", ChatMsg.MODE_ERROR, "방이 가득 찼습니다.");
+//                            out.writeObject(errorMsg);
+                        }
+                        break;
+//                    case ChatMsg.MODE_ENTER_EXCHANGEROOM:
+//                        String[] enterExchangeRoomData = msg.getMessage().split("\\|");
+//                        int enterExchangeRoomId = Integer.parseInt(enterExchangeRoomData[0]);
+//                        enteringUser = enterExchangeRoomData[1];
+//
+//                        // 방에 유저 추가 시도
+//                        success = RoomManager.addUserToRoom(enterExchangeRoomId, enteringUser);
+//
+//                        if(success) {
+//                            // 서버 로그
+//                            t_display.append(enteringUser + "님이 " + enterExchangeRoomId + "번 방에 입장했습니다.\n");
+//
+//                            // 해당 방의 모든 유저 정보 가져오기
+//                            ExchangeRoom exchangeRoom = RoomManager.getInstance().getExchangeRoom(String.valueOf(enterExchangeRoomId));
+//                            if(exchangeRoom != null) {
+//                                // 약간의 딜레이를 주어 두 번째 클라이언트의 WaitingRoom이 생성될 시간을 줌
+//                                try {
+//                                    Thread.sleep(100);
+//                                } catch (InterruptedException e) {
+//                                    e.printStackTrace();
+//                                }
+//
+//                                // 방의 모든 유저들에 대해 메시지 전송
+//                                List<String> users = exchangeRoom.getUserList();
+//                                for(String user : users) {
+//                                    ChatMsg enterRoomMsg = new ChatMsg("Server", ChatMsg.MODE_ENTER_EXCHANGEROOM,
+//                                            enterExchangeRoomId + "|" + user);
+//                                    broadcasting(enterRoomMsg);
+//                                }
+//                            }
+//                        }
+//                        break;
 
                     case ChatMsg.MODE_TX_ROOMCHAT:
                         String[] roomChatData = msg.getMessage().split("\\|");

@@ -1,5 +1,6 @@
 package client;
 
+import server.ExchangeRoom;
 import server.RoomManager;
 import shared.ChatMsg;
 
@@ -17,6 +18,7 @@ public class ManageNetwork extends Thread{
     private LobbyFrame lobbyFrame;
     private int roomCount = RoomManager.getRoomListSize();
     private WaitingRoom waitingRoom;
+    private ExchangeWaitingRoom exchangeWaitingRoom;
     private OriginalGameScreen originalGameScreen;
 
     public ManageNetwork(ObjectInputStream in, ObjectOutputStream out, Socket socket) {
@@ -27,6 +29,9 @@ public class ManageNetwork extends Thread{
     }
     public void setWaitingRoom(WaitingRoom waitingRoom) {
         this.waitingRoom = waitingRoom;
+    }
+    public void setExchangeWaitingRoom(ExchangeWaitingRoom exchangeWaitingRoom) {
+        this.exchangeWaitingRoom = exchangeWaitingRoom;
     }
 
     public ObjectInputStream getOIS() {
@@ -122,19 +127,20 @@ public class ManageNetwork extends Thread{
                                     lobbyFrame.updateRoomList("새로운 교환방 " + roomName + "에 들어오세요!\n");
                                 });
 
-                                // 방 생성자인 경우에만 WaitingRoom 오픈
-//                                if (ownerName.equals(lobbyFrame.getUserId())) {
-//                                    ExchangeWaitingRoom exchangeWaitingRoom = new ExchangeWaitingRoom(
-//                                            String.valueOf(roomId),
-//                                            roomName,
-//                                            ownerName,
-//                                            this
-//                                    );
-//                                    // 교환 대기방을 `ManageNetwork`와 연결
-//                                    this.setExchangeWaitingRoom(exchangeWaitingRoom);
-//                                    exchangeWaitingRoom.show();
-//                                    lobbyFrame.dispose();
-//                                }
+                                // 방 생성자인 경우에만 exchangeWaitingRoom 오픈
+                                if (ownerName.equals(lobbyFrame.getUserId())) {
+                                    System.out.println("exchangeWaitingRoom 오픈");
+                                    ExchangeWaitingRoom exchangeWaitingRoom = new ExchangeWaitingRoom(
+                                            String.valueOf(roomId),
+                                            roomName,
+                                            ownerName,
+                                            this
+                                    );
+                                    exchangeWaitingRoom.show();
+                                    lobbyFrame.dispose();
+                                } else {
+                                    System.out.println("머임");
+                                }
                             }
                         }
                         break;
@@ -175,22 +181,68 @@ public class ManageNetwork extends Thread{
                             break;
                         case ChatMsg.MODE_ENTER_EXCHANGEROOM:
                             String[] exchangeEnterInfo = cm.getMessage().split("\\|");
-                            int exchangeRoomId = Integer.parseInt(exchangeEnterInfo[0]);
-                            String exchangeUserName = exchangeEnterInfo[1];
-                            System.out.println("해당 교환방 유저 수: " + RoomManager.getExchangeRoom(Integer.toString((exchangeRoomId))).getUserListSize());
-                            // 교환 대기방이 열려 있는 경우
-//                            if (exchangeWaitingRoom != null && exchangeWaitingRoom.getRoomId().equals(String.valueOf(exchangeRoomId))) {
-//                                exchangeWaitingRoom.updatePlayerName(exchangeUserName); // 대기방 UI 업데이트
-//                                System.out.println("교환 대기방 업데이트: " + exchangeUserName + " 추가됨.");
+                            roomId = Integer.parseInt(exchangeEnterInfo[0]);
+                            String[] usersInRoom = exchangeEnterInfo[1].split(",");
+
+                            System.out.println("Received ENTER_EXCHANGEROOM message: RoomID=" + roomId + ", Users=" + exchangeEnterInfo[1]);
+
+                            // 교환방 정보 업데이트
+                            ExchangeRoom room = RoomManager.getInstance().getExchangeRoom(String.valueOf(roomId));
+                            if (room == null) {
+                                // 방이 없으면 새로 생성
+                                room = RoomManager.getInstance().createExchangeRoom("Server", "교환방", ""); // 임의의 기본값
+                            }
+
+                            // 방의 유저 리스트 업데이트
+                            for (String user : usersInRoom) {
+                                room.enterUser(user);
+                            }
+
+                            // 현재 클라이언트의 교환방 UI 생성 또는 업데이트
+                            SwingUtilities.invokeLater(() -> {
+                                if (exchangeWaitingRoom == null || !exchangeWaitingRoom.getRoomId().equals(String.valueOf(roomId))) {
+                                    // 새 교환방 UI 생성
+                                    exchangeWaitingRoom = new ExchangeWaitingRoom(
+                                            String.valueOf(roomId),
+                                            "교환방",
+                                            gameUser.getId(),
+                                            gameUser.getNet()
+                                    );
+                                    exchangeWaitingRoom.show();
+                                } else {
+                                    // 기존 교환방 UI 업데이트
+                                    for (String user : usersInRoom) {
+                                        exchangeWaitingRoom.updatePlayer2Name(user);
+                                    }
+                                }
+                            });
+//                            enterInfo = cm.getMessage().split("\\|");
+//                            enterRoomId = Integer.parseInt(enterInfo[0]);
+//                            enteringUser = enterInfo[1];
+//
+//                            System.out.println("Received ENTER_ROOM message: " + cm.getMessage());
+//
+//                            // waitingRoom이 null이 아닐 때만 업데이트
+//                            if (exchangeWaitingRoom != null) {
+//                                exchangeWaitingRoom.updatePlayer2Name(enteringUser);
+//                                System.out.println("Updated exchangeWaitingRoom room with user: " + enteringUser);
 //                            } else {
-//                                System.out.println("교환 대기방이 활성화되지 않았습니다.");
+//                                System.out.println("exchangeWaitingRoom is null");
 //                            }
-                            break;
+//                            break;
+
+
                         case ChatMsg.MODE_TX_ROOMCHAT:
                             if (waitingRoom != null) {
                                 String[] roomChatData = cm.getMessage().split("\\|", 2);
                                 if (roomChatData.length == 2) {
                                     waitingRoom.receiveMessage(roomChatData[1]);
+                                }
+                            }
+                            else if (exchangeWaitingRoom != null) {
+                                String[] roomChatData = cm.getMessage().split("\\|", 2);
+                                if (roomChatData.length == 2) {
+                                    exchangeWaitingRoom.receiveMessage(roomChatData[1]);
                                 }
                             }
                             break;
