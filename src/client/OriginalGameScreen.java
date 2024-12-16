@@ -25,6 +25,11 @@ public class OriginalGameScreen extends JFrame {
     private boolean isSoundButtonHovered = false;
     private Rectangle soundButtonBounds = new Rectangle(10, 10, 32, 32);
     private BufferedImage soundOn, soundOff;
+    private BufferedImage player1, player2; // 게임 캐릭터 이미지
+    //게임 캐릭터 이미지 라벨
+    private JLabel player1ImageLabel;
+    private JLabel player2ImageLabel;
+
 
     // 배경 이미지
     private ImageIcon backgroundImage = new ImageIcon(getClass().getResource("/client/assets/game/two_player_background.png"));
@@ -38,6 +43,8 @@ public class OriginalGameScreen extends JFrame {
         try {
             soundOff = ImageIO.read(getClass().getResourceAsStream("/client/assets/sounds/toolSoundOff.png"));
             soundOn = ImageIO.read(getClass().getResourceAsStream("/client/assets/sounds/toolSoundOn.png"));
+            player1 = ImageIO.read(getClass().getClassLoader().getResource("client/assets/player1.png"));
+            player2 = ImageIO.read(getClass().getClassLoader().getResource("client/assets/player2.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -60,6 +67,14 @@ public class OriginalGameScreen extends JFrame {
                         g.fillRect(soundButtonBounds.x, soundButtonBounds.y,
                                 soundButtonBounds.width, soundButtonBounds.height);
                     }
+
+//                    if (player1 != null) {
+//                        g.drawImage(player1, 150, 550, null);
+//                    }
+//                    if (player2 != null) {
+//                        g.drawImage(player2, 625, 550, null);
+//                    }
+
                 }
             }
         };
@@ -138,6 +153,10 @@ public class OriginalGameScreen extends JFrame {
         player1Panel.setOpaque(false);
         player2Panel.setOpaque(false);
 
+        // 메인 패널에 추가
+        mainPanel.add(player1ImageLabel);
+        mainPanel.add(player2ImageLabel);
+
         mainPanel.add(player1Panel);
         mainPanel.add(player2Panel);
         mainPanel.add(player1Label);
@@ -146,6 +165,9 @@ public class OriginalGameScreen extends JFrame {
         // 라벨을 항상 최상위에 표시
         mainPanel.setComponentZOrder(player1Label, 0);
         mainPanel.setComponentZOrder(player2Label, 0);
+
+        mainPanel.setComponentZOrder(player1ImageLabel, 0);
+        mainPanel.setComponentZOrder(player2ImageLabel, 0);
 
         startGameLoop();
     }
@@ -159,6 +181,15 @@ public class OriginalGameScreen extends JFrame {
     }
 
     private void createPanels() {
+        // 플레이어 이미지를 위한 JLabel 생성
+        player1ImageLabel = new JLabel(new ImageIcon(player1));
+        player2ImageLabel = new JLabel(new ImageIcon(player2));
+        // 위치와 크기 설정
+        player1ImageLabel.setBounds(150, 550, player1.getWidth(), player1.getHeight());
+        player2ImageLabel.setBounds(625, 560, player2.getWidth(), player2.getHeight());
+
+
+
         // 자신의 게임 패널 (왼쪽)
         player1Panel = new GamePanel(true);  // true = 조작 가능
         player1Panel.setBounds(0, 0, 450, 650);
@@ -259,7 +290,6 @@ public class OriginalGameScreen extends JFrame {
 
         private BufferedImage dd1, dd2, dd3, dd4, dd5, dd6, dd7, dd8, dd9, dd10, dd11, dd12; // 발사대 하단 이미지
         private BufferedImage gameBottom; // 게임 하단 이미지
-        private BufferedImage player1, player2; // 게임 캐릭터 이미지
 
 
         private BufferedImage b1, b2, b3, b4, b5, b6, b7, bF; // 버블 이미지
@@ -270,6 +300,7 @@ public class OriginalGameScreen extends JFrame {
         private BufferedImage bP5_1, bP5_2, bP5_3, bP5_4; // 버블 팝 이미지
         private BufferedImage bP6_1, bP6_2, bP6_3, bP6_4; // 버블 팝 이미지
         private BufferedImage bP7_1, bP7_2, bP7_3, bP7_4; // 버블 팝 이미지
+
 
 
         private double angle = 0; // 화살표의 현재 각도 (라디안 값)
@@ -379,8 +410,7 @@ public class OriginalGameScreen extends JFrame {
 
 
                 gameBottom = ImageIO.read(getClass().getClassLoader().getResource("assets/game/gamebottom.png"));
-                player1 = ImageIO.read(getClass().getClassLoader().getResource("assets/player1.png"));
-                player1 = ImageIO.read(getClass().getClassLoader().getResource("assets/player2.png"));
+
 
                 // 발사대 구슬 초기 위치 설정
                 bubbleX = 212; // 발사대 중심 X 좌표
@@ -904,6 +934,7 @@ public class OriginalGameScreen extends JFrame {
                 int gameBottomY = 516; // 하단의 Y 위치
                 g.drawImage(gameBottom, gameBottomX, gameBottomY, null);
             }
+
 
             // 구슬 배열을 기반으로 그리기
             int startX, startY = 65; // 시작 Y 위치
