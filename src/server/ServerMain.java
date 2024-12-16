@@ -284,6 +284,7 @@ public class ServerMain extends JFrame {
                             // 서버 로그에 출력
                             printMessage("[방 " + roomChatId + "] " + chatMessage);
                         }
+                        break;
                     case ChatMsg.MODE_GAME_START:
                         // 게임 시작 메시지를 모든 클라이언트에게 브로드캐스트
                         t_display.append("게임 시작: " + msg.getMessage() + "\n");

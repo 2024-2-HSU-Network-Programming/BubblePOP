@@ -341,7 +341,7 @@ public class OriginalGameScreen extends JFrame {
         System.out.println("새로운 총점: " + score.getScore());
 
         SwingUtilities.invokeLater(() -> {
-            scoreLabel.setText("점수: " + score.getScore());
+            scoreLabel.setText("SCORE: " + score.getScore());
         });
 
         // 상대방에게 점수 업데이트 전송
