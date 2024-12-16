@@ -141,11 +141,26 @@ public class ServerMain extends JFrame {
                                 t_display.append("새 사용자 접속: " + userName + "\n");
                                 t_display.append("현재 참가자 수: " + connectedUsers.size());
 
+                                // 현재 존재하는 모든 대기방 정보를 전송
+                                for (GameRoom room : RoomManager.getInstance().getAllRooms()) {
+                                    ChatMsg existingRoomMsg = new ChatMsg("Server", ChatMsg.MODE_TX_CREATEROOM,
+                                            room.getRoomId() + "|" + room.getRoomOwner() + "|" + room.getRoomName() + "|" + room.getRoomPassword());
+                                    out.writeObject(existingRoomMsg);
+                                }
+
+                                // 현재 존재하는 모든 교환방 정보를 전송
+                                for (ExchangeRoom room : RoomManager.getInstance().getAllExchangeRooms()) {
+                                    ChatMsg existingExchangeRoomMsg = new ChatMsg("Server", ChatMsg.MODE_TX_CREATEEXCHANGEROOM,
+                                            room.getRoomId() + "|" + room.getOwner() + "|" + room.getRoomName() + "|" + room.getPassword());
+                                    out.writeObject(existingExchangeRoomMsg);
+                                }
+
                                 ChatMsg welcomeMsg = new ChatMsg(userName, ChatMsg.MODE_LOGIN, userName + "님 환영합니다!");
                                 broadcasting(welcomeMsg);
                             }
                         }
                         break;
+
                     case ChatMsg.MODE_TX_STRING:
                         t_display.append(userName + ": " + msg.getMessage() + "\n");
                         broadcasting(msg); // 다른 사용자들에게 메시지 전송
@@ -157,8 +172,25 @@ public class ServerMain extends JFrame {
                         }
                         broadcasting(new ChatMsg("Server", ChatMsg.MODE_LOGOUT, userName + "님이 로그아웃했습니다."));
                         return; // 통신 종료
+                    case ChatMsg.MODE_PASSWORD_CHECK:
+                        String[] passwordData = msg.getMessage().split("\\|");
+                        int roomId = Integer.parseInt(passwordData[0]);
+                        String inputPassword = passwordData[1];
+                        GameRoom room = RoomManager.getInstance().getGameRoom(String.valueOf(roomId));
+                        boolean isPasswordCorrect = room != null && room.getRoomPassword().equals(inputPassword);
+                        ChatMsg passwordCheckResult = new ChatMsg(
+                                "Server",
+                                ChatMsg.MODE_PASSWORD_CHECK,
+                                roomId + "|" + isPasswordCorrect
+                        );
+                        out.writeObject(passwordCheckResult); // 클라이언트로 결과 전송
+                        break;
                     case ChatMsg.MODE_TX_CREATEROOM:
                         String[] roomData = msg.getMessage().split("\\|");
+                        if (roomData.length < 2) { // 배열 크기 점검
+                            t_display.append("잘못된 방 생성 요청: " + msg.getMessage() + "\n");
+                            break;
+                        }
                         String roomName = roomData[0];
                         String password = roomData[1];
 
@@ -174,9 +206,26 @@ public class ServerMain extends JFrame {
 
                         broadcasting(roomBroadcastMsg); // 모든 클라이언트에 전송
                         break;
+                    case ChatMsg.MODE_TX_CREATEEXCHANGEROOM:
+                        String[] exchangeRoomData = msg.getMessage().split("\\|");
+                        if (exchangeRoomData.length < 2) { // 배열 크기 점검
+                            t_display.append("잘못된 방 생성 요청: " + msg.getMessage() + "\n");
+                            break;
+                        }
+                        String exchangeRoomName = exchangeRoomData[0];
+                        String exchangeRoomPw = exchangeRoomData[1]; // 비밀번호가 없을 경우 빈 문자열로 처리
+                        // 서버에서 방 생성
+                        ExchangeRoom newExchangeRoom = RoomManager.getInstance().createExchangeRoom(userName, exchangeRoomName, exchangeRoomPw);
+                        // 디버깅용 메시지
+                        t_display.append("\n방 생성 - RoomID: " + newExchangeRoom.getRoomId() + ", RoomName: " + exchangeRoomName + "\n");
+                        // 생성된 방 정보를 모든 클라이언트에 브로드캐스트
+                        ChatMsg exchangeRoomBroadcastMsg = new ChatMsg(userName, ChatMsg.MODE_TX_CREATEEXCHANGEROOM,
+                                newExchangeRoom.getRoomId() + "|" + userName + "|" + exchangeRoomName + "|" + exchangeRoomPw);
+                        broadcasting(exchangeRoomBroadcastMsg); // 모든 클라이언트에 전송
+                        break;
                     case ChatMsg.MODE_LEAVE_ROOM:
                         String[] leaveRoomData = msg.getMessage().split("\\|");
-                        int roomId = Integer.parseInt(leaveRoomData[0]);
+                        roomId = Integer.parseInt(leaveRoomData[0]);
                         String leavingUser = leaveRoomData[1];
 
                         RoomManager.leaveRoom(roomId, leavingUser);
@@ -199,7 +248,7 @@ public class ServerMain extends JFrame {
                             t_display.append(enteringUser + "님이 " + enterRoomId + "번 방에 입장했습니다.\n");
 
                             // 해당 방의 모든 유저 정보 가져오기
-                            GameRoom room = RoomManager.getInstance().getGameRoom(String.valueOf(enterRoomId));
+                            room = RoomManager.getInstance().getGameRoom(String.valueOf(enterRoomId));
                             if(room != null) {
                                 // 약간의 딜레이를 주어 두 번째 클라이언트의 WaitingRoom이 생성될 시간을 줌
                                 try {
@@ -225,7 +274,7 @@ public class ServerMain extends JFrame {
                         String chatMessage = msg.getMessage().split("\\|", 2)[1];
 
                         // 서버에서 해당 방의 모든 유저에게 한 번만 브로드캐스트
-                        GameRoom room = RoomManager.getInstance().getGameRoom(String.valueOf(roomChatId));
+                        room = RoomManager.getInstance().getGameRoom(String.valueOf(roomChatId));
                         if (room != null) {
                             // 방 전체에 대해 한 번만 브로드캐스트
                             ChatMsg roomChatMsg = new ChatMsg(userName, ChatMsg.MODE_TX_ROOMCHAT,
@@ -239,6 +288,43 @@ public class ServerMain extends JFrame {
                         // 게임 시작 메시지를 모든 클라이언트에게 브로드캐스트
                         t_display.append("게임 시작: " + msg.getMessage() + "\n");
                         broadcasting(msg);
+                        break;
+                    case ChatMsg.MODE_BUYITEM:
+                        String[] itemData = msg.getMessage().split("\\|");
+                        String itemName = itemData[0];
+                        int quantity = Integer.parseInt(itemData[1]);
+                        int totalCost = Integer.parseInt(itemData[2]);
+                        // 사용자 데이터 업데이트 (예: 데이터베이스 또는 메모리)
+                        //GameUser user = GameUser.getInstance();
+                        if (userName != null) {
+                            //user.addItem(itemName, quantity);
+                            t_display.append(userName + "님이 " + itemName + " " + quantity + "개를 구매했습니다.\n");
+                            // 클라이언트에 응답 메시지 전송
+                            ChatMsg responseMsg = new ChatMsg(
+                                    "Server",
+                                    ChatMsg.MODE_BUYITEM,
+                                    itemName + "|" + quantity + "|" + totalCost
+                            );
+                            out.writeObject(responseMsg);
+                        }
+                        break;
+                    case ChatMsg.MODE_SELLITEM:
+                        itemData = msg.getMessage().split("\\|");
+                        itemName = itemData[0];
+                        quantity = Integer.parseInt(itemData[1]);
+                        totalCost = Integer.parseInt(itemData[2]);
+                        // 사용자 데이터 업데이트 (예: 데이터베이스 또는 메모리)
+                        if (userName != null) {
+                            //user.addItem(itemName, quantity);
+                            t_display.append(userName + "님이 " + itemName + " " + quantity + "개를 판매했습니다.\n");
+                            // 클라이언트에 응답 메시지 전송
+                            ChatMsg responseMsg = new ChatMsg(
+                                    "Server",
+                                    ChatMsg.MODE_SELLITEM,
+                                    itemName + "|" + quantity + "|" + totalCost
+                            );
+                            out.writeObject(responseMsg);
+                        }
                         break;
 
                     case ChatMsg.MODE_TX_GAME:

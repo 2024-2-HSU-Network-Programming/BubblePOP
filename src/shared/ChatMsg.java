@@ -13,8 +13,13 @@ public class ChatMsg implements Serializable {
     public final static int MODE_TX_ROOMCHAT=304;
    // public final static int MODE_TX_GAME=305;
     public final static int MODE_TX_CREATEROOM=400;
+    public final static int MODE_TX_CREATEEXCHANGEROOM=401;
     public final static int MODE_LEAVE_ROOM=410;
     public static final int MODE_ENTER_ROOM = 451;
+    public static final int MODE_PASSWORD_CHECK = 402;
+    public static final int MODE_BUYITEM = 600;
+    public static final int MODE_SELLITEM = 601;
+    public static final int MODE_ENTER_EXCHANGEROOM = 452;
 
     public static final int MODE_GAME_START = 500;    // 게임 시작
     public static final int MODE_TX_GAME = 501;       // 게임 상태 전송

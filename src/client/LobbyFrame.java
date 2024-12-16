@@ -18,7 +18,6 @@ public class LobbyFrame extends JFrame {
     private RoomListTapPane roomListTapPane;
     private JButton btnItemStore;
     private JButton btnCreateRoom;
-    private JButton btnExchangeRoom;
     private JTextArea t_globalChat;
     private JTextField tf_globalChat;
     private JButton btnSendGlobalChat;
@@ -135,8 +134,9 @@ public class LobbyFrame extends JFrame {
         btnCreateRoom.setBounds(40, 540, 180,85);
 
         btnItemStore.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) { new ItemStoreFrame(); }
+            public void actionPerformed(ActionEvent e) {
+                new ItemStoreFrame(user.getNet());
+            }
         });
 
         btnCreateRoom.addActionListener(new ActionListener() {

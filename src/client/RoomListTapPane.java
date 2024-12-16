@@ -1,6 +1,7 @@
 package client;
 
 import server.GameRoom;
+import server.ExchangeRoom;
 import server.RoomManager;
 import shared.ChatMsg;
 
@@ -38,6 +39,13 @@ public class RoomListTapPane extends JTabbedPane {
         tab1.setLayout(null);
         tab1.setBackground(new Color(40,49,69));
         tab1.setPreferredSize(new Dimension(215, 572)); // 전체 크기 고정
+        addTab("대기방", tab1);
+
+        tab2 = new JPanel();
+        tab2.setLayout(null);
+        tab2.setBackground(new Color(60, 70, 90));
+        tab2.setPreferredSize(new Dimension(215, 572));
+        addTab("교환방", tab2);
 
         // RoomManager에서 초기 방 리스트를 가져와 추가
         refreshRoomList();
@@ -46,10 +54,7 @@ public class RoomListTapPane extends JTabbedPane {
 //        addRoomPane(1, "초보자 방");
 //        addRoomPane(2, "고수 방");
 //        addRoomPane(3, "같이 게임해요");
-        //tab1.add(Box.createVerticalStrut(10)); // 간격 추가
-        addTab("대기방", tab1);
 
-        //addTab("교환방", tab2);
 
     }
 
@@ -74,7 +79,7 @@ public class RoomListTapPane extends JTabbedPane {
 
         // 공개, 비공개 라벨
         String passwordStatus = "";
-        if(password.equals("")) {
+        if(password.equals(" ")) {
             passwordStatus = "공개";
         } else {
             passwordStatus = "비공개";
@@ -90,29 +95,87 @@ public class RoomListTapPane extends JTabbedPane {
         lblParticipants.setForeground(Color.black); // 흰색 텍스트
         roomPane.add(lblParticipants);
 
+        String finalPasswordStatus = passwordStatus;
         // 클릭 이벤트 추가
         roomPane.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("RoomPane clicked: " + roomName);
-                enterRoom(roomNumber, roomName);
+                //enterRoom(roomNumber, roomName);
+                if(finalPasswordStatus.equals("비공개")) {
+                    // 비밀번호 입력 다이얼로그
+                    String inputPassword = JOptionPane.showInputDialog(
+                            null,
+                            "비밀번호를 입력하세요:",
+                            "비공개 방 입장",
+                            JOptionPane.PLAIN_MESSAGE
+                    );
+                    if (inputPassword != null) { // 사용자가 비밀번호를 입력했을 때
+                        // 서버로 입력된 비밀번호를 검증하는 로직 추가 필요
+                        boolean isPasswordCorrect = checkPassword(roomNumber, inputPassword);
+                        if (isPasswordCorrect) {
+                            enterRoom(roomNumber, roomName); // 비밀번호 검증 성공 시 방 입장
+                        } else {
+                            JOptionPane.showMessageDialog(
+                                    null,
+                                    "비밀번호가 올바르지 않습니다!",
+                                    "입장 실패",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                        }
+                    }
+                } else {
+                    enterRoom(roomNumber, roomName);
+                }
+
             }
         });
 
         return roomPane;
     }
+    // 비밀번호 체크 함수
+    private boolean checkPassword(int roomNumber, String inputPassword) {
+        // RoomManager에서 해당 방 가져오기
+        GameRoom room = RoomManager.getInstance().getGameRoom(String.valueOf(roomNumber));
+        // 서버로 비밀번호 검증 요청
+//        ChatMsg passwordCheckMsg = new ChatMsg(
+//                GameUser.getInstance().getId(),
+//                ChatMsg.MODE_PASSWORD_CHECK,
+//                roomNumber + "|" + inputPassword
+//        );
+        if (room == null) {
+            // 방이 존재하지 않을 경우 처리
+            System.out.println("방을 찾을 수 없습니다: RoomID=" + roomNumber);
+            JOptionPane.showMessageDialog(
+                    null,
+                    "방을 찾을 수 없습니다.",
+                    "오류",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            return false;
+        }
+
+        // 비밀번호 비교
+        String roomPassword = room.getRoomPassword();
+        System.out.println("입력된 비밀번호: " + inputPassword + ", 방 비밀번호: " + roomPassword);
+        return roomPassword.equals(inputPassword);
+        // 서버에서 검증 결과를 받아오는 로직 필요
+        // 예를 들어, 서버에서 결과를 콜백으로 받을 수 있다면 콜백 함수에서 결과를 처리합니다.
+        //return network.waitForPasswordCheckResult(roomNumber); // 이 메서드는 서버 응답 대기 후 결과를 반환
+    }
 
     // 새로운 RoomPane 추가 메서드
-    public void addRoomPane(int roomNumber, String roomName, String password, int userListSize) {
+    public void addRoomPane(int roomNumber, String roomName, String password, int userListSize, JPanel tab) {
         System.out.println("addRoomPane 호출: RoomID=" + roomNumber + ", RoomName=" + roomName);
         JPanel newRoomPane = RoomPane(roomNumber, roomName, password, userListSize);
-        tab1.add(newRoomPane); // tab1에 추가
+        tab.add(newRoomPane); // 선택한 탭에 추가
         nextY += roomPaneHeight + gap; // 다음 RoomPane의 Y 좌표 갱신
-        tab1.setPreferredSize(new Dimension(215, nextY + gap)); // 패널 크기 갱신
-        tab1.revalidate(); // 레이아웃 업데이트
-        tab1.repaint(); // 화면 갱신
-        System.out.println("RoomPane 갱신 완료: " + tab1.getComponentCount() + "개의 방");
+        tab.setPreferredSize(new Dimension(215, nextY + gap)); // 패널 크기 갱신
+        tab.revalidate(); // 레이아웃 업데이트
+        tab.repaint(); // 화면 갱신
+        System.out.println("RoomPane 갱신 완료: " + tab.getComponentCount() + "개의 방");
     }
+
     // RoomManager로부터 실시간으로 방 정보를 가져와 갱신
     public void refreshRoomList() {
         tab1.removeAll(); // 기존 RoomPane 제거
@@ -123,12 +186,24 @@ public class RoomListTapPane extends JTabbedPane {
 
         for (GameRoom room : rooms) {
             System.out.println("Room 갱신 중: RoomID=" + room.getRoomId() + ", RoomName=" + room.getRoomName());
-            addRoomPane(room.getRoomId(), room.getRoomName(), room.getRoomPassword(), room.getUserListSize());
+            addRoomPane(room.getRoomId(), room.getRoomName(), room.getRoomPassword(), room.getUserListSize(), tab1);
         }
 
         System.out.println(RoomManager.getInstance().getAllRooms());
         tab1.revalidate();
         tab1.repaint();
+        // 교환방 갱신
+        tab2.removeAll(); // 기존 RoomPane 제거
+        tab2.setLayout(null); // 레이아웃을 명시적으로 재설정
+        nextY = 20; // 초기 Y 좌표로 리셋
+        List<ExchangeRoom> exchangeRooms = RoomManager.getInstance().getAllExchangeRooms(); // 교환방만 가져오기
+        System.out.println("RoomManager에서 반환된 교환방 개수: " + exchangeRooms.size());
+        for (ExchangeRoom room : exchangeRooms) {
+            System.out.println("교환방 갱신 중: RoomID=" + room.getRoomId() + ", RoomName=" + room.getRoomName());
+            addRoomPane(room.getRoomId(), room.getRoomName(), room.getPassword(), room.getUserListSize(), tab2);
+        }
+        tab2.revalidate();
+        tab2.repaint();
     }
 
     private void enterRoom(int roomNumber, String roomName) {
@@ -158,31 +233,6 @@ public class RoomListTapPane extends JTabbedPane {
         }
 
         refreshRoomList();
-    }
-
-
-    // 방 정보를 수신하는 스레드
-    private void startListeningForRooms() {
-//        new Thread(() -> {
-//            try {
-//                while (true) {
-//                    Object obj = in.readObject(); // 서버로부터 객체 수신
-//                    if (obj instanceof ChatMsg) {
-//                        ChatMsg chatMsg = (ChatMsg) obj;
-//                        if (chatMsg.getMode() == 101) { // 방 생성 메시지라면
-//                            // 방 이름과 번호를 파싱하여 추가
-//                            String[] roomInfo = chatMsg.getMessage().split(", ");
-//                            String roomName = roomInfo[0].split(": ")[1];
-//                            String password = roomInfo[1].split(": ")[1]; // 비밀번호
-//                            int roomNumber = tab1.getComponentCount() + 1; // 새 방 번호
-//                            addRoomPane(roomNumber, roomName);
-//                        }
-//                    }
-//                }
-//            } catch (ClassNotFoundException | IOException e) {
-//                System.out.println("Room 수신 오류: " + e.getMessage());
-//            }
-//        }).start();
     }
 
 }
