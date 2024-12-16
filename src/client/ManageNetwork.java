@@ -260,7 +260,7 @@ public class ManageNetwork extends Thread{
                                     // 점수를 누적하지 않고 직접 설정
                                     SwingUtilities.invokeLater(() -> {
                                         originalGameScreen.player2Score.setScore(score);
-                                        originalGameScreen.player2ScoreLabel.setText("점수: " + score);
+                                        originalGameScreen.player2ScoreLabel.setText("SCORE: " + score);
                                     });
                                 }
                             }
