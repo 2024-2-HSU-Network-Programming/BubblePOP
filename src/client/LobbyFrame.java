@@ -66,6 +66,53 @@ public class LobbyFrame extends JFrame {
         lobbyCenterPane = new JPanel();
         lobbyCenterPane.setLayout(null);
         lobbyCenterPane.setBackground(Color.BLACK);
+
+//        // 유저 정보 패널
+//        JPanel userInfoPanel = new JPanel();
+//        userInfoPanel.setLayout(new GridLayout(3, 1));
+//        userInfoPanel.setBounds(20, 20, 400, 100);
+//        userInfoPanel.setBackground(new Color(52, 74, 119));  // 배경색 설정
+
+        // 유저 ID
+        JLabel userIdLabel = new JLabel("User ID: " + user.getId());
+        userIdLabel.setForeground(Color.WHITE);
+        userIdLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        userIdLabel.setBounds(100, 230, 200, 30); // 위치와 크기 설정
+        lobbyCenterPane.add(userIdLabel);
+
+        // 보유 코인
+        JLabel coinLabel = new JLabel("Coins:    " + user.getCoin());
+        coinLabel.setForeground(Color.WHITE);
+        coinLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        coinLabel.setBounds(100, 260, 200, 30);
+        lobbyCenterPane.add(coinLabel);
+
+        // 보유 아이템 패널
+        JPanel itemPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        itemPanel.setBackground(new Color(52, 74, 119));
+        itemPanel.setBounds(50, 290, 330, 90);
+        lobbyCenterPane.add(itemPanel);
+
+        // 아이템 아이콘과 수량 표시
+        if (user.getChangeBubbleColor() > 0) {
+            addItemDisplay(itemPanel, "/client/assets/item/change-bubble.png", user.getChangeBubbleColor());
+        }
+        if (user.getLineExplosion() > 0) {
+            addItemDisplay(itemPanel, "/client/assets/item/line-explosion.png", user.getLineExplosion());
+        }
+        if (user.getBomb() > 0) {
+            addItemDisplay(itemPanel, "/client/assets/item/bomb.png", user.getBomb());
+        }
+
+
+//        userInfoPanel.add(userIdLabel);
+//        userInfoPanel.add(coinLabel);
+//        userInfoPanel.add(itemPanel);
+//        lobbyCenterPane.add(userInfoPanel);
+
+
+
+
         // 전체 채팅 칸 추가
         t_globalChat = new JTextArea();
         t_globalChat.setBounds(20,20,400,150);
@@ -135,7 +182,7 @@ public class LobbyFrame extends JFrame {
 
         btnItemStore.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new ItemStoreFrame(user.getNet());
+                new ItemStoreFrame(user.getNet(), LobbyFrame.this);
             }
         });
 
@@ -169,6 +216,52 @@ public class LobbyFrame extends JFrame {
     public RoomListTapPane getRoomListPane() {
         return roomListTapPane;
     }
+
+    // 아이템 표시를 위한 헬퍼 메소드
+    private void addItemDisplay(JPanel panel, String imagePath, int count) {
+        ImageIcon originalIcon = new ImageIcon(getClass().getResource(imagePath));
+        Image scaledImage = originalIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(scaledImage);
+
+        JPanel itemContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        itemContainer.setLayout(null);
+        itemContainer.setBackground(new Color(52, 74, 119));
+
+        JLabel iconLabel = new JLabel(scaledIcon);
+        JLabel countLabel = new JLabel("x " + count);
+        countLabel.setForeground(Color.WHITE);
+        countLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        countLabel .setBounds(10, 10, 200, 30);
+
+        itemContainer.add(iconLabel);
+        itemContainer.add(countLabel);
+        panel.add(itemContainer);
+    }
+
+    public void updateCoinDisplay() {
+        SwingUtilities.invokeLater(() -> {
+            // 코인 라벨 업데이트
+            for (Component comp : lobbyCenterPane.getComponents()) {
+                if (comp instanceof JLabel && ((JLabel) comp).getText().startsWith("Coins:")) {
+                    ((JLabel) comp).setText("Coins:    " + user.getCoin());
+                    break;
+                }
+            }
+        });
+    }
+
+
+//    public void refreshUserInfo() {
+//        SwingUtilities.invokeLater(() -> {
+//            getContentPane().removeAll();
+//            lobbyPane.removeAll();
+//            lobbyPane.add(LobbyLeftPanel(), BorderLayout.WEST);
+//            lobbyPane.add(LobbyRightPanel(), BorderLayout.EAST);
+//            lobbyPane.add(LobbyCenterPanel(), BorderLayout.CENTER);
+//            revalidate();
+//            repaint();
+//        });
+//    }
 
     public static void main(String[] args) {
         ObjectInputStream in = null; // 초기화 필요
