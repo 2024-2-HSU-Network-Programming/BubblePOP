@@ -106,6 +106,47 @@ public class ManageNetwork extends Thread{
                                 }
                             }
                             break;
+                        case ChatMsg.MODE_TX_CREATEEXCHANGEROOM:
+                        if (lobbyFrame != null) {
+                            String[] exchangeRoomInfo = cm.getMessage().split("\\|");
+                            if (exchangeRoomInfo.length >= 4) {
+                                int roomId = Integer.parseInt(exchangeRoomInfo[0]);
+                                String ownerName = exchangeRoomInfo[1];
+                                String roomName = exchangeRoomInfo[2];
+                                String roomPassword = exchangeRoomInfo[3];
+
+                                // 방 생성 및 UI 갱신
+                                RoomManager.getInstance().createExchangeRoom(ownerName, roomName, roomPassword);
+                                SwingUtilities.invokeLater(() -> {
+                                    lobbyFrame.getRoomListPane().refreshRoomList();
+                                    lobbyFrame.updateRoomList("새로운 교환방 " + roomName + "에 들어오세요!\n");
+                                });
+
+                                // 방 생성자인 경우에만 WaitingRoom 오픈
+//                                if (ownerName.equals(lobbyFrame.getUserId())) {
+//                                    ExchangeWaitingRoom exchangeWaitingRoom = new ExchangeWaitingRoom(
+//                                            String.valueOf(roomId),
+//                                            roomName,
+//                                            ownerName,
+//                                            this
+//                                    );
+//                                    // 교환 대기방을 `ManageNetwork`와 연결
+//                                    this.setExchangeWaitingRoom(exchangeWaitingRoom);
+//                                    exchangeWaitingRoom.show();
+//                                    lobbyFrame.dispose();
+//                                }
+                            }
+                        }
+                        break;
+
+                        case ChatMsg.MODE_PASSWORD_CHECK:
+                            String[] resultData = cm.getMessage().split("\\|");
+                            int roomId = Integer.parseInt(resultData[0]);
+                            boolean isPasswordCorrect = Boolean.parseBoolean(resultData[1]);
+                            // 결과를 전역 변수나 콜백 함수로 전달
+                            //setPasswordCheckResult(roomId, isPasswordCorrect); // 결과 저장
+                            break;
+
                         case ChatMsg.MODE_LEAVE_ROOM:
                             String[] leaveInfo = cm.getMessage().split("\\|");
                             int leavingRoomId = Integer.parseInt(leaveInfo[0]);
@@ -132,6 +173,19 @@ public class ManageNetwork extends Thread{
                                 System.out.println("WaitingRoom is null");
                             }
                             break;
+                        case ChatMsg.MODE_ENTER_EXCHANGEROOM:
+                            String[] exchangeEnterInfo = cm.getMessage().split("\\|");
+                            int exchangeRoomId = Integer.parseInt(exchangeEnterInfo[0]);
+                            String exchangeUserName = exchangeEnterInfo[1];
+                            System.out.println("해당 교환방 유저 수: " + RoomManager.getExchangeRoom(Integer.toString((exchangeRoomId))).getUserListSize());
+                            // 교환 대기방이 열려 있는 경우
+//                            if (exchangeWaitingRoom != null && exchangeWaitingRoom.getRoomId().equals(String.valueOf(exchangeRoomId))) {
+//                                exchangeWaitingRoom.updatePlayerName(exchangeUserName); // 대기방 UI 업데이트
+//                                System.out.println("교환 대기방 업데이트: " + exchangeUserName + " 추가됨.");
+//                            } else {
+//                                System.out.println("교환 대기방이 활성화되지 않았습니다.");
+//                            }
+                            break;
                         case ChatMsg.MODE_TX_ROOMCHAT:
                             if (waitingRoom != null) {
                                 String[] roomChatData = cm.getMessage().split("\\|", 2);
@@ -139,6 +193,27 @@ public class ManageNetwork extends Thread{
                                     waitingRoom.receiveMessage(roomChatData[1]);
                                 }
                             }
+                            break;
+                        case ChatMsg.MODE_BUYITEM:
+                            String[] itemData = cm.getMessage().split("\\|");
+                            String itemName = itemData[0];
+                            int quantity = Integer.parseInt(itemData[1]);
+                            int totalCost = Integer.parseInt(itemData[2]);
+
+                            // 사용자 데이터 업데이트
+                            GameUser.getInstance().addItem(itemName, quantity, totalCost);
+                            System.out.println("아이템 구매 완료: " + itemName + " " + quantity + "개");
+                            System.out.println("코인: " + GameUser.getInstance().getCoin() + "\n");
+                            break;
+                        case ChatMsg.MODE_SELLITEM:
+                            itemData = cm.getMessage().split("\\|");
+                            itemName = itemData[0];
+                            quantity = Integer.parseInt(itemData[1]);
+                            totalCost = Integer.parseInt(itemData[2]);
+                            // 사용자 데이터 업데이트
+                            GameUser.getInstance().sellItem(itemName, quantity, totalCost);
+                            System.out.println("아이템 판매 완료: " + itemName + " " + quantity + "개");
+                            System.out.println("코인: " + GameUser.getInstance().getCoin() + "\n");
                             break;
                         case ChatMsg.MODE_GAME_START:
                             if (waitingRoom != null) {

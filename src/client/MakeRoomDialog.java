@@ -106,10 +106,13 @@ public class MakeRoomDialog extends JDialog {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String roomType = roomTypeComboBox.getSelectedItem().toString();
+                    String roomName = roomTitle.getText().trim();
+                    String password = new String(roomPassword.getPassword()).trim();
+                    System.out.println("password: " + password);
+                    if (password.isEmpty()) { // 비밀번호가 비어 있는 경우
+                        password = " "; // 비밀번호 없이 공개 방 생성
+                    }
                     if(roomType.equals("대기방 생성")) {
-                        String roomName = roomTitle.getText();
-                        String password = new String(roomPassword.getPassword());
-
                         // 대기방 정보 생성
                         String roomInfo = roomName + "|" + password;
 
@@ -122,6 +125,13 @@ public class MakeRoomDialog extends JDialog {
                         //WaitingRoom.main(new String[]{});
 
                     } else {
+                        // 교환방 정보 생성
+                        String exchangeRoomInfo = roomName + "|" + password;
+                        ChatMsg roomObj = new ChatMsg(user.getId(), ChatMsg.MODE_TX_CREATEEXCHANGEROOM, exchangeRoomInfo);
+                        System.out.println("user name: " + network.getName());
+                        user.getNet().sendMessage(roomObj);
+                        dispose(); // 다이얼로그 닫기
+                        lobbyFrame.dispose();
                         return;
                     }
 
