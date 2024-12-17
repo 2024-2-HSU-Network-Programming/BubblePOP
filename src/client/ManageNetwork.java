@@ -12,8 +12,8 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class ManageNetwork extends Thread{
-    private GameUser gameUser;
-    private ObjectInputStream ois;
+    private GameUser gameUser; // 사용자 인스턴스
+    private ObjectInputStream ois; // 서버로부터 데이터를 수신하기 위한 스트림
     private ObjectOutputStream oos;
     private Socket socket;
     private LobbyFrame lobbyFrame;
@@ -254,6 +254,22 @@ public class ManageNetwork extends Thread{
 //                                System.out.println("exchangeWaitingRoom is null");
 //                            }
 //                            break;
+
+                        case ChatMsg.MODE_ENTER_ROOM:
+                            String[] enterInfo = cm.getMessage().split("\\|");
+                            int enterRoomId = Integer.parseInt(enterInfo[0]);
+                            String enteringUser = enterInfo[1];
+
+                            System.out.println("Received ENTER_ROOM message: " + cm.getMessage());
+
+                            // waitingRoom이 null이 아닐 때만 업데이트
+                            if (waitingRoom != null) {
+                                waitingRoom.updatePlayer2Name(enteringUser);
+                                System.out.println("Updated waiting room with user: " + enteringUser);
+                            } else {
+                                System.out.println("WaitingRoom is null");
+                            }
+                            break;
 
 
                         case ChatMsg.MODE_TX_ROOMCHAT:
