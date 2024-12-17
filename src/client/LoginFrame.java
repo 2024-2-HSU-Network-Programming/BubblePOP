@@ -10,12 +10,19 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 public class LoginFrame extends JFrame{
     // 서버 연결 필요 요소
-    String serverAddress = "localhost";
-    int serverPort = 12345;
+//    String serverAddress = "localhost";
+//    int serverPort = 12345;
     Socket socket;
+
+    private String serverAddress;
+    private int serverPort;
+
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private ManageNetwork network;
@@ -33,6 +40,7 @@ public class LoginFrame extends JFrame{
     private ImageIcon logo_character = new ImageIcon(getClass().getResource("/client/assets/logo/logo_character.png"));
 
     public LoginFrame() {
+        loadServerConfig();
         setTitle("2024-2 Network Programming-BubblePOP");
         setBounds(100,100, 960, 672);
         setResizable(false); // 크기 고정
@@ -148,6 +156,37 @@ public class LoginFrame extends JFrame{
                     "연결 오류",
                     JOptionPane.ERROR_MESSAGE);
             System.exit(-1);
+        }
+    }
+
+    private void loadServerConfig() {
+        try {
+            List<String> lines = Files.readAllLines(Paths.get("server.txt"));
+            if (lines.size() >= 2) {
+                serverAddress = lines.get(0).trim();
+                serverPort = Integer.parseInt(lines.get(1).trim());
+            } else {
+                //serverAddress = "localhost";
+                //serverPort = 12345;
+                JOptionPane.showMessageDialog(this,
+                        "서버 설정 파일 형식이 잘못되었습니다. 기본값을 사용합니다.",
+                        "설정 파일 오류",
+                        JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (IOException e) {
+            //serverAddress = "localhost";
+            //serverPort = 12345;
+            JOptionPane.showMessageDialog(this,
+                    "서버 설정 파일을 읽을 수 없습니다. 기본값을 사용합니다.",
+                    "설정 파일 오류",
+                    JOptionPane.WARNING_MESSAGE);
+        } catch (NumberFormatException e) {
+            //serverAddress = "localhost";
+           // serverPort = 12345;
+            JOptionPane.showMessageDialog(this,
+                    "포트 번호 형식이 잘못되었습니다. 기본값을 사용합니다.",
+                    "설정 파일 오류",
+                    JOptionPane.WARNING_MESSAGE);
         }
     }
 
