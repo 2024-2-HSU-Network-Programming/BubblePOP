@@ -229,32 +229,36 @@ public class RoomListTapPane extends JTabbedPane {
 
     // RoomManager로부터 실시간으로 방 정보를 가져와 갱신
     public void refreshRoomList() {
-        tab1.removeAll(); // 기존 RoomPane 제거
-        tab1.setLayout(null); // 레이아웃을 명시적으로 재설정
-        nextY = 20; // 초기 Y 좌표로 리셋
-        List<GameRoom> rooms = RoomManager.getInstance().getAllRooms();
-        System.out.println("RoomManager에서 반환된 방 개수: " + rooms.size());
+        SwingUtilities.invokeLater(() -> {
+            tab1.removeAll(); // 기존 RoomPane 제거
+            tab1.setLayout(null);
+            nextY = 20; // 초기 Y 좌표로 리셋
 
-        for (GameRoom room : rooms) {
-            System.out.println("Room 갱신 중: RoomID=" + room.getRoomId() + ", RoomName=" + room.getRoomName());
-            addRoomPane(room.getRoomId(), room.getRoomName(), room.getRoomPassword(), room.getUserListSize(), tab1, false);
-        }
+            List<GameRoom> rooms = RoomManager.getInstance().getAllRooms();
+            System.out.println("RoomManager에서 반환된 방 개수: " + rooms.size());
 
-        System.out.println(RoomManager.getInstance().getAllRooms());
-        tab1.revalidate();
-        tab1.repaint();
-        // 교환방 갱신
-        tab2.removeAll(); // 기존 RoomPane 제거
-        tab2.setLayout(null); // 레이아웃을 명시적으로 재설정
-        nextY = 20; // 초기 Y 좌표로 리셋
-        List<ExchangeRoom> exchangeRooms = RoomManager.getInstance().getAllExchangeRooms(); // 교환방만 가져오기
-        System.out.println("RoomManager에서 반환된 교환방 개수: " + exchangeRooms.size());
-        for (ExchangeRoom room : exchangeRooms) {
-            System.out.println("교환방 갱신 중: RoomID=" + room.getRoomId() + ", RoomName=" + room.getRoomName() + "UserListSize= " + room.getUserListSize());
-            addRoomPane(room.getRoomId(), room.getRoomName(), room.getRoomPassword(), room.getUserListSize(), tab2, true);
-        }
-        tab2.revalidate();
-        tab2.repaint();
+            for (GameRoom room : rooms) {
+                System.out.println("Room 갱신 중: RoomID=" + room.getRoomId() + ", RoomName=" + room.getRoomName());
+                addRoomPane(room.getRoomId(), room.getRoomName(), room.getRoomPassword(), room.getUserListSize(), tab1, false);
+            }
+
+            tab1.revalidate();
+            tab1.repaint();
+
+            // 교환방 갱신
+            tab2.removeAll(); // 기존 RoomPane 제거
+            tab2.setLayout(null); // 레이아웃을 명시적으로 재설정
+            nextY = 20; // 초기 Y 좌표로 리셋
+            List<ExchangeRoom> exchangeRooms = RoomManager.getInstance().getAllExchangeRooms(); // 교환방만 가져오기
+            System.out.println("RoomManager에서 반환된 교환방 개수: " + exchangeRooms.size());
+            for (ExchangeRoom room : exchangeRooms) {
+                System.out.println("교환방 갱신 중: RoomID=" + room.getRoomId() + ", RoomName=" + room.getRoomName() + "UserListSize= " + room.getUserListSize());
+                addRoomPane(room.getRoomId(), room.getRoomName(), room.getRoomPassword(), room.getUserListSize(), tab2, true);
+            }
+            tab2.revalidate();
+            tab2.repaint();
+        });
+
     }
 
     private void enterRoom(int roomNumber, String roomName) {

@@ -16,7 +16,7 @@ public class ChatMsg implements Serializable {
    // public final static int MODE_TX_GAME=305;
     public final static int MODE_TX_CREATEROOM=400;
     public final static int MODE_TX_CREATEEXCHANGEROOM=401;
-    public final static int MODE_LEAVE_ROOM=410;
+    public final static int MODE_LEAVE_ROOM=453;
     public static final int MODE_ENTER_ROOM = 451;
     public static final int MODE_PASSWORD_CHECK = 402;
     public static final int MODE_BUYITEM = 600;
@@ -30,9 +30,9 @@ public class ChatMsg implements Serializable {
     public static final int MODE_GAME_SYNC = 504;     // 게임 싱크
     public static final int MODE_GAME_OVER = 505;     // 게임 종료
 
-    public static final int MODE_EXCHANGEITEM = 506; // 아이템 교환
+    public static final int MODE_EXCHANGEITEM = 602; // 아이템 교환
 
-    public static final int MODE_GAME_SCORE = 507;
+    public static final int MODE_GAME_SCORE = 506;
 
 
 

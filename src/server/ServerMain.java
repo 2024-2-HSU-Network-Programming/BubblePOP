@@ -164,6 +164,7 @@ public class ServerMain extends JFrame {
                     case ChatMsg.MODE_TX_STRING:
                         t_display.append(userName + ": " + msg.getMessage() + "\n");
                         broadcasting(msg); // 다른 사용자들에게 메시지 전송
+
                         break;
                     case ChatMsg.MODE_LOGOUT:
                         t_display.append("사용자 로그아웃: " + userName + "\n");
@@ -228,13 +229,31 @@ public class ServerMain extends JFrame {
                         roomId = Integer.parseInt(leaveRoomData[0]);
                         String leavingUser = leaveRoomData[1];
 
-                        RoomManager.leaveRoom(roomId, leavingUser);
+                        // 방에서 유저 제거
+                        RoomManager.getInstance().leaveRoom(roomId, leavingUser);
 
-                        // 모든 클라이언트에 방 나가기 정보 브로드캐스트
-                        ChatMsg leaveRoomMsg = new ChatMsg("Server", ChatMsg.MODE_LEAVE_ROOM,
-                                roomId + "|" + leavingUser);
+                        room = RoomManager.getInstance().getGameRoom(String.valueOf(roomId));
+                        if (room == null || room.getUserListSize() == 0) {
+                            // 방이 완전히 비어있으면 삭제
+                            RoomManager.getInstance().getAllRooms().remove(String.valueOf(roomId));
+
+                            // 모든 클라이언트에게 방 목록 완전 업데이트 메시지 전송
+                            ChatMsg updateRoomListMsg = new ChatMsg("Server", ChatMsg.MODE_TX_STRING, "UPDATE_ROOM_LIST_FULL");
+                            broadcasting(updateRoomListMsg);
+                            System.out.println("방 완전 삭제됨: " + roomId);
+                        } else {
+                            // 방의 유저 수가 줄어든 경우 업데이트 메시지 브로드캐스트
+                            ChatMsg roomUpdatedMsg = new ChatMsg("Server", ChatMsg.MODE_TX_STRING, "UPDATE_ROOM_LIST");
+                            broadcasting(roomUpdatedMsg);
+                            System.out.println("유저 나감: " + leavingUser + ", 남은 인원: " + room.getUserListSize());
+                        }
+
+                        // 나간 사용자에게 알림
+                        ChatMsg leaveRoomMsg = new ChatMsg("Server", ChatMsg.MODE_LEAVE_ROOM, roomId + "|" + leavingUser);
                         broadcasting(leaveRoomMsg);
                         break;
+
+
                     case ChatMsg.MODE_ENTER_ROOM:
                         String[] enterRoomData = msg.getMessage().split("\\|");
                         int enterRoomId = Integer.parseInt(enterRoomData[0]);
