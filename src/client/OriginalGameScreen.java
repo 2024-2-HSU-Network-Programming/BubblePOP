@@ -26,9 +26,27 @@ public class OriginalGameScreen extends JFrame {
     private Rectangle soundButtonBounds = new Rectangle(10, 10, 32, 32);
     private BufferedImage soundOn, soundOff;
     private BufferedImage player1, player2; // 게임 캐릭터 이미지
+    private BufferedImage changeBubble, linebomb,bomb;
+
     //게임 캐릭터 이미지 라벨
     private JLabel player1ImageLabel;
     private JLabel player2ImageLabel;
+
+    private GameTimer gameTimer;
+    private GameScore player1Score;
+    public  GameScore player2Score;
+    private JLabel timerLabel;
+    private JLabel player1ScoreLabel;
+    public  JLabel player2ScoreLabel;
+
+    private Timer gameLoop;
+
+    GameUser user = GameUser.getInstance();
+
+    private JLabel changeBubbleNum;
+    private JLabel linebombNum;
+    private JLabel bombNum;
+
 
 
     // 배경 이미지
@@ -45,6 +63,9 @@ public class OriginalGameScreen extends JFrame {
             soundOn = ImageIO.read(getClass().getResourceAsStream("/client/assets/sounds/toolSoundOn.png"));
             player1 = ImageIO.read(getClass().getClassLoader().getResource("client/assets/player1.png"));
             player2 = ImageIO.read(getClass().getClassLoader().getResource("client/assets/player2.png"));
+            changeBubble = ImageIO.read(getClass().getResourceAsStream("/client/assets/item/change-bubble.png"));
+            linebomb = ImageIO.read(getClass().getResourceAsStream("/client/assets/item/line-explosion.png"));
+            bomb = ImageIO.read(getClass().getResourceAsStream("/client/assets/item/bomb.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -60,22 +81,14 @@ public class OriginalGameScreen extends JFrame {
                 if (soundImage != null) {
                     g.drawImage(soundImage, soundButtonBounds.x, soundButtonBounds.y,
                             soundButtonBounds.width, soundButtonBounds.height, null);
-
                     // 호버 효과
                     if (isSoundButtonHovered) {
                         g.setColor(new Color(255, 255, 255, 50));
                         g.fillRect(soundButtonBounds.x, soundButtonBounds.y,
                                 soundButtonBounds.width, soundButtonBounds.height);
                     }
-
-//                    if (player1 != null) {
-//                        g.drawImage(player1, 150, 550, null);
-//                    }
-//                    if (player2 != null) {
-//                        g.drawImage(player2, 625, 550, null);
-//                    }
-
                 }
+
             }
         };
 
@@ -106,6 +119,81 @@ public class OriginalGameScreen extends JFrame {
                 repaint();
             }
         });
+
+        // 아이템 패널 생성 및 추가
+        JPanel itemPanel = new JPanel(null);  // null layout 사용
+        itemPanel.setOpaque(false);
+
+        // 아이템 이미지 추가
+        addScaledImage(itemPanel, changeBubble, 50, 0, 60, 60);
+        addScaledImage(itemPanel, linebomb, 190, 0, 60, 60);
+        addScaledImage(itemPanel, bomb, 320, 0, 60, 60);
+
+        // 아이템 개수 라벨 추가
+        changeBubbleNum = new JLabel("x " + user.getChangeBubbleColor());
+        changeBubbleNum.setForeground(Color.WHITE);
+        changeBubbleNum.setFont(new Font("Arial", Font.BOLD, 16));
+        changeBubbleNum.setBounds(110, 5, 90, 30);
+        itemPanel.add(changeBubbleNum);
+
+        linebombNum = new JLabel("x " + user.getLineExplosion());
+        linebombNum.setForeground(Color.WHITE);
+        linebombNum.setFont(new Font("Arial", Font.BOLD, 16));
+        linebombNum.setBounds(245, 5, 95, 30);
+        itemPanel.add(linebombNum);
+
+        bombNum = new JLabel("x " + user.getBomb());
+        bombNum.setForeground(Color.WHITE);
+        bombNum.setFont(new Font("Arial", Font.BOLD, 16));
+        bombNum.setBounds(370, 5, 90, 30);
+        itemPanel.add(bombNum);
+
+        itemPanel.setBounds(0, 0, getWidth(), getHeight());
+        mainPanel.add(itemPanel);
+
+        player1Score = new GameScore();
+        player2Score = new GameScore();
+
+        // 타이머 레이블 생성 및 위치 설정
+        timerLabel = new JLabel("30");
+        timerLabel.setFont(new Font("Arial", Font.BOLD, 36));
+        timerLabel.setForeground(Color.RED);
+        timerLabel.setBounds(430, 50, 100, 50);
+        timerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+
+//        player2Label.setBounds(850, 550, 200, 15);
+//        player1Label.setBounds(345, 550, 200, 15);
+
+        // 점수 레이블 생성 및 위치 설정
+        JPanel player1ScorePanel = new JPanel();
+        player1ScorePanel.setBackground(new Color(0, 0, 0, 150)); // 반투명 검은색 배경
+        player1ScorePanel.setBounds(150, 35, 200, 30);
+        player1ScoreLabel = new JLabel("SCORE : 0");
+        player1ScoreLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        player1ScoreLabel.setForeground(Color.YELLOW);
+        player1ScorePanel.add(player1ScoreLabel);
+
+
+        JPanel player2ScorePanel = new JPanel();
+        player2ScorePanel.setBackground(new Color(0, 0, 0, 150)); // 반투명 검은색 배경
+        player2ScorePanel.setBounds(620, 35, 200, 30);
+        player2ScoreLabel = new JLabel("SCORE: 0");
+        player2ScoreLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        player2ScoreLabel.setForeground(Color.YELLOW);
+        player2ScorePanel.add(player2ScoreLabel);
+
+        // 메인 패널에 추가
+        mainPanel.add(timerLabel);
+        mainPanel.add(timerLabel);
+        mainPanel.add(player1ScorePanel);
+        mainPanel.add(player2ScorePanel);
+
+        // 게임 타이머 시작
+        gameTimer = new GameTimer(this);
+        gameTimer.start();
+
+
 
         mainPanel.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
@@ -171,6 +259,100 @@ public class OriginalGameScreen extends JFrame {
 
         startGameLoop();
     }
+
+    private void addScaledImage(JPanel panel, BufferedImage image, int x, int y, int width, int height) {
+        if (image != null) {
+            Image scaledImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH); // 스케일 조정
+            JLabel imageLabel = new JLabel(new ImageIcon(scaledImage));
+            imageLabel.setBounds(x, y, width, height); // 위치와 크기 설정
+            panel.add(imageLabel);
+        }
+    }
+
+    // 타이머 업데이트 메서드
+    public void updateTimer(int remainingTime) {
+        SwingUtilities.invokeLater(() -> {
+            timerLabel.setText(String.valueOf(remainingTime));
+        });
+    }
+
+    // 게임 종료 메서드
+    public void endGame() {
+        SwingUtilities.invokeLater(() -> {
+            // 게임 루프 중지
+            if (gameLoop != null) {
+                gameLoop.stop();
+            }
+
+            // 배경음악 중지
+            if (audioManager != null) {
+                audioManager.stopBGM();
+            }
+            // 점수 비교 및 코인 추가
+            int myScore = player1Score.getScore();
+            int opponentScore = player2Score.getScore();
+
+            String resultMessage;
+            if (myScore > opponentScore) {
+                // 승리 시 코인 추가 ( 승리 점수의 50%를 코인으로 변환)
+                int coinReward = myScore / 50;
+                GameUser.getInstance().addCoin(coinReward);
+
+                resultMessage = String.format(
+                        "게임 종료! 승리!\n내 점수: %d\n상대방 점수: %d\n보상 코인: %d",
+                        myScore, opponentScore, coinReward
+                );
+            } else if (myScore < opponentScore) {
+                resultMessage = String.format(
+                        "게임 종료! 패배\n내 점수: %d\n상대방 점수: %d",
+                        myScore, opponentScore
+                );
+            } else {
+                resultMessage = String.format(
+                        "게임 종료! 무승부\n내 점수: %d\n상대방 점수: %d",
+                        myScore, opponentScore
+                );
+            }
+
+            // 게임 결과 메시지 표시
+            JOptionPane.showMessageDialog(this, resultMessage, "게임 종료", JOptionPane.INFORMATION_MESSAGE);
+
+            // ManageNetwork에서 게임 화면 참조 제거
+            if (network != null) {
+                network.setGameScreen(null);  // ManageNetwork에 이 메서드를 추가해야 함
+            }
+
+            // 로비로 돌아가기
+            new LobbyFrame();
+
+            // 게임 창 닫기
+            dispose();
+        });
+    }
+
+    public void updateScore(int bubbleCount, boolean isPlayer1) {
+        GameScore score = isPlayer1 ? player1Score : player2Score;
+        JLabel scoreLabel = isPlayer1 ? player1ScoreLabel : player2ScoreLabel;
+
+        int points = score.calculateScore(bubbleCount);
+        System.out.println(bubbleCount + "개의 버블에 대한 계산 점수: " + points);
+
+        score.addScore(points);
+        System.out.println("새로운 총점: " + score.getScore());
+
+        SwingUtilities.invokeLater(() -> {
+            scoreLabel.setText("SCORE: " + score.getScore());
+        });
+
+        // 상대방에게 점수 업데이트 전송
+        if (isPlayer1) {
+            network.sendMessage(new ChatMsg(userId, ChatMsg.MODE_GAME_SCORE,
+                    String.valueOf(score.getScore())));
+        }
+    }
+
+
+
 
     private void initializeFrame() {
         setTitle("BubblePOP Game");
@@ -253,15 +435,15 @@ public class OriginalGameScreen extends JFrame {
 
     // 게임 루프 시작
     private void startGameLoop() {
-        Timer gameLoop = new Timer(25, e -> {
+        gameLoop = new Timer(25, e -> {
             // 자신의 게임 상태만 서버로 전송
             String gameState = String.format("%d|%d|%f|%s|%d|%d",
                     player1Panel.getBubbleX(),
                     player1Panel.getBubbleY(),
                     player1Panel.getAngle(),
                     player1Panel.getBoardState(),
-                    player1Panel.getCurrentBubbleType(),  // 현재 구슬 타입 추가
-                    player1Panel.getNextBubbleType()      // 다음 구슬 타입 추가
+                    player1Panel.getCurrentBubbleType(),
+                    player1Panel.getNextBubbleType()
             );
 
             network.sendMessage(new ChatMsg(userId, ChatMsg.MODE_TX_GAME, gameState));
@@ -285,7 +467,7 @@ public class OriginalGameScreen extends JFrame {
         private static final int BUBBLE_SIZE = 48;
         private static final int BOARD_LEFT = 65;
         private BufferedImage arrowImage; // 화살표 이미지
-
+        private BufferedImage bar;
         private BufferedImage cc1; // 발사대 상단 이미지
 
         private BufferedImage dd1, dd2, dd3, dd4, dd5, dd6, dd7, dd8, dd9, dd10, dd11, dd12; // 발사대 하단 이미지
@@ -346,11 +528,14 @@ public class OriginalGameScreen extends JFrame {
 
         private boolean isControllable;
 
-        public GamePanel(boolean isControllable) {
+        public
+        GamePanel(boolean isControllable) {
             this.isControllable = isControllable;
 
             try {
                 // 화살표 이미지 로드
+                bar =ImageIO.read(getClass().getClassLoader().getResource("assets/game/bar.png"));
+
                 arrowImage = ImageIO.read(getClass().getClassLoader().getResource("assets/game/shooter/arrow.png"));
                 cc1 = ImageIO.read(getClass().getClassLoader().getResource("assets/game/shooter/cc1.png"));
                 dd1 = ImageIO.read(getClass().getClassLoader().getResource("assets/game/shooter/dd1.png"));
@@ -414,6 +599,7 @@ public class OriginalGameScreen extends JFrame {
 
                 gameBottom = ImageIO.read(getClass().getClassLoader().getResource("assets/game/gamebottom.png"));
 
+                shotCount = 0;
 
                 // 발사대 구슬 초기 위치 설정
                 bubbleX = 212; // 발사대 중심 X 좌표
@@ -480,13 +666,48 @@ public class OriginalGameScreen extends JFrame {
 
         // 구슬 제거 로직
         private void processConnectedBubbles(int row, int col, int bubbleType) {
-            Set<int[]> connectedBubbles = new HashSet<>();
-            removeBubbles(row, col, bubbleType, connectedBubbles);
+            Set<Point> connectedBubbles = new HashSet<>();
+            findConnectedBubbles(row, col, bubbleType, connectedBubbles);
 
-            // 3개 이상 연결된 경우 제거
+            // 디버그 출력
+            System.out.println("연결된 버블 개수: " + connectedBubbles.size());
+
+            // 3개 이상 연결된 경우 제거 및 점수 계산
             if (connectedBubbles.size() >= 3) {
-                for (int[] pos : connectedBubbles) {
-                    board[pos[0]][pos[1]] = 0; // 구슬 제거
+                // 디버그 출력
+                System.out.println(connectedBubbles.size() + "개의 버블에 대한 점수 업데이트");
+
+                // 연결된 구슬에 대한 점수 계산
+                updateScore(connectedBubbles.size(), isControllable);
+
+                // 디버그 출력
+                System.out.println("현재 점수: " + (isControllable ? player1Score.getScore() : player2Score.getScore()));
+
+                // 구슬 제거 및 애니메이션
+                for (Point p : connectedBubbles) {
+                    Point screenPos = new Point(
+                            (p.y * BUBBLE_SIZE) + (p.x % 2 == 0 ? 43 : 67),
+                            65 + (p.x * BUBBLE_SIZE)
+                    );
+                    popAnimations.add(new BubblePop(screenPos, board[p.x][p.y]));
+                    board[p.x][p.y] = 0;
+                }
+
+                // 떠있는 구슬 처리
+                Set<Point> floating = findFloatingBubbles();
+                if (!floating.isEmpty()) {
+                    // 떠있는 구슬에 대한 추가 점수 계산
+                    updateScore(floating.size(), isControllable);
+
+                    // 떠있는 구슬 제거 및 애니메이션
+                    for (Point p : floating) {
+                        Point screenPos = new Point(
+                                (p.y * BUBBLE_SIZE) + (p.x % 2 == 0 ? 43 : 67),
+                                65 + (p.x * BUBBLE_SIZE)
+                        );
+                        popAnimations.add(new BubblePop(screenPos, board[p.x][p.y]));
+                        board[p.x][p.y] = 0;
+                    }
                 }
             }
         }
@@ -551,31 +772,42 @@ public class OriginalGameScreen extends JFrame {
             {
 
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    // 기존 왼쪽 회전 로직 유지
+                    // 왼쪽키: 왼쪽 회전
                     angle -= rotationSpeed;
                     if (angle < minAngle) {
                         angle = minAngle;
                     }
                     repaint();
                 } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    // 기존 오른쪽 회전 로직 유지
+                    // 오른쪽키: 오른쪽 회전
                     angle += rotationSpeed;
                     if (angle > maxAngle) {
                         angle = maxAngle;
                     }
                     repaint();
                 } else if (e.getKeyCode() == KeyEvent.VK_Q) {
-                // Q키: 현재 발사할 구슬 색상 변경
-                currentBubbleType = (currentBubbleType % 7) + 1;
-                repaint();
-            } else if (e.getKeyCode() == KeyEvent.VK_W) {
-                // W키: 맨 아래 라인 폭발
-                explodeBottomLine();
-                repaint();
-            }else if(e.getKeyCode() == KeyEvent.VK_E) {
-                    // E키: 폭탄 구슬로 변경
-                    if (!isBubbleMoving) {
+                    // Q키: 구슬색 변경 아이템 사용
+                    if (user.getChangeBubbleColor() > 0) {
+                        if (user.getChangeBubbleColor() > 0) {
+                            currentBubbleType = (currentBubbleType % 7) + 1;
+                            user.useItem("구슬색 변경");
+                            ((OriginalGameScreen)SwingUtilities.getWindowAncestor(this)).updateItemLabels();
+                            repaint();
+                        }
+                    }
+                } else if (e.getKeyCode() == KeyEvent.VK_W) {
+                    // W키: 라인 폭발 아이템 사용
+                    if (user.getLineExplosion() > 0) {
+                        explodeBottomLine();
+                        user.useItem("라인 폭발");
+                        ((OriginalGameScreen)SwingUtilities.getWindowAncestor(this)).updateItemLabels();
+                        repaint();
+                    }
+                } else if(e.getKeyCode() == KeyEvent.VK_E) {
+                    // E키: 폭탄 구슬 아이템 사용
+                    if (!isBubbleMoving && user.getBomb() > 0) {
                         isBombBubble = true;
+                        user.useItem("폭탄");
                         repaint();
                     }
                 }
@@ -664,12 +896,15 @@ public class OriginalGameScreen extends JFrame {
 
         // 맨 아래 라인 폭발
         private void explodeBottomLine() {
+            int removedBubbles = 0; // 제거된 구슬 개수 !
+
             // 맨 아래부터 위로 올라가며 첫 번째로 구슬이 있는 줄을 찾음
             for (int row = board.length - 1; row >= 0; row--) {
                 boolean hasAnyBubble = false;
                 for (int col = 0; col < board[row].length; col++) {
                     if (board[row][col] != 0) {
                         hasAnyBubble = true;
+                        removedBubbles++; // 제거된 구슬 카운트 증가
                         // 폭발 애니메이션 추가
                         Point screenPos = new Point(
                                 (col * BUBBLE_SIZE) + (row % 2 == 0 ? 43 : 67),
@@ -684,6 +919,7 @@ public class OriginalGameScreen extends JFrame {
                 if (hasAnyBubble) {
                     // 떠 있는 구슬들 처리
                     Set<Point> floating = findFloatingBubbles();
+                    removedBubbles += floating.size(); // 떨어지는 구슬  카운트 증가
                     for (Point p : floating) {
                         Point screenPos = new Point(
                                 (p.y * BUBBLE_SIZE) + (p.x % 2 == 0 ? 43 : 67),
@@ -694,6 +930,10 @@ public class OriginalGameScreen extends JFrame {
                     }
                     break;  // 한 줄만 폭발시키고 종료
                 }
+            }
+            // 제거된 구슬에 대한 점수 업데이트
+            if (removedBubbles > 0) {
+                updateScore(removedBubbles, isControllable);
             }
         }
 
@@ -754,36 +994,13 @@ public class OriginalGameScreen extends JFrame {
                 return;
             }
 
-            // 같은 색상 매칭 처리
-            Set<Point> connected = new HashSet<>();
-            findConnectedBubbles(row, col, currentBubbleType, connected);
-
-            if (connected.size() >= 3) {
-                // 연결된 구슬 제거
-                for (Point p : connected) {
-                    Point screenPos = new Point(
-                            (p.y * BUBBLE_SIZE) + (p.x % 2 == 0 ? 43 : 67),
-                            65 + (p.x * BUBBLE_SIZE)
-                    );
-                    popAnimations.add(new BubblePop(screenPos, board[p.x][p.y]));
-                    board[p.x][p.y] = 0;
-                }
-
-                // 떠있는 구슬 처리
-                Set<Point> floating = findFloatingBubbles();
-                for (Point p : floating) {
-                    Point screenPos = new Point(
-                            (p.y * BUBBLE_SIZE) + (p.x % 2 == 0 ? 43 : 67),
-                            65 + (p.x * BUBBLE_SIZE)
-                    );
-                    popAnimations.add(new BubblePop(screenPos, board[p.x][p.y]));
-                    board[p.x][p.y] = 0;
-                }
-            }
+            // processConnectedBubbles 호출로 교체! 같은 색상 매칭 처리!
+            processConnectedBubbles(row, col, currentBubbleType);
         }
-
         // 폭탄 구슬 폭발 처리 메서드
         private void explodeBombBubble(int row, int col) {
+            int removedBubbles = 0; // 제거된 구슬 개수
+
             // 주변 6방향 체크를 위한 방향 배열
             int[][] directions;
             if (row % 2 == 0) {
@@ -803,6 +1020,7 @@ public class OriginalGameScreen extends JFrame {
 
                 if (newRow >= 0 && newRow < board.length && newCol >= 0 && newCol < board[newRow].length) {
                     if (board[newRow][newCol] != 0) {
+                        removedBubbles++; // 제거된 구슬 카운트
                         // 폭발 애니메이션 추가
                         Point screenPos = new Point(
                                 (newCol * BUBBLE_SIZE) + (newRow % 2 == 0 ? 43 : 67),
@@ -816,6 +1034,7 @@ public class OriginalGameScreen extends JFrame {
 
             // 떠 있는 구슬 처리
             Set<Point> floating = findFloatingBubbles();
+            removedBubbles += floating.size(); // 떨어지는 구슬  카운트
             for (Point p : floating) {
                 Point screenPos = new Point(
                         (p.y * BUBBLE_SIZE) + (p.x % 2 == 0 ? 43 : 67),
@@ -823,6 +1042,10 @@ public class OriginalGameScreen extends JFrame {
                 );
                 popAnimations.add(new BubblePop(screenPos, board[p.x][p.y]));
                 board[p.x][p.y] = 0;
+            }
+            // 제거된 구슬  점수 에 반영
+            if (removedBubbles > 0) {
+                updateScore(removedBubbles, isControllable);
             }
         }
 
@@ -981,6 +1204,10 @@ public class OriginalGameScreen extends JFrame {
             // 배경 이미지 로드
 //            ImageIcon backgroundImage = new ImageIcon(getClass().getClassLoader().getResource("assets/game/two_player_background.png"));
 //            g.drawImage(backgroundImage.getImage(), 0, 0, getWidth(), getHeight(), null);
+
+            if (bar != null) {
+                g.drawImage(bar, 0, 600, null);
+            }
 
             // 게임 하단 이미지 출력
             if (gameBottom != null) {
@@ -1266,10 +1493,21 @@ public class OriginalGameScreen extends JFrame {
                 }
             }
         }
+
+        public void updateOpponentScore(int score) {
+            SwingUtilities.invokeLater(() -> {
+                player2Score.addScore(score);
+                player2ScoreLabel.setText("SCORE: " + player2Score.getScore());
+            });
+        }
+
     }
-//    public static void main(String[] args) {
-//
-//        // 게임 화면 시작
-//        OriginalGameScreen.startGame(userId, network, isHost);
-//    }
+
+    private void updateItemLabels() {
+        SwingUtilities.invokeLater(() -> {
+            changeBubbleNum.setText("x " + user.getChangeBubbleColor());
+            linebombNum.setText("x " + user.getLineExplosion());
+            bombNum.setText("x " + user.getBomb());
+        });
+    }
 }

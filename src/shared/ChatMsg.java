@@ -29,7 +29,11 @@ public class ChatMsg implements Serializable {
     public static final int MODE_BUBBLE_POP = 503;    // 버블 터짐
     public static final int MODE_GAME_SYNC = 504;     // 게임 싱크
     public static final int MODE_GAME_OVER = 505;     // 게임 종료
+
     public static final int MODE_EXCHANGEITEM = 506; // 아이템 교환
+
+    public static final int MODE_GAME_SCORE = 507;
+
 
 
 

@@ -383,6 +383,7 @@ public class ServerMain extends JFrame {
                             // 서버 로그에 출력
                             printMessage("[방 " + roomChatId + "] " + chatMessage);
                         }
+                        break;
                     case ChatMsg.MODE_GAME_START:
                         // 게임 시작 메시지를 모든 클라이언트에게 브로드캐스트
                         t_display.append("게임 시작: " + msg.getMessage() + "\n");
@@ -435,6 +436,12 @@ public class ServerMain extends JFrame {
                     case ChatMsg.MODE_BUBBLE_POP:
                     case ChatMsg.MODE_GAME_SYNC:
                     case ChatMsg.MODE_GAME_OVER:
+                        broadcasting(msg);
+                        break;
+
+                    case ChatMsg.MODE_GAME_SCORE:
+                        // 게임 점수 업데이트를 모든 클라이언트에게 브로드캐스트
+                        t_display.append("게임 점수 업데이트: " + userName + " - " + msg.getMessage() + "\n");
                         broadcasting(msg);
                         break;
 

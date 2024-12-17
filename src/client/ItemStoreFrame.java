@@ -14,6 +14,7 @@ public class ItemStoreFrame extends JFrame {
     private ImageIcon lineExplosionIcon = new ImageIcon(getClass().getResource("/client/assets/item/line-explosion.png"));
     private ImageIcon bombIcon = new ImageIcon(getClass().getResource("/client/assets/item/bomb.png"));
     private ManageNetwork network;
+    private LobbyFrame lobbyFrame;
     GameUser user = GameUser.getInstance();
 
     public ItemStoreFrame() {
@@ -26,8 +27,10 @@ public class ItemStoreFrame extends JFrame {
 
         buildGUI();
     }
-    public ItemStoreFrame(ManageNetwork network) {
+    public ItemStoreFrame(ManageNetwork network, LobbyFrame lobbyFrame) {
         this.network = network;
+        this.lobbyFrame = lobbyFrame;
+
         setTitle("Lobby");
         setBounds(100,100, 960, 672);
         setResizable(false); // 크기 고정
@@ -201,9 +204,16 @@ public class ItemStoreFrame extends JFrame {
                     );
                     user.getNet().sendMessage(buyMsg);
                     // UI 업데이트
-                    SwingUtilities.invokeLater(this::refreshMyItems); // 아이템 탭 새로고침
+//                    SwingUtilities.invokeLater(this::refreshMyItems); // 아이템 탭 새로고침
                     // 로컬 사용자 데이터 업데이트 (서버 응답 후 업데이트하는 것이 이상적)
 //                    GameUser.getInstance().addItem(itemTitle, quantity);
+                    SwingUtilities.invokeLater(() -> {
+                        this.refreshMyItems();
+                        if (lobbyFrame != null) {
+                            lobbyFrame.updateCoinDisplay();//잔여 코인 업데이트
+                            lobbyFrame.updateItemDisplay(); // 아이템 수량 업데이트
+                        }
+                    }); // 사용한 코인이 로비에도 반영되게
                     JOptionPane.showMessageDialog(null, "구매가 완료되었습니다!", "구매 성공", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
@@ -265,9 +275,16 @@ public class ItemStoreFrame extends JFrame {
                     );
                     GameUser.getInstance().getNet().sendMessage(buyMsg);
                     // UI 업데이트
-                    SwingUtilities.invokeLater(this::refreshMyItems); // 아이템 탭 새로고침
+                   // SwingUtilities.invokeLater(this::refreshMyItems); // 아이템 탭 새로고침
                     // 로컬 사용자 데이터 업데이트 (서버 응답 후 업데이트하는 것이 이상적)
 //                    GameUser.getInstance().addItem(itemTitle, quantity);
+                    SwingUtilities.invokeLater(() -> {
+                        this.refreshMyItems();
+                        if (lobbyFrame != null) {
+                            lobbyFrame.updateCoinDisplay();//잔여 코인 업데이트
+                            lobbyFrame.updateItemDisplay(); // 아이템 수량 업데이트
+                        }
+                    });// 로비에 코인이 반영되게
                     JOptionPane.showMessageDialog(null, "판매가 완료되었습니다!", "판매 성공", JOptionPane.INFORMATION_MESSAGE);
                 }
             }

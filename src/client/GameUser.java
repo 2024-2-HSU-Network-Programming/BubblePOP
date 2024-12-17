@@ -10,7 +10,7 @@ public class GameUser {
     private String id;
     private String password;
 
-    private int coin = 300;
+    private int coin = 3000;
     private int changeBubbleColor = 0;
     private int lineExplosion = 0;
     private int bomb = 0;
@@ -55,6 +55,21 @@ public class GameUser {
             this.coin += amount;
         } else {
             System.out.println("추가할 코인은 양수여야 합니다.");
+        }
+    }
+
+    //게임내 아이템 사용
+    public void useItem(String itemName) {
+        switch (itemName) {
+            case "구슬색 변경":
+                changeBubbleColor--;
+                break;
+            case "라인 폭발":
+                lineExplosion--;
+                break;
+            case "폭탄":
+                bomb--;
+                break;
         }
     }
 
