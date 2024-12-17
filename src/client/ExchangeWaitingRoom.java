@@ -3,9 +3,12 @@ package client;
 import server.RoomManager;
 import shared.ChatMsg;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
 public class ExchangeWaitingRoom {
     private String userId;
@@ -17,11 +20,17 @@ public class ExchangeWaitingRoom {
     private JButton exchangeButton;
     private JLabel player1ReadyLabel;  // 플레이어1 준비상태 라벨
     private JLabel player2ReadyLabel;  // 플레이어2 준비상태 라벨
+    private JLabel changeBubbleNum; //보유개수
+    private JLabel linebombNum;//보유개수
+    private JLabel bombNum;//보유개수
     private boolean isReady = false;   // 준비상태 플래그
     private String roomOwner;          // 방장 ID 저장
     private boolean player1Ready = false;  // 자신의 준비 상태
     private boolean player2Ready = false;  // 상대방의 준비 상태
     private GameUser gameUser;
+    private BufferedImage changeBubble,linebomb,bomb;
+    GameUser user = GameUser.getInstance();
+
 
 
     // 채팅 관련 필드
@@ -36,7 +45,10 @@ public class ExchangeWaitingRoom {
     private ImageIcon userCharacterIcon = new ImageIcon(getClass().getResource("/client/assets/game/user_character.png"));
     private ImageIcon logoIcon = new ImageIcon(getClass().getResource("/client/assets/logo/logo.png"));
 
-    public ExchangeWaitingRoom(String roomNumber, String roomName, String userId, ManageNetwork network) {
+    private LobbyFrame lobbyFrame;
+
+    public ExchangeWaitingRoom(String roomNumber, String roomName, String userId, ManageNetwork network, LobbyFrame lobbyFrame) {
+        this.lobbyFrame = lobbyFrame;
         this.userId = userId;
         this.network = network;
         this.roomId = roomNumber;
@@ -47,6 +59,13 @@ public class ExchangeWaitingRoom {
         this.roomOwner = ownerFromServer;  // 서버에서 받은 실제 방장 ID로 설정
 
         network.setExchangeWaitingRoom(this);
+        try {
+            changeBubble = ImageIO.read(getClass().getResourceAsStream("/client/assets/item/change-bubble.png"));
+            linebomb = ImageIO.read(getClass().getResourceAsStream("/client/assets/item/line-explosion.png"));
+            bomb = ImageIO.read(getClass().getResourceAsStream("/client/assets/item/bomb.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         frame = new JFrame("교환방");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -107,6 +126,32 @@ public class ExchangeWaitingRoom {
         selectItemButton.setFont(new Font("맑은 고딕", Font.BOLD, 14));
         frame.add(selectItemButton);
 
+        // 아이템 이미지 추가
+        addScaledImage(frame, changeBubble, 50, 570, 60, 60);
+        addScaledImage(frame, linebomb, 190, 570, 60, 60);
+        addScaledImage(frame, bomb, 320, 570, 60, 60);
+
+        // 아이템 개수 라벨 추가
+        changeBubbleNum = new JLabel("x " + user.getChangeBubbleColor());
+        changeBubbleNum.setForeground(Color.WHITE);
+        changeBubbleNum.setFont(new Font("Arial", Font.BOLD, 16));
+        changeBubbleNum.setBounds(110, 575, 90, 30);
+        frame.add(changeBubbleNum);
+
+        linebombNum = new JLabel("x " + user.getLineExplosion());
+        linebombNum.setForeground(Color.WHITE);
+        linebombNum.setFont(new Font("Arial", Font.BOLD, 16));
+        linebombNum.setBounds(245, 575, 95, 30);
+        frame.add(linebombNum);
+
+        bombNum = new JLabel("x " + user.getBomb());
+        bombNum.setForeground(Color.WHITE);
+        bombNum.setFont(new Font("Arial", Font.BOLD, 16));
+        bombNum.setBounds(370, 575, 90, 30);
+        frame.add(bombNum);
+
+
+
 // 선택된 아이템 이미지 라벨
         selectedItemLabel = new JLabel("선택한 아이템", SwingConstants.CENTER);
         selectedItemLabel.setBounds(100, 450, 100, 100);
@@ -118,7 +163,7 @@ public class ExchangeWaitingRoom {
             JFileChooser fileChooser = new JFileChooser();
 
             // 초기 파일 경로 설정
-            File initialDirectory = new File("/Users/yebin/BubblePOP/src/client/assets/item");
+            File initialDirectory = new File("/Users/yebin/BubblePOP/src/client/assets/item"); //제출전 수정하기
             fileChooser.setCurrentDirectory(initialDirectory);
 
             fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
@@ -174,13 +219,24 @@ public class ExchangeWaitingRoom {
         exchangeButton.setEnabled(userId.equals(roomOwner));  // 방장인 경우에만 활성화
 
         exchangeButton.addActionListener(e -> {
-            // 교환 요청 데이터 생성
-            String exchangeData = userId + "|" + player2NameLabel.getText();
+            if (selectedItemPath == null) {
+                JOptionPane.showMessageDialog(frame, "교환할 아이템을 선택해주세요.");
+                return;
+            }
 
-            // 서버로 교환 요청 전송
-            ChatMsg exchangeRequest = new ChatMsg(userId, ChatMsg.MODE_EXCHANGEITEM, exchangeData);
+            // 아이템 파일명 추출
+            String selectedFileName = new File(selectedItemPath).getName();
+
+            // 아이템 보유 여부 확인
+            if (!GameUser.getInstance().hasItem(selectedFileName)) {
+                JOptionPane.showMessageDialog(frame, "해당 아이템을 보유하고 있지 않습니다.");
+                return;
+            }
+
+            // 서버에 교환 요청 전송
+            ChatMsg exchangeRequest = new ChatMsg(userId, ChatMsg.MODE_EXCHANGEITEM,
+                    userId + "|" + selectedFileName);
             network.sendMessage(exchangeRequest);
-
         });
 
         frame.add(exchangeButton);
@@ -306,6 +362,11 @@ public class ExchangeWaitingRoom {
             chatInputField.setText("");
         }
     }
+    private void updateLobbyItems() {
+        if (lobbyFrame != null) {
+            lobbyFrame.updateItemDisplay();
+        }
+    }
 
     public void receiveMessage(String message) {
         SwingUtilities.invokeLater(() -> {
@@ -346,8 +407,10 @@ public class ExchangeWaitingRoom {
 //    }
 private void sendSelectedItemImage() {
     if (selectedItemPath != null) {
+        String fileName = new File(selectedItemPath).getName();
         ImageIcon imageIcon = new ImageIcon(selectedItemPath);
-        ChatMsg imageMsg = new ChatMsg(userId, ChatMsg.MODE_TX_IMAGE, "SelectedItem", imageIcon);
+        // 파일명을 메시지에 포함
+        ChatMsg imageMsg = new ChatMsg(userId, ChatMsg.MODE_TX_IMAGE, "SelectedItem|" + fileName, imageIcon);
         network.sendMessage(imageMsg);
     }
 }
@@ -405,6 +468,71 @@ private void sendSelectedItemImage() {
             }
         });
     }
+    private void addScaledImage(JFrame frame, BufferedImage image, int x, int y, int width, int height) {
+        if (image != null) {
+            Image scaledImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH); // 스케일 조정
+            JLabel imageLabel = new JLabel(new ImageIcon(scaledImage));
+            imageLabel.setBounds(x, y, width, height); // 위치와 크기 설정
+            frame.add(imageLabel);
+        }
+    }
+    public void handleReceivedItem(String itemFileName) {
+        // 받은 아이템 증가
+        if (itemFileName.equals("bomb.png")) {
+            gameUser.setBomb(gameUser.getBomb() + 1);
+        } else if (itemFileName.equals("line-explosion.png")) {
+            gameUser.setLineExplosion(gameUser.getLineExplosion() + 1);
+        } else if (itemFileName.equals("change-bubble.png")) {
+            gameUser.setChangeBubbleColor(gameUser.getChangeBubbleColor() + 1);
+        }
+
+        // UI 업데이트
+        SwingUtilities.invokeLater(() -> {
+            changeBubbleNum.setText("x " + gameUser.getChangeBubbleColor());
+            linebombNum.setText("x " + gameUser.getLineExplosion());
+            bombNum.setText("x " + gameUser.getBomb());
+            updateLobbyItems();
+        });
+    }
+
+    public void processReceivedItem(String itemFileName) {
+        // 받은 아이템 증가
+        if (itemFileName.equals("bomb.png")) {
+            gameUser.setBomb(gameUser.getBomb() + 1);
+        } else if (itemFileName.equals("line-explosion.png")) {
+            gameUser.setLineExplosion(gameUser.getLineExplosion() + 1);
+        } else if (itemFileName.equals("change-bubble.png")) {
+            gameUser.setChangeBubbleColor(gameUser.getChangeBubbleColor() + 1);
+        }
+
+        // UI 업데이트
+        SwingUtilities.invokeLater(() -> {
+            updateItemCountLabels();
+            updateLobbyItems();
+        });
+    }
+
+    private void updateItemCountLabels() {
+        changeBubbleNum.setText("x " + gameUser.getChangeBubbleColor());
+        linebombNum.setText("x " + gameUser.getLineExplosion());
+        bombNum.setText("x " + gameUser.getBomb());
+    }
 
 
+    public void processSentItem(String itemFileName) {
+        // 보낸 아이템 감소
+        if (itemFileName.equals("bomb.png")) {
+            gameUser.setBomb(gameUser.getBomb() - 1);
+        } else if (itemFileName.equals("line-explosion.png")) {
+            gameUser.setLineExplosion(gameUser.getLineExplosion() - 1);
+        } else if (itemFileName.equals("change-bubble.png")) {
+            gameUser.setChangeBubbleColor(gameUser.getChangeBubbleColor() - 1);
+        }
+
+        // UI 업데이트
+        SwingUtilities.invokeLater(() -> {
+            updateItemCountLabels();
+            updateLobbyItems();
+        });
+    }
 }

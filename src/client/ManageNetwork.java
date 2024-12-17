@@ -46,6 +46,7 @@ public class ManageNetwork extends Thread{
     public void run() {
         // lobbyFrame 초기화를 여기서 한 번만 수행
         lobbyFrame = new LobbyFrame();
+        this.gameUser = GameUser.getInstance();
 
         while(true) {
             Object objCm = null;
@@ -134,7 +135,8 @@ public class ManageNetwork extends Thread{
                                             String.valueOf(roomId),
                                             roomName,
                                             ownerName,
-                                            this
+                                            this,
+                                            lobbyFrame  // LobbyFrame 인스턴스 전달
                                     );
                                     exchangeWaitingRoom.show();
                                     lobbyFrame.dispose();
@@ -209,7 +211,8 @@ public class ManageNetwork extends Thread{
                                             String.valueOf(roomId),
                                             "교환방",
                                             gameUser.getId(),
-                                            gameUser.getNet()
+                                            gameUser.getNet(),
+                                            lobbyFrame
                                     );
                                     exchangeWaitingRoom.updatePlayer2Items(player2Items);
                                     exchangeWaitingRoom.show();
@@ -325,15 +328,26 @@ public class ManageNetwork extends Thread{
                             });
                             break;
                         case ChatMsg.MODE_EXCHANGEITEM:
-                            // 교환 완료 메시지 표시
-                            SwingUtilities.invokeLater(() -> {
-                                String exchangeResult = cm.getMessage();
-                                if (exchangeWaitingRoom != null) {
-                                    exchangeWaitingRoom.receiveMessage(exchangeResult); // 교환 완료 메시지를 채팅창에 표시
-                                }
-                            });
-                            break;
+                            String[] exchangeInfo = cm.getMessage().split("\\|");
+                            String sender = exchangeInfo[0];
+                            String receiver = exchangeInfo[1];
+                            String exchangedItem = exchangeInfo[2];
 
+                            if (exchangeWaitingRoom != null) {
+                                if (receiver.equals(gameUser.getId())) {
+                                    // 수신자인 경우 아이템 증가
+                                    exchangeWaitingRoom.processReceivedItem(exchangedItem);
+                                } else if (sender.equals(gameUser.getId())) {
+                                    // 송신자인 경우 아이템 감소
+                                    exchangeWaitingRoom.processSentItem(exchangedItem);
+                                }
+
+                                // 교환 완료 메시지를 채팅창에 표시
+                                String exchangeMessage = sender + "님이 " + receiver + "님과 " +
+                                        exchangedItem.replace(".png", "") + " 아이템을 교환했습니다.";
+                                exchangeWaitingRoom.receiveMessage(exchangeMessage);
+                            }
+                            break;
 
                         case ChatMsg.MODE_GAME_SCORE:
                             if (originalGameScreen != null) {

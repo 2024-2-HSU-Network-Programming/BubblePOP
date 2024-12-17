@@ -1,7 +1,9 @@
 package server;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ExchangeRoom {
     private int roomId; // Room Id
@@ -12,6 +14,9 @@ public class ExchangeRoom {
     private Boolean isFull;
     private Boolean isPlaying;
 
+    private Map<String, String> selectedItems; // 유저별 선택한 아이템
+    private Map<String, Boolean> readyStatus; // 유저별 준비 상태
+
     public ExchangeRoom(int roomId, String roomOwner, String roomName,String roomPassword) {
         this.roomId = roomId;
         this.roomOwner = roomOwner;
@@ -21,6 +26,9 @@ public class ExchangeRoom {
         this.roomPassword = roomPassword;
 
         userList = new ArrayList();
+        this.selectedItems = new HashMap<>();
+        this.readyStatus = new HashMap<>();
+
         userList.add(roomOwner);
         System.out.println("룸 생성 id: "+this.roomId+" owner: "+this.roomOwner+" name: "+this.roomName);
     }
@@ -43,6 +51,58 @@ public class ExchangeRoom {
             isFull = true;
         else
             isFull = false;
+    }
+
+    // 아이템 선택 메소드
+    public void setSelectedItem(String userId, String itemName) {
+        selectedItems.put(userId, itemName);
+    }
+
+    // 준비 상태 설정 메소드
+    public void setReady(String userId, boolean ready) {
+        readyStatus.put(userId, ready);
+    }
+
+    // 교환 가능 상태 확인
+    public boolean canExchange() {
+        if (userList.size() != 2) return false;
+
+        // 모든 유저가 아이템을 선택하고 준비 상태인지 확인
+        for (String user : userList) {
+            if (!selectedItems.containsKey(user) ||
+                    !readyStatus.containsKey(user) ||
+                    !readyStatus.get(user)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // 아이템 교환 실행
+    public Map<String, String> executeExchange() {
+        if (!canExchange()) return null;
+
+        Map<String, String> exchangeResult = new HashMap<>();
+        String user1 = userList.get(0);
+        String user2 = userList.get(1);
+
+        // 각 유저가 받을 아이템 매핑
+        exchangeResult.put(user1, selectedItems.get(user2));
+        exchangeResult.put(user2, selectedItems.get(user1));
+
+        // 교환 후 초기화
+        selectedItems.clear();
+        readyStatus.clear();
+
+        return exchangeResult;
+    }
+
+    public String getSelectedItem(String userId) {
+        return selectedItems.get(userId);
+    }
+
+    public boolean isReady(String userId) {
+        return readyStatus.getOrDefault(userId, false);
     }
 
     public boolean checkPassword(String password) {

@@ -330,7 +330,8 @@ private void enterExchangeRoom(int roomNumber, String roomName) {
                     String.valueOf(roomNumber),
                     roomName,
                     currentUser,
-                    user.getNet()
+                    user.getNet(),
+                    lobbyFrame  // LobbyFrame 인스턴스 전달
             );
             waitingRoom.show();
             lobbyFrame.dispose();

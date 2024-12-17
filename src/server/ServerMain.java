@@ -318,19 +318,37 @@ public class ServerMain extends JFrame {
                         }
 
                         break;
+
                     case ChatMsg.MODE_EXCHANGEITEM:
-                        // 메시지에서 필요한 데이터 분리
                         String[] exchangeData = msg.getMessage().split("\\|");
-                        String sender = exchangeData[0];  // 교환 요청자
-                        String receiver = exchangeData[1];  // 교환 상대
-//                        String exchangeItem = exchangeData[2]; // 교환된 아이템 정보
+                        String sender = exchangeData[0];
+                        String itemName = exchangeData[1];  // 파일명으로 아이템 식별
 
-                        // 교환 성공 메시지 생성 및 브로드캐스트
-                        String exchangeResult = "교환 완료!";
-                        ChatMsg exchangeMsg = new ChatMsg("Server", ChatMsg.MODE_EXCHANGEITEM, exchangeResult);
-                        broadcasting(exchangeMsg);
+                        // 해당 교환방의 다른 사용자를 찾아서 아이템 전송
+                        ExchangeRoom exchangeRoom = null;
+                        for (ExchangeRoom room2 : RoomManager.getInstance().getAllExchangeRooms()) {
+                            if (room2.getUserList().contains(sender)) {
+                                exchangeRoom = room2;
+                                break;
+                            }
+                        }
 
-                        t_display.append(exchangeResult + "\n"); // 서버 로그 출력
+                        if (exchangeRoom != null) {
+                            // 상대방 찾기
+                            String receiver = exchangeRoom.getUserList().stream()
+                                    .filter(user -> !user.equals(sender))
+                                    .findFirst()
+                                    .orElse(null);
+
+                            if (receiver != null) {
+                                // 교환 완료 메시지를 양쪽 클라이언트에 전송
+                                String exchangeResult = sender + "|" + receiver + "|" + itemName;
+                                ChatMsg exchangeMsg = new ChatMsg("Server", ChatMsg.MODE_EXCHANGEITEM, exchangeResult);
+                                broadcasting(exchangeMsg);
+
+                                t_display.append("아이템 교환 완료: " + sender + "와 " + receiver + " 사이에 " + itemName + " 교환됨\n");
+                            }
+                        }
                         break;
 
 
@@ -391,19 +409,19 @@ public class ServerMain extends JFrame {
                         break;
                     case ChatMsg.MODE_BUYITEM:
                         String[] itemData = msg.getMessage().split("\\|");
-                        String itemName = itemData[0];
+                        String itemName2 = itemData[0];
                         int quantity = Integer.parseInt(itemData[1]);
                         int totalCost = Integer.parseInt(itemData[2]);
                         // 사용자 데이터 업데이트 (예: 데이터베이스 또는 메모리)
                         //GameUser user = GameUser.getInstance();
                         if (userName != null) {
                             //user.addItem(itemName, quantity);
-                            t_display.append(userName + "님이 " + itemName + " " + quantity + "개를 구매했습니다.\n");
+                            t_display.append(userName + "님이 " + itemName2 + " " + quantity + "개를 구매했습니다.\n");
                             // 클라이언트에 응답 메시지 전송
                             ChatMsg responseMsg = new ChatMsg(
                                     "Server",
                                     ChatMsg.MODE_BUYITEM,
-                                    itemName + "|" + quantity + "|" + totalCost
+                                    itemName2 + "|" + quantity + "|" + totalCost
                             );
                             out.writeObject(responseMsg);
                         }

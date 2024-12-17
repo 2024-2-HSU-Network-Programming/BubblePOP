@@ -11,9 +11,9 @@ public class GameUser {
     private String password;
 
     private int coin = 3000;
-    private int changeBubbleColor = 0;
-    private int lineExplosion = 0;
-    private int bomb = 0;
+    private int changeBubbleColor = 5;
+    private int lineExplosion = 5;
+    private int bomb = 5;
 
     // 기존 필드들...
     private static final Map<String, String> itemImages = new HashMap<>();
@@ -186,5 +186,69 @@ public class GameUser {
                 "폭탄" + "|" + getBomb()
         };
     }
+
+    // 아이템 교환 메소드
+    public void exchangeItems(String givenItem, String receivedItem) {
+        // 주는 아이템 감소
+        switch (givenItem) {
+            case "bomb.png":
+                if (bomb > 0) {
+                    bomb--;
+                }
+                break;
+            case "change-bubble.png":
+                if (changeBubbleColor > 0) {
+                    changeBubbleColor--;
+                }
+                break;
+            case "line-explosion.png":
+                if (lineExplosion > 0) {
+                    lineExplosion--;
+                }
+                break;
+        }
+
+        // 받는 아이템 증가
+        switch (receivedItem) {
+            case "bomb.png":
+                bomb++;
+                break;
+            case "change-bubble.png":
+                changeBubbleColor++;
+                break;
+            case "line-explosion.png":
+                lineExplosion++;
+                break;
+        }
+    }
+    // 아이템 보유 여부 확인
+    public boolean hasItem(String itemName) {
+        switch (itemName) {
+            case "change-bubble.png":
+                return changeBubbleColor > 0;
+            case "line-explosion.png":
+                return lineExplosion > 0;
+            case "bomb.png":
+                return bomb > 0;
+            default:
+                return false;
+        }
+    }
+
+    // 아이템 개수 반환
+    public int getItemCount(String itemName) {
+        switch (itemName) {
+            case "change-bubble.png":
+                return changeBubbleColor;
+            case "line-explosion.png":
+                return lineExplosion;
+            case "bomb.png":
+                return bomb;
+            default:
+                return 0;
+        }
+    }
+
+
 
 }
