@@ -451,19 +451,26 @@ public class ServerMain extends JFrame {
                         int roomChatId = Integer.parseInt(roomChatData[0]);
                         String chatMessage = msg.getMessage().split("\\|", 2)[1];
 
-                        // 서버에서 해당 방의 모든 유저에게 한 번만 브로드캐스트
-                        room = RoomManager.getInstance().getGameRoom(String.valueOf(roomChatId));
-                        if (room != null) {
+                        // 일반 대기방 확인
+                        GameRoom gameRoom = RoomManager.getInstance().getGameRoom(String.valueOf(roomChatId));
+                        // 교환방 확인
+                        ExchangeRoom exchangeRoom2 = RoomManager.getInstance().getExchangeRoom(String.valueOf(roomChatId));
+
+                        if (gameRoom != null || exchangeRoom2 != null) {
                             // 방 전체에 대해 한 번만 브로드캐스트
                             ChatMsg roomChatMsg = new ChatMsg(userName, ChatMsg.MODE_TX_ROOMCHAT,
                                     roomChatId + "|" + chatMessage);
                             broadcasting(roomChatMsg);
 
                             // 서버 로그에 출력
-                            printMessage("[방 " + roomChatId + "] " + chatMessage);
+                            if (gameRoom != null) {
+                                printMessage("[대기방 " + roomChatId + "] " + chatMessage);
+                            } else {
+                                printMessage("[교환방 " + roomChatId + "] " + chatMessage);
+                            }
                         }
                         break;
-                    case ChatMsg.MODE_GAME_START:
+                        case ChatMsg.MODE_GAME_START:
                         // 게임 시작 메시지를 모든 클라이언트에게 브로드캐스트
                         t_display.append("게임 시작: " + msg.getMessage() + "\n");
                         broadcasting(msg);
