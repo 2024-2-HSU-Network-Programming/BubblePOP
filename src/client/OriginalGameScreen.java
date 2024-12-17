@@ -467,7 +467,7 @@ public class OriginalGameScreen extends JFrame {
         private static final int BUBBLE_SIZE = 48;
         private static final int BOARD_LEFT = 65;
         private BufferedImage arrowImage; // 화살표 이미지
-
+        private BufferedImage bar;
         private BufferedImage cc1; // 발사대 상단 이미지
 
         private BufferedImage dd1, dd2, dd3, dd4, dd5, dd6, dd7, dd8, dd9, dd10, dd11, dd12; // 발사대 하단 이미지
@@ -534,6 +534,8 @@ public class OriginalGameScreen extends JFrame {
 
             try {
                 // 화살표 이미지 로드
+                bar =ImageIO.read(getClass().getClassLoader().getResource("assets/game/bar.png"));
+
                 arrowImage = ImageIO.read(getClass().getClassLoader().getResource("assets/game/shooter/arrow.png"));
                 cc1 = ImageIO.read(getClass().getClassLoader().getResource("assets/game/shooter/cc1.png"));
                 dd1 = ImageIO.read(getClass().getClassLoader().getResource("assets/game/shooter/dd1.png"));
@@ -597,6 +599,7 @@ public class OriginalGameScreen extends JFrame {
 
                 gameBottom = ImageIO.read(getClass().getClassLoader().getResource("assets/game/gamebottom.png"));
 
+                shotCount = 0;
 
                 // 발사대 구슬 초기 위치 설정
                 bubbleX = 212; // 발사대 중심 X 좌표
@@ -1201,6 +1204,10 @@ public class OriginalGameScreen extends JFrame {
             // 배경 이미지 로드
 //            ImageIcon backgroundImage = new ImageIcon(getClass().getClassLoader().getResource("assets/game/two_player_background.png"));
 //            g.drawImage(backgroundImage.getImage(), 0, 0, getWidth(), getHeight(), null);
+
+            if (bar != null) {
+                g.drawImage(bar, 0, 600, null);
+            }
 
             // 게임 하단 이미지 출력
             if (gameBottom != null) {
