@@ -52,11 +52,17 @@ public class ServerMain extends JFrame {
         t_display = new JTextArea();
         t_display.setEditable(false);
 
+        // JScrollPane을 추가하여 드래그(스크롤) 기능 활성화
+        JScrollPane scrollPane = new JScrollPane(t_display);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
         JPanel displayPanel = new JPanel(new BorderLayout());
-        displayPanel.add(t_display, BorderLayout.CENTER);
+        displayPanel.add(scrollPane, BorderLayout.CENTER);
 
         return displayPanel;
     }
+
 
     public JPanel createControlPanel() {
         JButton sendButton = new JButton("서버 종료");
