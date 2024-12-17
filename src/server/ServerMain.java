@@ -95,6 +95,7 @@ public class ServerMain extends JFrame {
     // 브로드캐스트
     public synchronized void broadcasting(ChatMsg msg) {
         synchronized (clientStreams) {
+            System.out.println("Broadcasting message: " + msg.getMessage());
             for (ObjectOutputStream out : clientStreams.values()) {
                 try {
                     out.writeObject(msg);

@@ -167,34 +167,38 @@ public class ManageNetwork extends Thread{
                             int leavingRoomId = Integer.parseInt(leaveInfo[0]);
                             String leavingUser = leaveInfo[1];
 
-                            System.out.println("Client LeaveRoomMode : " +
-                                    RoomManager.getGameRoom(Integer.toString(leavingRoomId)).getUserListSize());
-
-                            // UI 업데이트 로직 추가
-                            if (lobbyFrame != null) {
-                                SwingUtilities.invokeLater(() -> {
-                                    lobbyFrame.getRoomListPane().refreshRoomList(); // 방 목록 새로고침
-                                    lobbyFrame.updateRoomList(leavingUser + "님이 방에서 나갔습니다.");
-
-                                });
-                            }
-                            break;
-                        case ChatMsg.MODE_ENTER_ROOM:
-                            String[] enterInfo = cm.getMessage().split("\\|");
-                            int enterRoomId = Integer.parseInt(enterInfo[0]);
-                            String enteringUser = enterInfo[1];
-
-                            System.out.println("Received ENTER_ROOM message: " + cm.getMessage());
-
-                            // waitingRoom이 null이 아닐 때만 업데이트
-                            if (waitingRoom != null) {
-                                waitingRoom.updatePlayer2Name(enteringUser);
-                                System.out.println("Updated waiting room with user: " + enteringUser);
+                            // 교환방인지 일반 방인지 확인
+                            ExchangeRoom exchangeRoom = RoomManager.getInstance().getExchangeRoom(String.valueOf(leavingRoomId));
+                            if (exchangeRoom != null) {
+                                // 교환방인 경우
+                                RoomManager.getInstance().removeUserFromExchangeRoom(leavingRoomId, leavingUser);
+                                if (lobbyFrame != null) {
+                                    SwingUtilities.invokeLater(() -> {
+                                        lobbyFrame.getRoomListPane().refreshRoomList();
+                                        lobbyFrame.updateRoomList(leavingUser + "님이 교환방에서 나갔습니다.");
+                                    });
+                                }
                             } else {
-                                System.out.println("WaitingRoom is null");
+                                // 일반 방인 경우
+                                GameRoom gameRoom = RoomManager.getInstance().getGameRoom(String.valueOf(leavingRoomId));
+                                if (gameRoom != null) {
+                                    System.out.println("Client LeaveRoomMode : " + gameRoom.getUserListSize());
+                                    RoomManager.getInstance().leaveRoom(leavingRoomId, leavingUser);
+
+                                    if (lobbyFrame != null) {
+                                        SwingUtilities.invokeLater(() -> {
+                                            lobbyFrame.getRoomListPane().refreshRoomList();
+                                            lobbyFrame.updateRoomList(leavingUser + "님이 방에서 나갔습니다.");
+                                        });
+                                    }
+                                }
                             }
+
+                            // 채팅 메시지 전송을 위한 별도의 ChatMsg 객체 생성 및 서버로 전송
+                            sendMessage(new ChatMsg(leavingUser, ChatMsg.MODE_TX_STRING,
+                                    leavingUser + "님이 로비로 돌아왔습니다."));
                             break;
-                        case ChatMsg.MODE_ENTER_EXCHANGEROOM:
+                            case ChatMsg.MODE_ENTER_EXCHANGEROOM:
                             String[] exchangeEnterInfo = cm.getMessage().split("\\|");
                             roomId = Integer.parseInt(exchangeEnterInfo[0]);
                             String[] usersInRoom = exchangeEnterInfo[1].split(",");
@@ -418,6 +422,9 @@ public class ManageNetwork extends Thread{
 
     public void setGameScreen(OriginalGameScreen gameScreen) {
         this.originalGameScreen = gameScreen;
+    }
+    public synchronized void broadcasting(ChatMsg msg) {
+        sendMessage(msg); // 서버로 메시지 전송하면 서버가 다시 모든 클라이언트에게 브로드캐스트
     }
 
 }

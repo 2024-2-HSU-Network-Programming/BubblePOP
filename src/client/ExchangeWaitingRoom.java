@@ -82,13 +82,28 @@ public class ExchangeWaitingRoom {
         exitButton.setBackground(Color.GREEN);
         exitButton.setFont(koreanFont);
         exitButton.addActionListener(e -> {
+            // 서버에 방 나가기 메시지 전송
             ChatMsg leaveRoomMsg = new ChatMsg(userId, ChatMsg.MODE_LEAVE_ROOM,
                     roomNumber + "|" + userId);
             network.sendMessage(leaveRoomMsg);
+
+            // 현재 교환방 창 닫기
             frame.dispose();
 
+            // LobbyFrame 생성 및 네트워크 연결 설정
             SwingUtilities.invokeLater(() -> {
-                new LobbyFrame();
+                LobbyFrame lobby = new LobbyFrame();
+                network.setLobbyFrame(lobby); // ManageNetwork에 새 LobbyFrame 설정
+
+                // 아이템 상태 유지를 위해 GameUser 인스턴스 가져오기
+                GameUser gameUser = GameUser.getInstance();
+
+                // UI 업데이트
+                lobby.updateItemDisplay(); // 아이템 디스플레이 업데이트
+                lobby.updateCoinDisplay(); // 코인 디스플레이 업데이트
+
+                // 로비 채팅창에 메시지 추가
+                lobby.addGlobalChatMessage(userId + "님이 교환방에서 로비로 돌아왔습니다.");
             });
         });
         frame.add(exitButton);
