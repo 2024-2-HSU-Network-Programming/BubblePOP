@@ -1,6 +1,7 @@
 package client;
 
 import server.ExchangeRoom;
+import server.GameRoom;
 import server.RoomManager;
 import shared.ChatMsg;
 
@@ -74,10 +75,17 @@ public class ManageNetwork extends Thread{
                             break;
 
                         case ChatMsg.MODE_TX_STRING:
-                            if (lobbyFrame != null) {
-                                System.out.println("서버에서 스트링값 수신: " + cm.getMessage());
-                                lobbyFrame.addGlobalChatMessage(cm.getMessage());
-                                lobbyFrame.getRoomListPane().refreshRoomList(); // UI 갱신 추가
+                            if (cm.getMessage().equals("UPDATE_ROOM_LIST")) {
+
+                                System.out.println("방 목록 갱신 요청 수신");
+                                SwingUtilities.invokeLater(() -> {
+                                    lobbyFrame.getRoomListPane().refreshRoomList();
+                                });
+                            } else {
+                                if (lobbyFrame != null) {
+                                    System.out.println("서버에서 스트링값 수신: " + cm.getMessage());
+                                    lobbyFrame.addGlobalChatMessage(cm.getMessage());
+                                }
                             }
                             break;
 
@@ -158,10 +166,16 @@ public class ManageNetwork extends Thread{
                             int leavingRoomId = Integer.parseInt(leaveInfo[0]);
                             String leavingUser = leaveInfo[1];
 
+                            System.out.println("Client LeaveRoomMode : " +
+                                    RoomManager.getGameRoom(Integer.toString(leavingRoomId)).getUserListSize());
+
                             // UI 업데이트 로직 추가
                             if (lobbyFrame != null) {
-                                lobbyFrame.updateRoomList(leavingUser + "님이 방에서 나갔습니다.");
-                                lobbyFrame.getRoomListPane().refreshRoomList(); // 방 목록 새로고침
+                                SwingUtilities.invokeLater(() -> {
+                                    lobbyFrame.getRoomListPane().refreshRoomList(); // 방 목록 새로고침
+                                    lobbyFrame.updateRoomList(leavingUser + "님이 방에서 나갔습니다.");
+
+                                });
                             }
                             break;
                         case ChatMsg.MODE_ENTER_ROOM:

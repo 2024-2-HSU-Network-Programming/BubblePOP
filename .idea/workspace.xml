@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a3e92f76-7a23-4d81-b3aa-d28e0e723f73" name="변경" comment="">
+    <list default="true" id="a3e92f76-7a23-4d81-b3aa-d28e0e723f73" name="변경" comment="Changes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/ExchangeRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/ExchangeRoom.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/ExchangeWaitingRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/ExchangeWaitingRoom.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/GameUser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/GameUser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/ManageNetwork.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/ManageNetwork.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/RoomListTapPane.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/RoomListTapPane.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server/ServerMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/ServerMain.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/shared/ChatMsg.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/ChatMsg.java" afterDir="false" />
     </list>
@@ -42,23 +40,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.GameScreen.executor": "Run",
-    "Application.LoginFrame.executor": "Run",
-    "Application.ServerMain.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "copy/feat#17",
-    "kotlin-language-version-configured": "true",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "애플리케이션.GameScreen.executor": "Run",
-    "애플리케이션.ItemStoreFrame.executor": "Run",
-    "애플리케이션.LobbyFrame.executor": "Run",
-    "애플리케이션.LoginFrame.executor": "Run",
-    "애플리케이션.ServerMain.executor": "Run",
-    "애플리케이션.WaitingRoom.executor": "Run"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.GameScreen.executor&quot;: &quot;Run&quot;,
+    &quot;Application.LoginFrame.executor&quot;: &quot;Run&quot;,
+    &quot;Application.ServerMain.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feat/#17&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;애플리케이션.GameScreen.executor&quot;: &quot;Run&quot;,
+    &quot;애플리케이션.ItemStoreFrame.executor&quot;: &quot;Run&quot;,
+    &quot;애플리케이션.LobbyFrame.executor&quot;: &quot;Run&quot;,
+    &quot;애플리케이션.LoginFrame.executor&quot;: &quot;Run&quot;,
+    &quot;애플리케이션.ServerMain.executor&quot;: &quot;Run&quot;,
+    &quot;애플리케이션.WaitingRoom.executor&quot;: &quot;Run&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/client/assets/item" />
@@ -155,6 +153,17 @@
       <updated>1732692744841</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Changes" />
