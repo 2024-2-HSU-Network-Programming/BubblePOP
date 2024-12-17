@@ -16,8 +16,6 @@ import java.util.List;
 
 public class LoginFrame extends JFrame{
     // 서버 연결 필요 요소
-//    String serverAddress = "localhost";
-//    int serverPort = 12345;
     Socket socket;
 
     private String serverAddress;
@@ -166,23 +164,23 @@ public class LoginFrame extends JFrame{
                 serverAddress = lines.get(0).trim();
                 serverPort = Integer.parseInt(lines.get(1).trim());
             } else {
-                //serverAddress = "localhost";
-                //serverPort = 12345;
+                serverAddress = "localhost";
+                serverPort = 12345;
                 JOptionPane.showMessageDialog(this,
                         "서버 설정 파일 형식이 잘못되었습니다. 기본값을 사용합니다.",
                         "설정 파일 오류",
                         JOptionPane.WARNING_MESSAGE);
             }
         } catch (IOException e) {
-            //serverAddress = "localhost";
-            //serverPort = 12345;
+            serverAddress = "localhost";
+            serverPort = 12345;
             JOptionPane.showMessageDialog(this,
                     "서버 설정 파일을 읽을 수 없습니다. 기본값을 사용합니다.",
                     "설정 파일 오류",
                     JOptionPane.WARNING_MESSAGE);
         } catch (NumberFormatException e) {
-            //serverAddress = "localhost";
-           // serverPort = 12345;
+            serverAddress = "localhost";
+            serverPort = 12345;
             JOptionPane.showMessageDialog(this,
                     "포트 번호 형식이 잘못되었습니다. 기본값을 사용합니다.",
                     "설정 파일 오류",
