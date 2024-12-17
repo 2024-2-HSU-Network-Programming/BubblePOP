@@ -4,9 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a3e92f76-7a23-4d81-b3aa-d28e0e723f73" name="변경" comment="Changes">
+    <list default="true" id="a3e92f76-7a23-4d81-b3aa-d28e0e723f73" name="변경" comment=":lipstick: : 글씨 폰트 변경">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/AudioManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/AudioManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/ExchangeWaitingRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/ExchangeWaitingRoom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/ItemStoreFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/ItemStoreFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/LobbyFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/LobbyFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/MakeRoomDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/MakeRoomDialog.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/ManageNetwork.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/ManageNetwork.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/OriginalGameScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/OriginalGameScreen.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/RoomListTapPane.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/RoomListTapPane.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server/ServerMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/ServerMain.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/shared/ChatMsg.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/ChatMsg.java" afterDir="false" />
@@ -46,7 +52,7 @@
     &quot;Application.LoginFrame.executor&quot;: &quot;Run&quot;,
     &quot;Application.ServerMain.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feat/#17&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;cm/feat#32&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;애플리케이션.GameScreen.executor&quot;: &quot;Run&quot;,
@@ -62,7 +68,7 @@
       <recent name="$PROJECT_DIR$/src/client/assets/item" />
     </key>
   </component>
-  <component name="RunManager" selected="애플리케이션.ServerMain">
+  <component name="RunManager" selected="Application.LoginFrame">
     <configuration name="GameScreen" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="client.GameScreen" />
       <module name="bubblePop" />
@@ -129,17 +135,17 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="애플리케이션.GameScreen" />
-      <item itemvalue="애플리케이션.LobbyFrame" />
-      <item itemvalue="애플리케이션.LoginFrame" />
-      <item itemvalue="애플리케이션.ServerMain" />
-      <item itemvalue="애플리케이션.WaitingRoom" />
+      <item itemvalue="Application.GameScreen" />
+      <item itemvalue="Application.LobbyFrame" />
+      <item itemvalue="Application.LoginFrame" />
+      <item itemvalue="Application.ServerMain" />
+      <item itemvalue="Application.WaitingRoom" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="애플리케이션.ServerMain" />
-        <item itemvalue="애플리케이션.LoginFrame" />
-        <item itemvalue="애플리케이션.GameScreen" />
+        <item itemvalue="Application.LoginFrame" />
+        <item itemvalue="Application.ServerMain" />
+        <item itemvalue="Application.GameScreen" />
       </list>
     </recent_temporary>
   </component>
@@ -152,6 +158,23 @@
       <option name="presentableId" value="Default" />
       <updated>1732692744841</updated>
     </task>
+    <task id="LOCAL-00001" summary=":art:  부분 수정">
+      <option name="closed" value="true" />
+      <created>1734418165643</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1734418165643</updated>
+    </task>
+    <task id="LOCAL-00002" summary=":lipstick: : 글씨 폰트 변경">
+      <option name="closed" value="true" />
+      <created>1734418692931</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1734418692931</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -167,7 +190,9 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Changes" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changes" />
+    <MESSAGE value=":art:  부분 수정" />
+    <MESSAGE value=":lipstick: : 글씨 폰트 변경" />
+    <option name="LAST_COMMIT_MESSAGE" value=":lipstick: : 글씨 폰트 변경" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -27,8 +27,8 @@ public class ExchangeWaitingRoom {
     private String roomOwner;          // 방장 ID 저장
     private boolean player1Ready = false;  // 자신의 준비 상태
     private boolean player2Ready = false;  // 상대방의 준비 상태
-    private GameUser gameUser;
-    private BufferedImage changeBubble,linebomb,bomb;
+    private GameUser gameUser; // 게임 유저 객체 (아이템, 코인 등 관리)
+    private BufferedImage changeBubble,linebomb,bomb; // 아이템 이미지
     GameUser user = GameUser.getInstance();
 
 
@@ -59,6 +59,7 @@ public class ExchangeWaitingRoom {
         this.roomOwner = ownerFromServer;  // 서버에서 받은 실제 방장 ID로 설정
 
         network.setExchangeWaitingRoom(this);
+        // 아이템 이미지 로드
         try {
             changeBubble = ImageIO.read(getClass().getResourceAsStream("/client/assets/item/change-bubble.png"));
             linebomb = ImageIO.read(getClass().getResourceAsStream("/client/assets/item/line-explosion.png"));
@@ -82,13 +83,28 @@ public class ExchangeWaitingRoom {
         exitButton.setBackground(Color.GREEN);
         exitButton.setFont(koreanFont);
         exitButton.addActionListener(e -> {
+            // 서버에 방 나가기 메시지 전송
             ChatMsg leaveRoomMsg = new ChatMsg(userId, ChatMsg.MODE_LEAVE_ROOM,
                     roomNumber + "|" + userId);
             network.sendMessage(leaveRoomMsg);
+
+            // 현재 교환방 창 닫기
             frame.dispose();
 
+            // LobbyFrame 생성 및 네트워크 연결 설정
             SwingUtilities.invokeLater(() -> {
-                new LobbyFrame();
+                LobbyFrame lobby = new LobbyFrame();
+                network.setLobbyFrame(lobby); // ManageNetwork에 새 LobbyFrame 설정
+
+                // 아이템 상태 유지를 위해 GameUser 인스턴스 가져오기
+                GameUser gameUser = GameUser.getInstance();
+
+                // UI 업데이트
+                lobby.updateItemDisplay(); // 아이템 디스플레이 업데이트
+                lobby.updateCoinDisplay(); // 코인 디스플레이 업데이트
+
+                // 로비 채팅창에 메시지 추가
+                lobby.addGlobalChatMessage(userId + "님이 교환방에서 로비로 돌아왔습니다.");
             });
         });
         frame.add(exitButton);
@@ -134,19 +150,19 @@ public class ExchangeWaitingRoom {
         // 아이템 개수 라벨 추가
         changeBubbleNum = new JLabel("x " + user.getChangeBubbleColor());
         changeBubbleNum.setForeground(Color.WHITE);
-        changeBubbleNum.setFont(new Font("Arial", Font.BOLD, 16));
+        changeBubbleNum.setFont(new Font("맑은 고딕", Font.BOLD, 16));
         changeBubbleNum.setBounds(110, 575, 90, 30);
         frame.add(changeBubbleNum);
 
         linebombNum = new JLabel("x " + user.getLineExplosion());
         linebombNum.setForeground(Color.WHITE);
-        linebombNum.setFont(new Font("Arial", Font.BOLD, 16));
+        linebombNum.setFont(new Font("맑은 고딕", Font.BOLD, 16));
         linebombNum.setBounds(245, 575, 95, 30);
         frame.add(linebombNum);
 
         bombNum = new JLabel("x " + user.getBomb());
         bombNum.setForeground(Color.WHITE);
-        bombNum.setFont(new Font("Arial", Font.BOLD, 16));
+        bombNum.setFont(new Font("맑은 고딕", Font.BOLD, 16));
         bombNum.setBounds(370, 575, 90, 30);
         frame.add(bombNum);
 

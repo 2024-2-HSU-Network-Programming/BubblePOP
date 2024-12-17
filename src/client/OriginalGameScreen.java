@@ -1,9 +1,17 @@
 package client;
 
-import shared.ChatMsg;
+/*
+SwingUtilities.invokeLater
+  https://carrotweb.tistory.com/56#google_vignette
+https://velog.io/@yunyoseob/JAVA-invoke-%EC%98%88%EC%99%B8%EC%B2%98%EB%A6%AC-Class.forName
+https://blog.naver.com/shimchan2/70172294371
+ */
 
+import shared.ChatMsg;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+// howbeautifulworld.tistory.com/1​ //타이머
+//https://blog.naver.com/codingspecialist/221652980303
 import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.*;
@@ -16,12 +24,12 @@ public class OriginalGameScreen extends JFrame {
     private GamePanel player1Panel;  // 자신의 게임 패널
     private GamePanel player2Panel;  // 상대방의 게임 패널
     private String userId;
-    private ManageNetwork network;
-    private boolean isHost;
+    private ManageNetwork network; // 네트워크 관리 객체
+    private boolean isHost; // 호스트 여부
     private JLabel player1Label;
     private JLabel player2Label;
     private String player2Name;
-    private AudioManager audioManager;
+    private AudioManager audioManager; // 오디오 관리 객체
     private boolean isSoundButtonHovered = false;
     private Rectangle soundButtonBounds = new Rectangle(10, 10, 32, 32);
     private BufferedImage soundOn, soundOff;
@@ -32,12 +40,13 @@ public class OriginalGameScreen extends JFrame {
     private JLabel player1ImageLabel;
     private JLabel player2ImageLabel;
 
-    private GameTimer gameTimer;
-    private GameScore player1Score;
-    public  GameScore player2Score;
-    private JLabel timerLabel;
-    private JLabel player1ScoreLabel;
-    public  JLabel player2ScoreLabel;
+    private GameTimer gameTimer;  // 게임 타이머
+    private GameScore player1Score;  // 플레이어 1의 점수
+    public GameScore player2Score;   // 플레이어 2의 점수
+
+    private JLabel timerLabel;  // 타이머 레이블
+    private JLabel player1ScoreLabel;  // 플레이어 1 점수 표시
+    public JLabel player2ScoreLabel;   // 플레이어 2 점수 표시
 
     private Timer gameLoop;
 
@@ -92,9 +101,7 @@ public class OriginalGameScreen extends JFrame {
             }
         };
 
-
         initializeFrame();
-
 
         mainPanel.addMouseListener(new MouseAdapter() {
             @Override
@@ -105,6 +112,7 @@ public class OriginalGameScreen extends JFrame {
                 }
             }
 
+            //마우스 호버
             @Override
             public void mouseEntered(MouseEvent e) {
                 if (soundButtonBounds.contains(e.getPoint())) {
@@ -112,7 +120,7 @@ public class OriginalGameScreen extends JFrame {
                     repaint();
                 }
             }
-
+            //마우스 호버
             @Override
             public void mouseExited(MouseEvent e) {
                 isSoundButtonHovered = false;
@@ -260,6 +268,7 @@ public class OriginalGameScreen extends JFrame {
         startGameLoop();
     }
 
+    //이미지 추가
     private void addScaledImage(JPanel panel, BufferedImage image, int x, int y, int width, int height) {
         if (image != null) {
             Image scaledImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH); // 스케일 조정
@@ -288,14 +297,15 @@ public class OriginalGameScreen extends JFrame {
             if (audioManager != null) {
                 audioManager.stopBGM();
             }
+
             // 점수 비교 및 코인 추가
             int myScore = player1Score.getScore();
             int opponentScore = player2Score.getScore();
 
             String resultMessage;
             if (myScore > opponentScore) {
-                // 승리 시 코인 추가 ( 승리 점수의 50%를 코인으로 변환)
-                int coinReward = myScore / 50;
+                // 승리 시 코인 추가 (승리 점수의 50%를 코인으로 변환)
+                int coinReward = myScore / 2;
                 GameUser.getInstance().addCoin(coinReward);
 
                 resultMessage = String.format(
@@ -319,17 +329,17 @@ public class OriginalGameScreen extends JFrame {
 
             // ManageNetwork에서 게임 화면 참조 제거
             if (network != null) {
-                network.setGameScreen(null);  // ManageNetwork에 이 메서드를 추가해야 함
+                network.setGameScreen(null);
             }
 
-            // 로비로 돌아가기
-            new LobbyFrame();
+            dispose(); // 현재 게임 화면 닫기
 
-            // 게임 창 닫기
-            dispose();
+            // 새로운 LobbyFrame을 생성하고 네트워크에 설정
+            LobbyFrame newLobby = new LobbyFrame();
+            network.setLobbyFrame(newLobby);
+            newLobby.addGlobalChatMessage(GameUser.getInstance().getId() + "님이 게임을 종료하고 로비로 돌아왔습니다.");
         });
     }
-
     public void updateScore(int bubbleCount, boolean isPlayer1) {
         GameScore score = isPlayer1 ? player1Score : player2Score;
         JLabel scoreLabel = isPlayer1 ? player1ScoreLabel : player2ScoreLabel;

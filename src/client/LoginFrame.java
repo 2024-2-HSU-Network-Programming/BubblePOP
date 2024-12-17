@@ -73,14 +73,14 @@ public class LoginFrame extends JFrame{
         // 아이디 입력
         JLabel lblUserName = new JLabel("아이디: ");
         lblUserName.setBounds(30, 50, 100, 30);
-        lblUserName.setFont(new Font("Arial", Font.PLAIN, 20));
+        lblUserName.setFont(new Font("맑은 고딕", Font.PLAIN, 20));
         txtUserName = new JTextField();
         txtUserName.setBounds(130, 40, 180, 50);
 
         // 비밀번호 입력
         JLabel lblUserPassword = new JLabel("비밀번호: ");
         lblUserPassword.setBounds(30, 120, 100, 30);
-        lblUserPassword.setFont(new Font("Arial", Font.PLAIN, 20));
+        lblUserPassword.setFont(new Font("맑은 고딕", Font.PLAIN, 20));
         txtUserPassword = new JPasswordField();
         txtUserPassword.setBounds(130, 110, 180, 50);
 
@@ -89,7 +89,7 @@ public class LoginFrame extends JFrame{
         btnLogin.setBounds(325, 22, 130, 157);
         btnLogin.setOpaque(true); // 배경색 적용 가능하도록 설정
         btnLogin.setBorderPainted(false); // 버튼 테두리 제거
-        btnLogin.setFont(new Font("Arial", Font.BOLD, 20));
+        btnLogin.setFont(new Font("맑은 고딕", Font.BOLD, 20));
         btnLogin.setBackground(Color.BLACK);
         btnLogin.setForeground(Color.white);
 
@@ -116,38 +116,41 @@ public class LoginFrame extends JFrame{
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
 
-//            // 총관리 네트워크 설정
-//            network = new ManageNetwork(in, out, socket);
-//            network.start();
-
-            // 로비 화면 생성
-    //        LobbyFrame lobbyFrame = new LobbyFrame(userName, new ManageNetwork(in, out, socket, null));
+            // ManageNetwork 인스턴스 생성 및 시작
             ManageNetwork network = new ManageNetwork(in, out, socket);
             network.start();
 
-            // GameUser 객체 생성 및 전송
+            // GameUser 초기화
             String userName = txtUserName.getText();
             String password = new String(txtUserPassword.getPassword());
             GameUser gameUser = GameUser.getInstance();
             gameUser.init(userName, password, network);
 
-//            out.writeObject(gameUser);
-//            out.flush();
-
-            // ChatMsg 객체 전송
+            // 로그인 메시지 전송
             ChatMsg loginMsg = new ChatMsg(gameUser.getId(), ChatMsg.MODE_LOGIN, "Login");
             out.writeObject(loginMsg);
             out.flush();
 
+            // 로그인 화면 숨기기
             setVisible(false);
-            //new LobbyFrame();
+
+            // 로비 화면 생성 및 네트워크 연결
+            LobbyFrame lobbyFrame = new LobbyFrame();
+            network.setLobbyFrame(lobbyFrame); // ManageNetwork에 LobbyFrame 설정
+
+            // 로그인 프레임 dispose
+            dispose();
 
         } catch(IOException e) {
-            // 서버 연결시 다양한 오류가 발생할 수 있기 때문에 꼭 작성해줘야함(서버 연결 실패, 네트워크 오류 등)
             System.out.println("서버 오류 > " + e.getMessage());
-            System.exit(-1); // 비정상 오류 상태는 음수 값
+            JOptionPane.showMessageDialog(this,
+                    "서버 연결에 실패했습니다: " + e.getMessage(),
+                    "연결 오류",
+                    JOptionPane.ERROR_MESSAGE);
+            System.exit(-1);
         }
     }
+
     public static void main(String[] args) {
         new LoginFrame();
     }

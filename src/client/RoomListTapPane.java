@@ -258,9 +258,7 @@ public class RoomListTapPane extends JTabbedPane {
             tab2.revalidate();
             tab2.repaint();
         });
-
     }
-
     private void enterRoom(int roomNumber, String roomName) {
         System.out.println("Entering Room: " + roomName + " (ID: " + roomNumber + ")");
         String currentUser = user.getId();

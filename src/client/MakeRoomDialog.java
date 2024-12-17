@@ -134,11 +134,8 @@ public class MakeRoomDialog extends JDialog {
                         lobbyFrame.dispose();
                         return;
                     }
-
                 }
             });
-
         }
-
     }
 }

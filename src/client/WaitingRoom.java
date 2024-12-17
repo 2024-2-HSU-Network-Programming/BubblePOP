@@ -58,13 +58,21 @@ public class WaitingRoom {
         exitButton.setBackground(Color.GREEN);
         exitButton.setFont(koreanFont);
         exitButton.addActionListener(e -> {
+            // 서버에 방 나가기 메시지 전송
             ChatMsg leaveRoomMsg = new ChatMsg(userId, ChatMsg.MODE_LEAVE_ROOM,
                     roomNumber + "|" + userId);
             network.sendMessage(leaveRoomMsg);
+
+            // 현재 대기방 창 닫기
             frame.dispose();
 
+            // LobbyFrame 생성 및 네트워크 연결 설정
             SwingUtilities.invokeLater(() -> {
-                new LobbyFrame();
+                LobbyFrame lobby = new LobbyFrame();
+                network.setLobbyFrame(lobby); // ManageNetwork에 새 LobbyFrame 설정
+
+                // 로비 채팅창에 메시지 추가
+                lobby.addGlobalChatMessage(userId + "님이 대기방에서 로비로 돌아왔습니다.");
             });
         });
         frame.add(exitButton);
@@ -183,6 +191,8 @@ public class WaitingRoom {
         chatPanel.add(chatInputPanel, BorderLayout.SOUTH);
 
         frame.add(chatPanel);
+
+        updateStartButton();
     }
 
     // 기존 메서드들...
