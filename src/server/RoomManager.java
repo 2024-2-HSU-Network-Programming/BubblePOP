@@ -1,5 +1,7 @@
 package server;
 
+import client.WaitingRoom;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,11 +82,45 @@ public class RoomManager {
 //        System.out.println("Room not found: " + roomId);
 //        return false; // 방을 찾지 못함
 //    }
-// 방에 사용자 추가
-public static boolean addUserToRoom(int roomId, String userName) {
-    GameRoom room = rooms.get(Integer.toString(roomId));
+    // 방에 사용자 추가
+    public static boolean addUserToRoom(int roomId, String userName) {
+        GameRoom room = rooms.get(Integer.toString(roomId));
+        if (room != null) {
+            System.out.println("Checking room: " + room.getRoomName());
+            System.out.println("Current users: " + room.getUserListSize() + ", Full: " + room.isFullRoom());
+
+            if (!room.isFullRoom()) {
+                room.enterUser(userName);
+                System.out.println("User added: " + userName + " to room " + room.getRoomName());
+                return true; // 사용자 추가 성공
+            } else {
+                System.out.println("Room is full: " + room.getRoomName());
+                return false; // 방이 가득 참
+            }
+        }
+        System.out.println("Room not found: " + roomId);
+        return false; // 방을 찾지 못함
+    }
+//    public static boolean addUserToExchangeRoom(int roomId, String userName) {
+//        ExchangeRoom room = exchangeRooms.get(Integer.toString(roomId));
+//        if (room != null) {
+//            if (!room.isFullRoom()) {
+//                room.enterUser(userName);
+//                System.out.println("User added to exchange room: " + userName);
+//                System.out.println("Current users: " + room.getUserList());
+//                return true;
+//            } else {
+//                System.out.println("Exchange room is full.");
+//                return false;
+//            }
+//        }
+//        System.out.println("Exchange room not found: " + roomId);
+//        return false;
+//    }
+public static boolean addUserToExchangeRoom(int roomId, String userName) {
+    ExchangeRoom room = exchangeRooms.get(Integer.toString(roomId));
     if (room != null) {
-        System.out.println("Checking room: " + room.getRoomName());
+        System.out.println("Checking ExchangeRoom: " + room.getRoomName());
         System.out.println("Current users: " + room.getUserListSize() + ", Full: " + room.isFullRoom());
 
         if (!room.isFullRoom()) {
@@ -92,22 +128,13 @@ public static boolean addUserToRoom(int roomId, String userName) {
             System.out.println("User added: " + userName + " to room " + room.getRoomName());
             return true; // 사용자 추가 성공
         } else {
-            System.out.println("Room is full: " + room.getRoomName());
+            System.out.println("ExchangeRoom is full: " + room.getRoomName());
             return false; // 방이 가득 참
         }
     }
-    System.out.println("Room not found: " + roomId);
+    System.out.println("ExchangeRoom not found: " + roomId);
     return false; // 방을 찾지 못함
 }
-    // 교환방에 사용자 추가
-    public static boolean addUserToExchangeRoom(int roomId, String userName) {
-        ExchangeRoom room = exchangeRooms.get(Integer.toString(roomId));
-        if (room != null && !room.isFullRoom()) {
-            room.enterUser(userName);
-            return true;
-        }
-        return false;
-    }
 
     // 방에서 사용자 제거
     public static void leaveRoom(int roomId, String userName) {
@@ -150,6 +177,7 @@ public synchronized List<GameRoom> getAllRooms() {
 }
     // 모든 교환방 반환
     public synchronized List<ExchangeRoom> getAllExchangeRooms() {
+        System.out.println("getAllExchangeRooms 호출됨. 현재 방 개수: " + rooms.size());
         return new ArrayList<>(exchangeRooms.values());
     }
     // 특정 교환방 검색
@@ -157,10 +185,11 @@ public synchronized List<GameRoom> getAllRooms() {
         return exchangeRooms.get(roomId);
     }
 
-// 방 검색 메서드
-public static GameRoom getGameRoom(String roomId) {
-    return rooms.get(roomId);
-}
+    // 방 검색 메서드
+    public static GameRoom getGameRoom(String roomId) {
+        return rooms.get(roomId);
+    }
+
 
     //    // 방 리스트 반환
     //    public static List<GameRoom> getRoomList() {

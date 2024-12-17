@@ -1,5 +1,7 @@
 package shared;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.Serializable;
 
 public class ChatMsg implements Serializable {
@@ -27,24 +29,38 @@ public class ChatMsg implements Serializable {
     public static final int MODE_BUBBLE_POP = 503;    // 버블 터짐
     public static final int MODE_GAME_SYNC = 504;     // 게임 싱크
     public static final int MODE_GAME_OVER = 505;     // 게임 종료
-    public static final int MODE_GAME_SCORE = 506;
+
+    public static final int MODE_EXCHANGEITEM = 506; // 아이템 교환
+
+    public static final int MODE_GAME_SCORE = 507;
+
 
 
 
     private String userId;
     private int mode;
     private String message;
+    private ImageIcon image;
 
     public ChatMsg(String userId, int mode, String message) {
         this.userId = userId;
         this.mode = mode;
         this.message = message;
     }
+    public ChatMsg(String userId, int mode, String message, ImageIcon image) {
+        this.userId = userId;
+        this.mode = mode;
+        this.message = message;
+        this.image = image;
+    }
 
     public ChatMsg(String userId, int code) {
         this(userId, code, null);
     }
 
+    public ImageIcon getImage() {
+        return image;
+    }
     public String getUserId() { return userId; }
     public int getMode() { return mode; }
     public String getMessage() { return message; }

@@ -1,6 +1,8 @@
 package client;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GameUser {
     private static final long serialVersionUID = 1L;
@@ -12,6 +14,20 @@ public class GameUser {
     private int changeBubbleColor = 0;
     private int lineExplosion = 0;
     private int bomb = 0;
+
+    // 기존 필드들...
+    private static final Map<String, String> itemImages = new HashMap<>();
+
+    static {
+        // 아이템 이름에 해당하는 이미지 경로 매핑
+        itemImages.put("구슬색 변경", "/client/assets/item/change-bubble.png");
+        itemImages.put("라인 폭발", "/client/assets/item/line-explosion.png");
+        itemImages.put("폭탄", "/client/assets/item/bomb.png");
+    }
+
+    public static String getItemImagePath(String itemTitle) {
+        return itemImages.getOrDefault(itemTitle, "/client/assets/logo/logo.png");
+    }
 
     private GameUser() {
     }
@@ -163,4 +179,12 @@ public class GameUser {
                 ", password='" + password + '\'' +
                 '}';
     }
+    public String[] getItemList() {
+        return new String[] {
+                "구슬색 변경" + "|" + getChangeBubbleColor(),
+                "라인 폭발" + "|" + getLineExplosion(),
+                "폭탄" + "|" + getBomb()
+        };
+    }
+
 }
