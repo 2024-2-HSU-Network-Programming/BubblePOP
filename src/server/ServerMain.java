@@ -21,6 +21,7 @@ public class ServerMain extends JFrame {
     private Vector<String> connectedUsers; // 접속 중인 사용자 목록
     private Vector<ClientHandler> users;
     private Map<Socket, ObjectOutputStream> clientStreams;
+    private Set<String> disconnectedUsers = new HashSet<>();
 
     private ChatMsg cmsg;
     private Socket clientSocket;
@@ -114,6 +115,9 @@ public class ServerMain extends JFrame {
     private void handleClient(Socket clientSocket) {
         try (ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
              ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream())) {
+
+            String userName = null;
+
             synchronized (clientStreams) {
                 clientStreams.put(clientSocket, out); // 클라이언트 추가
             }
@@ -125,9 +129,26 @@ public class ServerMain extends JFrame {
 
             // 클라이언트와 계속 통신
             while (true) {
-                ChatMsg msg = (ChatMsg) in.readObject(); // 메시지 수신
-                String userName = msg.getUserId();
+                ChatMsg msg = (ChatMsg) in.readObject();
+                userName = msg.getUserId();
+
+                // 연결 끊김 상태 처리
+                if (disconnectedUsers.contains(userName)) {
+                    synchronized (connectedUsers) {
+                        connectedUsers.add(userName);
+                        disconnectedUsers.remove(userName);
+                    }
+                    // 재연결된 사용자에게 방 목록 다시 전송
+                    sendRoomListsToUser(out);
+                }
                 switch (msg.getMode()) {
+                    case ChatMsg.MODE_GAME_OVER:
+                        // 게임 종료 후에도 연결 유지
+                        broadcasting(msg);
+                        // 게임 상태만 초기화하고 연결은 유지
+                        resetGameState(userName);
+                        break;
+
                     case ChatMsg.MODE_LOGIN:
                         //중복 사용자 검사
                         synchronized (connectedUsers) {
@@ -209,22 +230,27 @@ public class ServerMain extends JFrame {
                         break;
                     case ChatMsg.MODE_TX_CREATEEXCHANGEROOM:
                         String[] exchangeRoomData = msg.getMessage().split("\\|");
-                        if (exchangeRoomData.length < 2) { // 배열 크기 점검
+                        if (exchangeRoomData.length < 2) {
                             t_display.append("잘못된 방 생성 요청: " + msg.getMessage() + "\n");
                             break;
                         }
-                        String exchangeRoomName = exchangeRoomData[0];
-                        String exchangeRoomPw = exchangeRoomData[1]; // 비밀번호가 없을 경우 빈 문자열로 처리
-                        // 서버에서 방 생성
-                        ExchangeRoom newExchangeRoom = RoomManager.getInstance().createExchangeRoom(userName, exchangeRoomName, exchangeRoomPw);
-                        // 디버깅용 메시지
-                        t_display.append("\n방 생성 - RoomID: " + newExchangeRoom.getRoomId() + ", RoomName: " + exchangeRoomName + "\n");
-                        // 생성된 방 정보를 모든 클라이언트에 브로드캐스트
-                        ChatMsg exchangeRoomBroadcastMsg = new ChatMsg(userName, ChatMsg.MODE_TX_CREATEEXCHANGEROOM,
-                                newExchangeRoom.getRoomId() + "|" + userName + "|" + exchangeRoomName + "|" + exchangeRoomPw);
-                        broadcasting(exchangeRoomBroadcastMsg); // 모든 클라이언트에 전송
+
+                        // 유효성 검사와 함께 교환방 생성
+                        ExchangeRoom newExchangeRoom = createExchangeRoomWithValidation(
+                                userName, exchangeRoomData[0], exchangeRoomData[1]);
+
+                        if (newExchangeRoom != null) {
+                            // 모든 연결된 클라이언트에게 브로드캐스트
+                            ChatMsg exchangeRoomBroadcastMsg = new ChatMsg(
+                                    userName,
+                                    ChatMsg.MODE_TX_CREATEEXCHANGEROOM,
+                                    buildExchangeRoomMessage(newExchangeRoom)
+                            );
+                            broadcastToAllClients(exchangeRoomBroadcastMsg);
+                        }
                         break;
-                    case ChatMsg.MODE_LEAVE_ROOM:
+
+                        case ChatMsg.MODE_LEAVE_ROOM:
                         String[] leaveRoomData = msg.getMessage().split("\\|");
                         roomId = Integer.parseInt(leaveRoomData[0]);
                         String leavingUser = leaveRoomData[1];
@@ -487,7 +513,6 @@ public class ServerMain extends JFrame {
                     case ChatMsg.MODE_GAME_ACTION:
                     case ChatMsg.MODE_BUBBLE_POP:
                     case ChatMsg.MODE_GAME_SYNC:
-                    case ChatMsg.MODE_GAME_OVER:
                         broadcasting(msg);
                         break;
 
@@ -515,6 +540,62 @@ public class ServerMain extends JFrame {
                     }
                 }
             }
+        }
+    }
+
+    private void sendRoomListsToUser(ObjectOutputStream out) throws IOException {
+        // 기존 게임방 전송
+        for (GameRoom room : RoomManager.getInstance().getAllRooms()) {
+            ChatMsg roomMsg = new ChatMsg("Server", ChatMsg.MODE_TX_CREATEROOM,
+                    buildRoomMessage(room));
+            out.writeObject(roomMsg);
+        }
+
+        // 기존 교환방 전송
+        for (ExchangeRoom room : RoomManager.getInstance().getAllExchangeRooms()) {
+            ChatMsg exchangeRoomMsg = new ChatMsg("Server", ChatMsg.MODE_TX_CREATEEXCHANGEROOM,
+                    buildExchangeRoomMessage(room));
+            out.writeObject(exchangeRoomMsg);
+        }
+        out.flush();
+    }
+
+    private void broadcastToAllClients(ChatMsg msg) {
+        synchronized (clientStreams) {
+            for (ObjectOutputStream out : clientStreams.values()) {
+                try {
+                    out.writeObject(msg);
+                    out.flush();
+                } catch (IOException e) {
+                    t_display.append("브로드캐스트 오류: " + e.getMessage() + "\n");
+                }
+            }
+        }
+    }
+
+    private String buildRoomMessage(GameRoom room) {
+        return room.getRoomId() + "|" + room.getRoomOwner() + "|" +
+                room.getRoomName() + "|" + room.getRoomPassword();
+    }
+
+    private String buildExchangeRoomMessage(ExchangeRoom room) {
+        return room.getRoomId() + "|" + room.getRoomOwner() + "|" +
+                room.getRoomName() + "|" + room.getRoomPassword();
+    }
+
+    private void resetGameState(String userName) {
+        // 연결은 유지한 채로 게임 상태만 초기화
+        t_display.append("사용자의 게임 상태 초기화: " + userName + "\n");
+    }
+
+    private ExchangeRoom createExchangeRoomWithValidation(String owner, String name, String password) {
+        try {
+            ExchangeRoom room = RoomManager.getInstance().createExchangeRoom(owner, name, password);
+            t_display.append("교환방 생성됨: ID=" + room.getRoomId() + ", 이름=" + name + "\n");
+            return room;
+        } catch (Exception e) {
+            t_display.append("교환방 생성 실패: " + e.getMessage() + "\n");
+            return null;
         }
     }
 

@@ -194,7 +194,7 @@ public class LobbyFrame extends JFrame {
         lobbyRightPane.add(lb_logo);
 
         btnItemStore = new JButton("아이템 상점");
-        btnCreateRoom = new JButton("대기방 만들기");
+        btnCreateRoom = new JButton("방 만들기");
         //btnExchangeRoom = new JButton("교환방 만들기");
 
         btnItemStore.setBounds(40, 340, 180,85);

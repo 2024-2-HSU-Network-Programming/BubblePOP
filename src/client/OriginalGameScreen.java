@@ -295,7 +295,7 @@ public class OriginalGameScreen extends JFrame {
             String resultMessage;
             if (myScore > opponentScore) {
                 // 승리 시 코인 추가 ( 승리 점수의 50%를 코인으로 변환)
-                int coinReward = myScore / 50;
+                int coinReward = myScore / 2;
                 GameUser.getInstance().addCoin(coinReward);
 
                 resultMessage = String.format(

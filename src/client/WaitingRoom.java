@@ -183,6 +183,8 @@ public class WaitingRoom {
         chatPanel.add(chatInputPanel, BorderLayout.SOUTH);
 
         frame.add(chatPanel);
+
+        updateStartButton();
     }
 
     // 기존 메서드들...
