@@ -12,6 +12,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 
@@ -678,9 +680,25 @@ public class ServerMain extends JFrame {
         SwingUtilities.invokeLater(() -> t_display.append(msg + "\n"));
     }
 
+    // 서버 포트 로드 메소드
+    private static int loadServerPort() {
+        try {
+            List<String> lines = Files.readAllLines(Paths.get("server.txt"));
+            if (lines.size() >= 2) {
+                return Integer.parseInt(lines.get(1).trim());
+            }
+        } catch (IOException | NumberFormatException e) {
+            System.err.println("서버 설정 파일 읽기 실패. 기본 포트 사용: " + e.getMessage());
+        }
+        return -1; // 기본 포트
+    }
+
     public static void main(String[] args) {
-        int port = 12345;
+        //int port = 12345;
+        int port = loadServerPort();
         ServerMain server = new ServerMain(port);
         server.startServer();
     }
+
+
 }

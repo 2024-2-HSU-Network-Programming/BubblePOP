@@ -1,0 +1,158 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"a3e92f76-7a23-4d81-b3aa-d28e0e723f73\" name=\"변경\" comment=\"\">\r\n      <change afterPath=\"$PROJECT_DIR$/src/client/assets/item/change-bubble.png\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/server/ExchangeRoom.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/client/GameUser.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/client/GameUser.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/client/ItemStoreFrame.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/client/ItemStoreFrame.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/client/LobbyFrame.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/client/LobbyFrame.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/client/MakeRoomDialog.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/client/MakeRoomDialog.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/client/ManageNetwork.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/client/ManageNetwork.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/client/RoomListTapPane.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/client/RoomListTapPane.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/client/assets/item/bomb.png\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/client/assets/item/bomb.png\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/client/assets/item/line-explosion.png\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/client/assets/item/line-explosion.png\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/server/RoomManager.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/server/RoomManager.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/server/ServerMain.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/server/ServerMain.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/shared/ChatMsg.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/shared/ChatMsg.java\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Class\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\r\n      <map>\r\n        <entry key=\"$PROJECT_DIR$\" value=\"main\" />\r\n      </map>\r\n    </option>\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;customColor&quot;: &quot;&quot;,\r\n  &quot;associatedIndex&quot;: 3\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2pQKDyKmTP24KocN8ZAJaJHveOe\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\"><![CDATA[{\r\n  \"keyToString\": {\r\n    \"Application.GameScreen.executor\": \"Run\",\r\n    \"Application.LoginFrame.executor\": \"Run\",\r\n    \"Application.ServerMain.executor\": \"Run\",\r\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\r\n    \"git-widget-placeholder\": \"copy/feat#17\",\r\n    \"kotlin-language-version-configured\": \"true\",\r\n    \"node.js.selected.package.tslint\": \"(autodetect)\",\r\n    \"애플리케이션.GameScreen.executor\": \"Run\",\r\n    \"애플리케이션.ItemStoreFrame.executor\": \"Run\",\r\n    \"애플리케이션.LobbyFrame.executor\": \"Run\",\r\n    \"애플리케이션.LoginFrame.executor\": \"Run\",\r\n    \"애플리케이션.ServerMain.executor\": \"Run\",\r\n    \"애플리케이션.WaitingRoom.executor\": \"Run\"\r\n  }\r\n}]]></component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"MoveFile.RECENT_KEYS\">\r\n      <recent name=\"$PROJECT_DIR$/src/client/assets/item\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\" selected=\"애플리케이션.LoginFrame\">\r\n    <configuration name=\"GameScreen\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"client.GameScreen\" />\r\n      <module name=\"bubblePop\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"client.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"LobbyFrame\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"client.LobbyFrame\" />\r\n      <module name=\"bubblePop\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"client.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"LoginFrame\" type=\"Application\" factoryName=\"Application\" singleton=\"false\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"client.LoginFrame\" />\r\n      <module name=\"bubblePop\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"client.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"ServerMain\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"server.ServerMain\" />\r\n      <module name=\"bubblePop\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"server.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"WaitingRoom\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"client.WaitingRoom\" />\r\n      <module name=\"bubblePop\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"client.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <list>\r\n      <item itemvalue=\"애플리케이션.GameScreen\" />\r\n      <item itemvalue=\"애플리케이션.LobbyFrame\" />\r\n      <item itemvalue=\"애플리케이션.LoginFrame\" />\r\n      <item itemvalue=\"애플리케이션.ServerMain\" />\r\n      <item itemvalue=\"애플리케이션.WaitingRoom\" />\r\n    </list>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"애플리케이션.LoginFrame\" />\r\n        <item itemvalue=\"애플리케이션.ServerMain\" />\r\n        <item itemvalue=\"애플리케이션.GameScreen\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"애플리케이션 수준\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"디폴트 작업\">\r\n      <changelist id=\"a3e92f76-7a23-4d81-b3aa-d28e0e723f73\" name=\"변경\" comment=\"\" />\r\n      <created>1732692744841</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1732692744841</updated>\r\n    </task>\r\n    <servers />\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"Changes\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Changes\" />\r\n  </component>\r\n  <component name=\"com.intellij.coverage.CoverageDataManagerImpl\">\r\n    <SUITE FILE_PATH=\"coverage/BubblePOP$LoginFrame.ic\" NAME=\"LoginFrame 커버리지 결과\" MODIFIED=\"1733939055085\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"idea\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"true\">\r\n      <FILTER>client.*</FILTER>\r\n    </SUITE>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision bce0237b27e37d1494e36bc2a3e26b10c11519a9)
++++ b/.idea/workspace.xml	(date 1734374703788)
+@@ -4,21 +4,10 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="a3e92f76-7a23-4d81-b3aa-d28e0e723f73" name="변경" comment="">
+-      <change afterPath="$PROJECT_DIR$/src/client/assets/item/change-bubble.png" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/server/ExchangeRoom.java" afterDir="false" />
++    <list default="true" id="a3e92f76-7a23-4d81-b3aa-d28e0e723f73" name="변경" comment=":sparkles: : 게임화면에 아이템 보유개수 표시">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/client/GameUser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/GameUser.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/client/ItemStoreFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/ItemStoreFrame.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/client/LobbyFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/LobbyFrame.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/client/MakeRoomDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/MakeRoomDialog.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/client/ManageNetwork.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/ManageNetwork.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/client/RoomListTapPane.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/RoomListTapPane.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/client/assets/item/bomb.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/assets/item/bomb.png" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/client/assets/item/line-explosion.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/assets/item/line-explosion.png" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/server/RoomManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/RoomManager.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/server/ServerMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/ServerMain.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/shared/ChatMsg.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/ChatMsg.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/client/OriginalGameScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/OriginalGameScreen.java" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -55,9 +44,13 @@
+     "Application.LoginFrame.executor": "Run",
+     "Application.ServerMain.executor": "Run",
+     "RunOnceActivity.ShowReadmeOnStart": "true",
+-    "git-widget-placeholder": "copy/feat#17",
++    "git-widget-placeholder": "storage",
+     "kotlin-language-version-configured": "true",
++    "node.js.detected.package.eslint": "true",
++    "node.js.selected.package.eslint": "(autodetect)",
+     "node.js.selected.package.tslint": "(autodetect)",
++    "nodejs_package_manager_path": "npm",
++    "vue.rearranger.settings.migration": "true",
+     "애플리케이션.GameScreen.executor": "Run",
+     "애플리케이션.ItemStoreFrame.executor": "Run",
+     "애플리케이션.LobbyFrame.executor": "Run",
+@@ -71,7 +64,7 @@
+       <recent name="$PROJECT_DIR$/src/client/assets/item" />
+     </key>
+   </component>
+-  <component name="RunManager" selected="애플리케이션.LoginFrame">
++  <component name="RunManager" selected="Application.LoginFrame">
+     <configuration name="GameScreen" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+       <option name="MAIN_CLASS_NAME" value="client.GameScreen" />
+       <module name="bubblePop" />
+@@ -138,19 +131,26 @@
+       </method>
+     </configuration>
+     <list>
+-      <item itemvalue="애플리케이션.GameScreen" />
+-      <item itemvalue="애플리케이션.LobbyFrame" />
+-      <item itemvalue="애플리케이션.LoginFrame" />
+-      <item itemvalue="애플리케이션.ServerMain" />
+-      <item itemvalue="애플리케이션.WaitingRoom" />
++      <item itemvalue="Application.GameScreen" />
++      <item itemvalue="Application.LobbyFrame" />
++      <item itemvalue="Application.LoginFrame" />
++      <item itemvalue="Application.ServerMain" />
++      <item itemvalue="Application.WaitingRoom" />
+     </list>
+     <recent_temporary>
+       <list>
+-        <item itemvalue="애플리케이션.LoginFrame" />
+-        <item itemvalue="애플리케이션.ServerMain" />
+-        <item itemvalue="애플리케이션.GameScreen" />
++        <item itemvalue="Application.LoginFrame" />
++        <item itemvalue="Application.ServerMain" />
+       </list>
+     </recent_temporary>
++  </component>
++  <component name="SharedIndexes">
++    <attachedChunks>
++      <set>
++        <option value="bundled-jdk-9823dce3aa75-b114ca120d71-intellij.indexing.shared.core-IU-242.20224.300" />
++        <option value="bundled-js-predefined-d6986cc7102b-410509235cf1-JavaScript-IU-242.20224.300" />
++      </set>
++    </attachedChunks>
+   </component>
+   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
+   <component name="TaskManager">
+@@ -160,12 +160,63 @@
+       <option name="number" value="Default" />
+       <option name="presentableId" value="Default" />
+       <updated>1732692744841</updated>
++      <workItem from="1734366152192" duration="25000" />
++      <workItem from="1734366187279" duration="8394000" />
++    </task>
++    <task id="LOCAL-00001" summary=":sparkles: : 게임 종료 로직, 타이머 추가">
++      <option name="closed" value="true" />
++      <created>1734365484508</created>
++      <option name="number" value="00001" />
++      <option name="presentableId" value="LOCAL-00001" />
++      <option name="project" value="LOCAL" />
++      <updated>1734365484508</updated>
++    </task>
++    <task id="LOCAL-00002" summary=":sparkles: : 로비에 코인, 아이디 추가 &amp; 상점 이용시 로비에 코인 반영">
++      <option name="closed" value="true" />
++      <created>1734368708957</created>
++      <option name="number" value="00002" />
++      <option name="presentableId" value="LOCAL-00002" />
++      <option name="project" value="LOCAL" />
++      <updated>1734368708957</updated>
+     </task>
++    <task id="LOCAL-00003" summary=":sparkles: : 게임 종료 시 점수 코인에 반영">
++      <option name="closed" value="true" />
++      <created>1734369971176</created>
++      <option name="number" value="00003" />
++      <option name="presentableId" value="LOCAL-00003" />
++      <option name="project" value="LOCAL" />
++      <updated>1734369971176</updated>
++    </task>
++    <task id="LOCAL-00004" summary=":sparkles: : 로비에 아이템 갯수 반영">
++      <option name="closed" value="true" />
++      <created>1734372800416</created>
++      <option name="number" value="00004" />
++      <option name="presentableId" value="LOCAL-00004" />
++      <option name="project" value="LOCAL" />
++      <updated>1734372800416</updated>
++    </task>
++    <task id="LOCAL-00005" summary=":sparkles: : 게임화면에 아이템 보유개수 표시">
++      <option name="closed" value="true" />
++      <created>1734373986371</created>
++      <option name="number" value="00005" />
++      <option name="presentableId" value="LOCAL-00005" />
++      <option name="project" value="LOCAL" />
++      <updated>1734373986371</updated>
++    </task>
++    <option name="localTasksCounter" value="6" />
+     <servers />
+   </component>
++  <component name="TypeScriptGeneratedFilesManager">
++    <option name="version" value="3" />
++  </component>
+   <component name="VcsManagerConfiguration">
+     <MESSAGE value="Changes" />
+-    <option name="LAST_COMMIT_MESSAGE" value="Changes" />
++    <MESSAGE value=":sparkles: : 게임 종료 로직, 타이머 추가" />
++    <MESSAGE value=":sparkles: : 로비에 코인, 아이디 추가 &amp; 상점 이용시 로비에 코인 반영" />
++    <MESSAGE value=":sparkles: : 게임 종료 시 점수 코인에 반영" />
++    <MESSAGE value=":sparkles: : 로비에 아이템 갯수 반영" />
++    <MESSAGE value=":sparkles: : 게임화면에 아이템 보유개수 표시" />
++    <option name="LAST_COMMIT_MESSAGE" value=":sparkles: : 게임화면에 아이템 보유개수 표시" />
+   </component>
+   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+     <SUITE FILE_PATH="coverage/BubblePOP$LoginFrame.ic" NAME="LoginFrame 커버리지 결과" MODIFIED="1733939055085" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="bubblePop:jar2">
+    <output-path>$PROJECT_DIR$/../..</output-path>
+    <root id="archive" name="bubblePop.jar">
+      <element id="module-output" name="bubblePop" />
+    </root>
+  </artifact>
+</component>
