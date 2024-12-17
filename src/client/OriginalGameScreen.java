@@ -288,13 +288,14 @@ public class OriginalGameScreen extends JFrame {
             if (audioManager != null) {
                 audioManager.stopBGM();
             }
+
             // 점수 비교 및 코인 추가
             int myScore = player1Score.getScore();
             int opponentScore = player2Score.getScore();
 
             String resultMessage;
             if (myScore > opponentScore) {
-                // 승리 시 코인 추가 ( 승리 점수의 50%를 코인으로 변환)
+                // 승리 시 코인 추가 (승리 점수의 50%를 코인으로 변환)
                 int coinReward = myScore / 2;
                 GameUser.getInstance().addCoin(coinReward);
 
@@ -319,17 +320,17 @@ public class OriginalGameScreen extends JFrame {
 
             // ManageNetwork에서 게임 화면 참조 제거
             if (network != null) {
-                network.setGameScreen(null);  // ManageNetwork에 이 메서드를 추가해야 함
+                network.setGameScreen(null);
             }
 
-            // 로비로 돌아가기
-            new LobbyFrame();
+            dispose(); // 현재 게임 화면 닫기
 
-            // 게임 창 닫기
-            dispose();
+            // 새로운 LobbyFrame을 생성하고 네트워크에 설정
+            LobbyFrame newLobby = new LobbyFrame();
+            network.setLobbyFrame(newLobby);
+            newLobby.addGlobalChatMessage(GameUser.getInstance().getId() + "님이 게임을 종료하고 로비로 돌아왔습니다.");
         });
     }
-
     public void updateScore(int bubbleCount, boolean isPlayer1) {
         GameScore score = isPlayer1 ? player1Score : player2Score;
         JLabel scoreLabel = isPlayer1 ? player1ScoreLabel : player2ScoreLabel;

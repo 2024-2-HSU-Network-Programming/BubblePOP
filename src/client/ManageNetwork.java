@@ -46,7 +46,7 @@ public class ManageNetwork extends Thread{
     @Override
     public void run() {
         // lobbyFrame 초기화를 여기서 한 번만 수행
-        lobbyFrame = new LobbyFrame();
+//        lobbyFrame = new LobbyFrame();
         this.gameUser = GameUser.getInstance();
 
         while(true) {
@@ -57,9 +57,7 @@ public class ManageNetwork extends Thread{
             try {
                 objCm = ois.readObject();
                 System.out.println("데이터 수신 완료!" + objCm);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
+            } catch (IOException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
 
@@ -77,11 +75,12 @@ public class ManageNetwork extends Thread{
 
                         case ChatMsg.MODE_TX_STRING:
                             if (cm.getMessage().equals("UPDATE_ROOM_LIST")) {
-
                                 System.out.println("방 목록 갱신 요청 수신");
-                                SwingUtilities.invokeLater(() -> {
-                                    lobbyFrame.getRoomListPane().refreshRoomList();
-                                });
+                                if (lobbyFrame != null) {
+                                    SwingUtilities.invokeLater(() -> {
+                                        lobbyFrame.getRoomListPane().refreshRoomList();
+                                    });
+                                }
                             } else {
                                 if (lobbyFrame != null) {
                                     System.out.println("서버에서 스트링값 수신: " + cm.getMessage());
@@ -388,6 +387,16 @@ public class ManageNetwork extends Thread{
 
         }
     }
+
+    public void setLobbyFrame(LobbyFrame frame) {
+        this.lobbyFrame = frame;
+    }
+
+    // LobbyFrame 가져오기 메서드 추가
+    public LobbyFrame getLobbyFrame() {
+        return this.lobbyFrame;
+    }
+
     // 메시지를 서버로 전송하는 메서드
     public synchronized void sendMessage(ChatMsg msg) {
         try {

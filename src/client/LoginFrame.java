@@ -116,38 +116,41 @@ public class LoginFrame extends JFrame{
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
 
-//            // 총관리 네트워크 설정
-//            network = new ManageNetwork(in, out, socket);
-//            network.start();
-
-            // 로비 화면 생성
-    //        LobbyFrame lobbyFrame = new LobbyFrame(userName, new ManageNetwork(in, out, socket, null));
+            // ManageNetwork 인스턴스 생성 및 시작
             ManageNetwork network = new ManageNetwork(in, out, socket);
             network.start();
 
-            // GameUser 객체 생성 및 전송
+            // GameUser 초기화
             String userName = txtUserName.getText();
             String password = new String(txtUserPassword.getPassword());
             GameUser gameUser = GameUser.getInstance();
             gameUser.init(userName, password, network);
 
-//            out.writeObject(gameUser);
-//            out.flush();
-
-            // ChatMsg 객체 전송
+            // 로그인 메시지 전송
             ChatMsg loginMsg = new ChatMsg(gameUser.getId(), ChatMsg.MODE_LOGIN, "Login");
             out.writeObject(loginMsg);
             out.flush();
 
+            // 로그인 화면 숨기기
             setVisible(false);
-            //new LobbyFrame();
+
+            // 로비 화면 생성 및 네트워크 연결
+            LobbyFrame lobbyFrame = new LobbyFrame();
+            network.setLobbyFrame(lobbyFrame); // ManageNetwork에 LobbyFrame 설정
+
+            // 로그인 프레임 dispose
+            dispose();
 
         } catch(IOException e) {
-            // 서버 연결시 다양한 오류가 발생할 수 있기 때문에 꼭 작성해줘야함(서버 연결 실패, 네트워크 오류 등)
             System.out.println("서버 오류 > " + e.getMessage());
-            System.exit(-1); // 비정상 오류 상태는 음수 값
+            JOptionPane.showMessageDialog(this,
+                    "서버 연결에 실패했습니다: " + e.getMessage(),
+                    "연결 오류",
+                    JOptionPane.ERROR_MESSAGE);
+            System.exit(-1);
         }
     }
+
     public static void main(String[] args) {
         new LoginFrame();
     }
