@@ -298,9 +298,6 @@ public class ItemStoreFrame extends JFrame {
         return itemBoxPanel;
     }
 
-
-
-
     public static void main(String[] args) {
         new ItemStoreFrame();
     }

@@ -27,8 +27,8 @@ public class ExchangeWaitingRoom {
     private String roomOwner;          // 방장 ID 저장
     private boolean player1Ready = false;  // 자신의 준비 상태
     private boolean player2Ready = false;  // 상대방의 준비 상태
-    private GameUser gameUser;
-    private BufferedImage changeBubble,linebomb,bomb;
+    private GameUser gameUser; // 게임 유저 객체 (아이템, 코인 등 관리)
+    private BufferedImage changeBubble,linebomb,bomb; // 아이템 이미지
     GameUser user = GameUser.getInstance();
 
 
@@ -59,6 +59,7 @@ public class ExchangeWaitingRoom {
         this.roomOwner = ownerFromServer;  // 서버에서 받은 실제 방장 ID로 설정
 
         network.setExchangeWaitingRoom(this);
+        // 아이템 이미지 로드
         try {
             changeBubble = ImageIO.read(getClass().getResourceAsStream("/client/assets/item/change-bubble.png"));
             linebomb = ImageIO.read(getClass().getResourceAsStream("/client/assets/item/line-explosion.png"));

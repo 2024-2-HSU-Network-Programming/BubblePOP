@@ -286,34 +286,22 @@ public class ServerMain extends JFrame {
                         int enterRoomId = Integer.parseInt(enterRoomData[0]);
                         String enteringUser = enterRoomData[1];
 
-                        // 방에 유저 추가 시도
                         boolean success = RoomManager.addUserToRoom(enterRoomId, enteringUser);
-
                         if(success) {
-                            // 서버 로그
-                            t_display.append(enteringUser + "님이 " + enterRoomId + "번 방에 입장했습니다.\n");
+                            GameRoom room2 = RoomManager.getInstance().getGameRoom(String.valueOf(enterRoomId));
+                            if(room2 != null) {
+                                // 즉시 모든 클라이언트에게 입장 알림
+                                ChatMsg enterRoomMsg = new ChatMsg("Server", ChatMsg.MODE_ENTER_ROOM,
+                                        enterRoomId + "|" + enteringUser);
+                                broadcasting(enterRoomMsg);
 
-                            // 해당 방의 모든 유저 정보 가져오기
-                            room = RoomManager.getInstance().getGameRoom(String.valueOf(enterRoomId));
-                            if(room != null) {
-                                // 약간의 딜레이를 주어 두 번째 클라이언트의 WaitingRoom이 생성될 시간을 줌
-                                try {
-                                    Thread.sleep(100);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-
-                                // 방의 모든 유저들에 대해 메시지 전송
-                                List<String> users = room.getUserList();
-                                for(String user : users) {
-                                    ChatMsg enterRoomMsg = new ChatMsg("Server", ChatMsg.MODE_ENTER_ROOM,
-                                            enterRoomId + "|" + user);
-                                    broadcasting(enterRoomMsg);
-                                }
+                                // 방 정보 업데이트 메시지도 전송
+                                ChatMsg updateMsg = new ChatMsg("Server", ChatMsg.MODE_TX_STRING, "UPDATE_ROOM_LIST");
+                                broadcasting(updateMsg);
                             }
                         }
                         break;
-                    case ChatMsg.MODE_ENTER_EXCHANGEROOM:
+                        case ChatMsg.MODE_ENTER_EXCHANGEROOM:
                         String[] enterExchangeRoomData = msg.getMessage().split("\\|");
                         int exchangeRoomId = Integer.parseInt(enterExchangeRoomData[0]);
                         enteringUser = enterExchangeRoomData[1];
@@ -518,8 +506,6 @@ public class ServerMain extends JFrame {
                         broadcasting(msg);
                         break;
 
-                    case ChatMsg.MODE_GAME_ACTION:
-                    case ChatMsg.MODE_BUBBLE_POP:
                     case ChatMsg.MODE_GAME_SYNC:
                         broadcasting(msg);
                         break;

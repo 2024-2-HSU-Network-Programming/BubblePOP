@@ -157,9 +157,6 @@ public class LobbyFrame extends JFrame {
         scrollPane.setBounds(20, 20, 400, 150);
         lobbyCenterPane.add(scrollPane);
 
-
-
-
         btnSendGlobalChat = new JButton("전송");
         btnSendGlobalChat.setBounds(360,200, 70, 30);
         btnSendGlobalChat.addActionListener(new ActionListener() {
