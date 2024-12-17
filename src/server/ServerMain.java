@@ -304,25 +304,36 @@ public class ServerMain extends JFrame {
                         // 이미지 데이터 수신
                         t_display.append("이미지 수신: " + msg.getMessage() + "\n");
 
+                        // SelectedItem|filename 형식에서 파일명 추출
+                        String[] imageInfo = msg.getMessage().split("\\|");
+                        if (imageInfo.length == 2 && imageInfo[0].equals("SelectedItem")) {
+                            // 해당 유저가 있는 교환방 찾기
+                            for (ExchangeRoom room2 : RoomManager.getInstance().getAllExchangeRooms()) {
+                                if (room2.getUserList().contains(msg.getUserId())) {
+                                    // 선택한 아이템 저장
+                                    room2.setSelectedItem(msg.getUserId(), imageInfo[1]);
+                                    break;
+                                }
+                            }
+                        }
+
                         // 모든 클라이언트에 이미지 브로드캐스트
                         synchronized (clientStreams) {
                             for (ObjectOutputStream clientOut : clientStreams.values()) {
                                 try {
-                                    // 메시지와 이미지 데이터를 포함한 객체를 전송
-                                    clientOut.writeObject(new ChatMsg(msg.getUserId(), ChatMsg.MODE_TX_IMAGE, msg.getMessage(), msg.getImage()));
+                                    clientOut.writeObject(new ChatMsg(msg.getUserId(), ChatMsg.MODE_TX_IMAGE,
+                                            msg.getMessage(), msg.getImage()));
                                     clientOut.flush();
                                 } catch (IOException e) {
                                     t_display.append("이미지 브로드캐스트 오류: " + e.getMessage() + "\n");
                                 }
                             }
                         }
-
                         break;
-
                     case ChatMsg.MODE_EXCHANGEITEM:
                         String[] exchangeData = msg.getMessage().split("\\|");
                         String sender = exchangeData[0];
-                        String itemName = exchangeData[1];  // 파일명으로 아이템 식별
+                        String senderItem = exchangeData[1];  // sender의 아이템
 
                         // 해당 교환방의 다른 사용자를 찾아서 아이템 전송
                         ExchangeRoom exchangeRoom = null;
@@ -341,16 +352,20 @@ public class ServerMain extends JFrame {
                                     .orElse(null);
 
                             if (receiver != null) {
-                                // 교환 완료 메시지를 양쪽 클라이언트에 전송
-                                String exchangeResult = sender + "|" + receiver + "|" + itemName;
+                                // receiver의 선택한 아이템 가져오기
+                                String receiverItem = exchangeRoom.getSelectedItem(receiver);
+
+                                // 양방향 교환 정보를 포함한 메시지 생성
+                                // 형식: sender|receiver|senderItem|receiverItem
+                                String exchangeResult = sender + "|" + receiver + "|" + senderItem + "|" + receiverItem;
                                 ChatMsg exchangeMsg = new ChatMsg("Server", ChatMsg.MODE_EXCHANGEITEM, exchangeResult);
                                 broadcasting(exchangeMsg);
 
-                                t_display.append("아이템 교환 완료: " + sender + "와 " + receiver + " 사이에 " + itemName + " 교환됨\n");
+                                t_display.append("아이템 교환 완료: " + sender + "의 " + senderItem + "와 " +
+                                        receiver + "의 " + receiverItem + " 교환됨\n");
                             }
                         }
                         break;
-
 
 //                    case ChatMsg.MODE_ENTER_EXCHANGEROOM:
 //                        String[] enterExchangeRoomData = msg.getMessage().split("\\|");
@@ -428,7 +443,7 @@ public class ServerMain extends JFrame {
                         break;
                     case ChatMsg.MODE_SELLITEM:
                         itemData = msg.getMessage().split("\\|");
-                        itemName = itemData[0];
+                        String itemName = itemData[0];
                         quantity = Integer.parseInt(itemData[1]);
                         totalCost = Integer.parseInt(itemData[2]);
                         // 사용자 데이터 업데이트 (예: 데이터베이스 또는 메모리)

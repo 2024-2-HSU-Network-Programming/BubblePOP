@@ -331,20 +331,16 @@ public class ManageNetwork extends Thread{
                             String[] exchangeInfo = cm.getMessage().split("\\|");
                             String sender = exchangeInfo[0];
                             String receiver = exchangeInfo[1];
-                            String exchangedItem = exchangeInfo[2];
+                            String senderItem = exchangeInfo[2];
+                            String receiverItem = exchangeInfo[3];
 
                             if (exchangeWaitingRoom != null) {
-                                if (receiver.equals(gameUser.getId())) {
-                                    // 수신자인 경우 아이템 증가
-                                    exchangeWaitingRoom.processReceivedItem(exchangedItem);
-                                } else if (sender.equals(gameUser.getId())) {
-                                    // 송신자인 경우 아이템 감소
-                                    exchangeWaitingRoom.processSentItem(exchangedItem);
-                                }
+                                exchangeWaitingRoom.handleExchange(sender, receiver, senderItem, receiverItem);
 
                                 // 교환 완료 메시지를 채팅창에 표시
                                 String exchangeMessage = sender + "님이 " + receiver + "님과 " +
-                                        exchangedItem.replace(".png", "") + " 아이템을 교환했습니다.";
+                                        senderItem.replace(".png", "") + "와 " +
+                                        receiverItem.replace(".png", "") + "을(를) 교환했습니다.";
                                 exchangeWaitingRoom.receiveMessage(exchangeMessage);
                             }
                             break;

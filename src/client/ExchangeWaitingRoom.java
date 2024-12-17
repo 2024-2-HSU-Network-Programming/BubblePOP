@@ -529,10 +529,24 @@ private void sendSelectedItemImage() {
             gameUser.setChangeBubbleColor(gameUser.getChangeBubbleColor() - 1);
         }
 
+
         // UI 업데이트
         SwingUtilities.invokeLater(() -> {
             updateItemCountLabels();
             updateLobbyItems();
         });
     }
+    public void handleExchange(String sender, String receiver, String senderItem, String receiverItem) {
+        if (userId.equals(sender)) {
+            // sender인 경우
+            processSentItem(senderItem);      // 보낸 아이템 감소
+            processReceivedItem(receiverItem); // 받은 아이템 증가
+        } else if (userId.equals(receiver)) {
+            // receiver인 경우
+            processSentItem(receiverItem);     // 보낸 아이템 감소
+            processReceivedItem(senderItem);   // 받은 아이템 증가
+        }
+    }
+
+
 }
