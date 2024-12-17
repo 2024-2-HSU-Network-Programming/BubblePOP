@@ -4,59 +4,209 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d6eb701e-94d1-44dd-8355-e52f1cc2862a" name="Changes" comment="">
+    <list default="true" id="a3e92f76-7a23-4d81-b3aa-d28e0e723f73" name="변경" comment=":lipstick: : 글씨 폰트 변경">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/AudioManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/AudioManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/ExchangeWaitingRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/ExchangeWaitingRoom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/ItemStoreFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/ItemStoreFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/LobbyFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/LobbyFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/MakeRoomDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/MakeRoomDialog.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/ManageNetwork.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/ManageNetwork.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/OriginalGameScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/OriginalGameScreen.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/RoomListTapPane.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/RoomListTapPane.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/ServerMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/ServerMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/shared/ChatMsg.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/ChatMsg.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/2024-2-HSU-Network-Programming/BubblePOP.git&quot;,
-    &quot;accountId&quot;: &quot;2fe21cd1-1ad5-470d-8b05-9466adfc4d27&quot;
-  }
-}</component>
   <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 3
 }</component>
-  <component name="ProjectId" id="2p6iufZiOwhufQ6Ndw1ra7fO2Fm" />
+  <component name="ProjectId" id="2pQKDyKmTP24KocN8ZAJaJHveOe" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;Application.GameScreen.executor&quot;: &quot;Run&quot;,
+    &quot;Application.LoginFrame.executor&quot;: &quot;Run&quot;,
+    &quot;Application.ServerMain.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;cm/feat#32&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/yebin/GitHub/BubblePOP&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;,
-    &quot;애플리케이션.Main.executor&quot;: &quot;Run&quot;
+    &quot;애플리케이션.GameScreen.executor&quot;: &quot;Run&quot;,
+    &quot;애플리케이션.ItemStoreFrame.executor&quot;: &quot;Run&quot;,
+    &quot;애플리케이션.LobbyFrame.executor&quot;: &quot;Run&quot;,
+    &quot;애플리케이션.LoginFrame.executor&quot;: &quot;Run&quot;,
+    &quot;애플리케이션.ServerMain.executor&quot;: &quot;Run&quot;,
+    &quot;애플리케이션.WaitingRoom.executor&quot;: &quot;Run&quot;
   }
 }</component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/client/assets/item" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.LoginFrame">
+    <configuration name="GameScreen" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="client.GameScreen" />
+      <module name="bubblePop" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="client.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LobbyFrame" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="client.LobbyFrame" />
+      <module name="bubblePop" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="client.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LoginFrame" type="Application" factoryName="Application" singleton="false" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="client.LoginFrame" />
+      <module name="bubblePop" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="client.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ServerMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="server.ServerMain" />
+      <module name="bubblePop" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="server.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="WaitingRoom" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="client.WaitingRoom" />
+      <module name="bubblePop" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="client.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.GameScreen" />
+      <item itemvalue="Application.LobbyFrame" />
+      <item itemvalue="Application.LoginFrame" />
+      <item itemvalue="Application.ServerMain" />
+      <item itemvalue="Application.WaitingRoom" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.LoginFrame" />
+        <item itemvalue="Application.ServerMain" />
+        <item itemvalue="Application.GameScreen" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
-    <task active="true" id="Default" summary="Default task">
-      <changelist id="d6eb701e-94d1-44dd-8355-e52f1cc2862a" name="Changes" comment="" />
-      <created>1732093151380</created>
+    <task active="true" id="Default" summary="디폴트 작업">
+      <changelist id="a3e92f76-7a23-4d81-b3aa-d28e0e723f73" name="변경" comment="" />
+      <created>1732692744841</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1732093151380</updated>
-      <workItem from="1732093152338" duration="374000" />
+      <updated>1732692744841</updated>
     </task>
+    <task id="LOCAL-00001" summary=":art:  부분 수정">
+      <option name="closed" value="true" />
+      <created>1734418165643</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1734418165643</updated>
+    </task>
+    <task id="LOCAL-00002" summary=":lipstick: : 글씨 폰트 변경">
+      <option name="closed" value="true" />
+      <created>1734418692931</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1734418692931</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Changes" />
+    <MESSAGE value=":art:  부분 수정" />
+    <MESSAGE value=":lipstick: : 글씨 폰트 변경" />
+    <option name="LAST_COMMIT_MESSAGE" value=":lipstick: : 글씨 폰트 변경" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.NullPointerException" package="java.lang" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/BubblePOP$LoginFrame.ic" NAME="LoginFrame 커버리지 결과" MODIFIED="1733939055085" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>client.*</FILTER>
+    </SUITE>
   </component>
 </project>
