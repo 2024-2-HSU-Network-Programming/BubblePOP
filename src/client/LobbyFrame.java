@@ -147,14 +147,30 @@ public class LobbyFrame extends JFrame {
         tf_globalChat = new JTextField();
         tf_globalChat.setBounds(20, 200, 330, 30);
         lobbyCenterPane.add(tf_globalChat);
+        tf_globalChat.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sendChatMessage();
+            }
+        });
+        JScrollPane scrollPane = new JScrollPane(t_globalChat);
+        scrollPane.setBounds(20, 20, 400, 150);
+        lobbyCenterPane.add(scrollPane);
 
-        btnSendGlobalChat = new JButton("보내기");
+
+
+
+        btnSendGlobalChat = new JButton("전송");
         btnSendGlobalChat.setBounds(360,200, 70, 30);
         btnSendGlobalChat.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ChatMsg msg = new ChatMsg(user.getId(), ChatMsg.MODE_TX_STRING, user.getId() + "님: " + tf_globalChat.getText());
-                user.getNet().sendMessage(msg);
+                String chatMessage = tf_globalChat.getText();
+                if (!chatMessage.isEmpty()) { // 빈 메시지는 전송되지 않도록 조건 추가
+                    ChatMsg msg = new ChatMsg(user.getId(), ChatMsg.MODE_TX_STRING, user.getId() + "님: " + chatMessage);
+                    user.getNet().sendMessage(msg);
+                    tf_globalChat.setText(""); // 메시지 전송 후 입력 필드 비우기
+                }
             }
         });
         lobbyCenterPane.add(btnSendGlobalChat);
@@ -164,6 +180,15 @@ public class LobbyFrame extends JFrame {
         lobbyCenterPane.add(lb_userCharacter);
 
         return lobbyCenterPane;
+    }
+
+    private void sendChatMessage() {
+        String chatMessage = tf_globalChat.getText();
+        if (!chatMessage.isEmpty()) { // 빈 메시지는 전송되지 않도록 조건 추가
+            ChatMsg msg = new ChatMsg(user.getId(), ChatMsg.MODE_TX_STRING, user.getId() + "님: " + chatMessage);
+            user.getNet().sendMessage(msg);
+            tf_globalChat.setText(""); // 메시지 전송 후 입력 필드 비우기
+        }
     }
 
     private JPanel LobbyLeftPanel() {
