@@ -93,14 +93,14 @@ public class LobbyFrame extends JFrame {
         // 유저 ID
         JLabel userIdLabel = new JLabel("User ID: " + user.getId());
         userIdLabel.setForeground(Color.WHITE);
-        userIdLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        userIdLabel.setFont(new Font("맑은 고딕", Font.BOLD, 16));
         userIdLabel.setBounds(100, 230, 200, 30); // 위치와 크기 설정
         lobbyCenterPane.add(userIdLabel);
 
         // 보유 코인
         JLabel coinLabel = new JLabel("Coins:    " + user.getCoin());
         coinLabel.setForeground(Color.WHITE);
-        coinLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        coinLabel.setFont(new Font("맑은 고딕", Font.BOLD, 16));
         coinLabel.setBounds(100, 260, 200, 30);
         lobbyCenterPane.add(coinLabel);
 
@@ -113,21 +113,21 @@ public class LobbyFrame extends JFrame {
         // 구슬전환 아이템 갯수 getChangeBubbleColor
         JLabel changeBubbleNum = new JLabel("x " + user.getChangeBubbleColor());
         changeBubbleNum.setForeground(Color.WHITE);
-        changeBubbleNum.setFont(new Font("Arial", Font.BOLD, 16));
+        changeBubbleNum.setFont(new Font("맑은 고딕", Font.BOLD, 16));
         changeBubbleNum.setBounds(90, 305, 90, 30);
         lobbyCenterPane.add(changeBubbleNum);
 
 // 한줄 제거 아이템 갯수 getLineExplosion
         JLabel linebombNum = new JLabel("x " + user.getLineExplosion());
         linebombNum.setForeground(Color.WHITE);
-        linebombNum.setFont(new Font("Arial", Font.BOLD, 16));
+        linebombNum.setFont(new Font("맑은 고딕", Font.BOLD, 16));
         linebombNum.setBounds(225, 305, 95, 30);
         lobbyCenterPane.add(linebombNum);
 
 // 폭탄 구슬 아이템 갯수 getBomb
         JLabel bombNum = new JLabel("x " + user.getBomb());
         bombNum.setForeground(Color.WHITE);
-        bombNum.setFont(new Font("Arial", Font.BOLD, 16));
+        bombNum.setFont(new Font("맑은 고딕", Font.BOLD, 16));
         bombNum.setBounds(350, 305, 90, 30);
         lobbyCenterPane.add(bombNum);
 

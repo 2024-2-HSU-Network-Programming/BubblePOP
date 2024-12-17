@@ -48,7 +48,7 @@ public class ItemStoreFrame extends JFrame {
         titlePanel.setPreferredSize(new Dimension(960, 50));
         titlePanel.setBackground(Color.WHITE); // 배경 흰색
         JLabel titleLabel = new JLabel("아이템 상점", SwingConstants.CENTER); // 텍스트 중앙 정렬
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setFont(new Font("맑은 고딕", Font.BOLD, 24));
         titlePanel.add(titleLabel, BorderLayout.CENTER);
 
         // JTabbedPane 생성
@@ -95,9 +95,9 @@ public class ItemStoreFrame extends JFrame {
         // 아이템 정보
         JPanel infoPanel = new JPanel(new GridLayout(2, 1)); // 2행 1열 레이아웃
         JLabel nameLabel = new JLabel(itemName, SwingConstants.LEFT);
-        nameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        nameLabel.setFont(new Font("맑은 고딕", Font.BOLD, 14));
         JLabel quantityLabel = new JLabel("보유 수량: " + quantity, SwingConstants.LEFT);
-        quantityLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        quantityLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 12));
         infoPanel.add(nameLabel);
         infoPanel.add(quantityLabel);
         itemPanel.add(infoPanel, BorderLayout.CENTER);
@@ -126,7 +126,7 @@ public class ItemStoreFrame extends JFrame {
         coinPanel.setLayout(new BorderLayout());
         coinPanel.setBounds(5, yPosition, 300, 50); // 크기와 위치 설정
         JLabel coinLabel = new JLabel("보유 코인: " + user.getCoin(), SwingConstants.CENTER);
-        coinLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        coinLabel.setFont(new Font("맑은 고딕", Font.BOLD, 16));
         coinPanel.add(coinLabel, BorderLayout.CENTER);
         myItemTapPanel.add(coinPanel);
         // 전체 패널 크기 업데이트
@@ -144,7 +144,7 @@ public class ItemStoreFrame extends JFrame {
 
         // 상단 아이템 제목
         JLabel titleLabel = new JLabel(itemTitle, SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        titleLabel.setFont(new Font("맑은 고딕", Font.BOLD, 20));
         itemBoxPanel.add(titleLabel, BorderLayout.NORTH);
 
         // 이미지 크기 조절
@@ -163,9 +163,9 @@ public class ItemStoreFrame extends JFrame {
         JPanel pricePanel = new JPanel(new GridLayout(2, 1)); // 2행 1열
         pricePanel.setBackground(Color.white);
         JLabel buyPriceLabel = new JLabel(String.format("구매시 %d", buyCoin), SwingConstants.CENTER);
-        buyPriceLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        buyPriceLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
         JLabel sellPriceLabel = new JLabel(String.format("판매시 %d", sellCoin), SwingConstants.CENTER);
-        sellPriceLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        sellPriceLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
         pricePanel.add(buyPriceLabel);
         pricePanel.add(sellPriceLabel);
         bottomPanel.add(pricePanel, BorderLayout.NORTH);

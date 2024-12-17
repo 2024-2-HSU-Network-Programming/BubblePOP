@@ -134,19 +134,19 @@ public class ExchangeWaitingRoom {
         // 아이템 개수 라벨 추가
         changeBubbleNum = new JLabel("x " + user.getChangeBubbleColor());
         changeBubbleNum.setForeground(Color.WHITE);
-        changeBubbleNum.setFont(new Font("Arial", Font.BOLD, 16));
+        changeBubbleNum.setFont(new Font("맑은 고딕", Font.BOLD, 16));
         changeBubbleNum.setBounds(110, 575, 90, 30);
         frame.add(changeBubbleNum);
 
         linebombNum = new JLabel("x " + user.getLineExplosion());
         linebombNum.setForeground(Color.WHITE);
-        linebombNum.setFont(new Font("Arial", Font.BOLD, 16));
+        linebombNum.setFont(new Font("맑은 고딕", Font.BOLD, 16));
         linebombNum.setBounds(245, 575, 95, 30);
         frame.add(linebombNum);
 
         bombNum = new JLabel("x " + user.getBomb());
         bombNum.setForeground(Color.WHITE);
-        bombNum.setFont(new Font("Arial", Font.BOLD, 16));
+        bombNum.setFont(new Font("맑은 고딕", Font.BOLD, 16));
         bombNum.setBounds(370, 575, 90, 30);
         frame.add(bombNum);
 

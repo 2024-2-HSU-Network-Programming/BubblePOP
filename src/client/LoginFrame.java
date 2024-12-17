@@ -73,14 +73,14 @@ public class LoginFrame extends JFrame{
         // 아이디 입력
         JLabel lblUserName = new JLabel("아이디: ");
         lblUserName.setBounds(30, 50, 100, 30);
-        lblUserName.setFont(new Font("Arial", Font.PLAIN, 20));
+        lblUserName.setFont(new Font("맑은 고딕", Font.PLAIN, 20));
         txtUserName = new JTextField();
         txtUserName.setBounds(130, 40, 180, 50);
 
         // 비밀번호 입력
         JLabel lblUserPassword = new JLabel("비밀번호: ");
         lblUserPassword.setBounds(30, 120, 100, 30);
-        lblUserPassword.setFont(new Font("Arial", Font.PLAIN, 20));
+        lblUserPassword.setFont(new Font("맑은 고딕", Font.PLAIN, 20));
         txtUserPassword = new JPasswordField();
         txtUserPassword.setBounds(130, 110, 180, 50);
 
@@ -89,7 +89,7 @@ public class LoginFrame extends JFrame{
         btnLogin.setBounds(325, 22, 130, 157);
         btnLogin.setOpaque(true); // 배경색 적용 가능하도록 설정
         btnLogin.setBorderPainted(false); // 버튼 테두리 제거
-        btnLogin.setFont(new Font("Arial", Font.BOLD, 20));
+        btnLogin.setFont(new Font("맑은 고딕", Font.BOLD, 20));
         btnLogin.setBackground(Color.BLACK);
         btnLogin.setForeground(Color.white);
 
