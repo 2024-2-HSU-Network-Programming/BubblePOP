@@ -2,7 +2,8 @@
 <div align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=auto&height=100&section=header&text=BubblePOP&fontSize=40&animation=fadeIn&fontColor=random" alt="BubblePOP Header"/>
 </div>
-BubblePOP은 한성대학교 2024-2학기 네트워크 프로그래밍 팀 프로젝트로, 소켓통신을 활용한 멀티플레이어 게임 기능을 구현한 버블 팝 게임입니다.
+BubblePOP은 한성대학교 2024-2학기 네트워크 프로그래밍 팀 프로젝트로, 소켓통신을 활용한 멀티플레이어 게임 기능을 구현한 버블 팝 게임입니다.<br>
+같은 색의 공을 맞추어 제거하는 버블 슈터 고전 아케이드 게임('Puzzle Bubble')에서 착안한 프로그램입니다.<br>
 
 ## ✨ 주요 기능 ✨
 1. 로그인 시스템
@@ -55,12 +56,13 @@ BubblePOP은 한성대학교 2024-2학기 네트워크 프로그래밍 팀 프�
   - E 버튼: 폭탄을 발사해 연결된 구슬 2개씩 폭발
 
 ## 👥 팀원 소개 (Team Members)
+
 | **임차민** | **정예빈** |
 |:---:|:---:|
 | <img src="https://github.com/ckals413.png" width="100"> | <img src="https://github.com/benniejung.png" width="100"> |
 | [@ckals413](https://github.com/ckals413) | [@benniejung](https://github.com/benniejung) |
 
-📚 기술 스택 📚
+## 📚 기술 스택 📚
 <p align="center"> <img src="https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=Java&logoColor=white"> <img src="https://img.shields.io/badge/JavaFX-007396?style=for-the-badge&logo=Java&logoColor=white"> <img src="https://img.shields.io/badge/Socket.IO-010101?style=for-the-badge&logo=Socket.IO&logoColor=white"> </p>
 💻 Java
 객체 지향 프로그래밍 언어로, 안정적이고 플랫폼에 독립적인 애플리케이션 개발에 사용되었습니다.
@@ -73,4 +75,6 @@ Java를 위한 최신 GUI 툴킷으로, 풍부한 사용자 인터페이스를 �
 
 ## 🎥 데모 영상
 
-[![BubblePOP Demo]](https://www.youtube.com/watch?v=영상ID)
+https://github.com/user-attachments/assets/a841e314-358e-4f9a-82e4-a87097a9baff
+
+
